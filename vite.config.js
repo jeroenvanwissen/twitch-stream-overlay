@@ -6,6 +6,7 @@ import vueDevTools from "vite-plugin-vue-devtools";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "./",
   plugins: [
     vue({
       template: {
@@ -21,12 +22,15 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  esbuild: {
+    target: "esnext",
+  },
   build: {
-    outDir: "docs",
+    outDir: "dist",
+    target: "esnext",
   },
   server: {
     open: true,
     port: 5501,
-    allowedHosts: ["streamerbot.nomercy.tv"],
   },
 });
