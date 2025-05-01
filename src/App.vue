@@ -5,6 +5,8 @@ import { ref } from "vue";
 
 import Badge from "@/components/Badge.vue";
 import Chat from "@/components/Chat.vue";
+import NowPlaying from "@/components/NowPlaying.vue";
+import Tasks from "@/components/Tasks.vue";
 
 const chatWindow = ref<HTMLDivElement>();
 const mainWindow = ref<HTMLDivElement>();
@@ -19,7 +21,10 @@ const mainWindow = ref<HTMLDivElement>();
     <div
       ref="mainWindow"
       class="relative flex flex-col w-available h-available justify-center -ml-6 mr-[5%]"
-    />
+    >
+      <NowPlaying v-if="user" />
+      <Tasks v-if="user" />
+    </div>
 
     <div
       ref="chatWindow"

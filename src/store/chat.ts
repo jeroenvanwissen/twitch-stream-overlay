@@ -18,6 +18,7 @@ export interface Message {
   isReply: boolean;
   isReturningChatter: boolean;
   message: MessageNode;
+  plainText: string;
   parentMessageId: string | null;
   parentMessageText: string | null;
   rewardId: string | null;

@@ -2,11 +2,13 @@ import type { HelixChatBadgeVersion } from "@twurple/api";
 import { ChatClient, type ChatMessage } from "@twurple/chat";
 
 import { secondsToDuration } from "@/lib/dateTime";
+import { spotifyClient } from "@/lib/spotify/spotifyClient";
 import { getUserData } from "@/lib/twitch/getUserData";
 import messageParser from "@/lib/twitch/messageParser";
 import { scopes, user } from "@/store/auth";
 import { addMessage, chatBadges, Message } from "@/store/chat";
 
+import { useTasks } from "@/composables/useTasks";
 import {
   getChannelBadges,
   getChannelFollowers,
@@ -90,11 +92,14 @@ messageHandler.value = chatClient.onMessage(
         pronoun: userData.pronoun,
       },
       message: messageParser(msg.id, text, msg.emoteOffsets),
+      plainText: text,
     };
 
     console.log(newMsg);
 
-    if (text.startsWith("!")) {
+    if (newMsg.isRedemption && newMsg.rewardId) {
+      await handleRedemption(channel, newMsg);
+    } else if (text.startsWith("!")) {
       const [command, ...params] = text.slice(1).split(" ");
       await handleCommand({ channel, command, params, newMsg });
     } else {
@@ -128,6 +133,27 @@ export const hasMinLevel = (
 
 // location.reload();
 export default chatClient;
+
+const handleRedemption = async (channel: string, msg: Message) => {
+  console.log("handleRedemption", channel, msg);
+  if (msg.rewardId && msg.plainText) {
+    // Spotify Song Request
+    if (msg.plainText.includes("spotify.com/track/")) {
+      const success = await spotifyClient.addToQueue(msg.plainText);
+      if (success) {
+        await chatClient.say(
+          channel,
+          `@${msg.userInfo.displayName} Your song has been added to the queue!`,
+        );
+      } else {
+        await chatClient.say(
+          channel,
+          `@${msg.userInfo.displayName} Failed to add song to queue. Make sure you provided a valid Spotify track URL!`,
+        );
+      }
+    }
+  }
+};
 const handleCommand = async ({
   channel,
   command,
@@ -142,7 +168,122 @@ const handleCommand = async ({
   console.log({ channel, command, params, newMsg });
   const broadcasterId = (await getUserIdFromName(channel))!;
 
+  const {
+    addTasks,
+    findTask,
+    focusTask,
+    nextTask,
+    markDone,
+    deleteTask,
+    clearTasks,
+    tasksByUser,
+  } = useTasks();
+
   switch (command) {
+    case "task":
+      if (params.length > 0) {
+        const tasks = params
+          .join(" ")
+          .split(",")
+          .map((task) => task.trim())
+          .filter((task) => task.length > 0);
+        if (tasks.length > 0) {
+          addTasks(newMsg.userInfo.userId, newMsg.userInfo.userName, tasks);
+          await chatClient.say(
+            channel,
+            `@${newMsg.userInfo.displayName} added ${tasks.length} task(s)`,
+          );
+        }
+      }
+      break;
+
+    case "focus":
+      if (params.length === 1) {
+        const task = findTask(params[0]);
+        if (task) {
+          focusTask(params[0]);
+          await chatClient.say(
+            channel,
+            `Now focusing on task #${task.id}: ${task.text}`,
+          );
+        }
+      }
+      break;
+
+    case "next":
+      if (params.length === 1) {
+        const newTask = findTask(params[0]);
+        if (newTask) {
+          nextTask(params[0]);
+          await chatClient.say(
+            channel,
+            `Moving to next task #${newTask.id}: ${newTask.text}`,
+          );
+        }
+      }
+      break;
+
+    case "done":
+      if (params.length === 0) {
+        await chatClient.say(
+          channel,
+          `@${newMsg.userInfo.displayName} Usage: !done <taskId> or !done all`,
+        );
+      } else if (params[0].toLowerCase() === "all") {
+        const userTasks = tasksByUser.value.get(newMsg.userInfo.userId) || [];
+        const undoneTasks = userTasks.filter(
+          (task: { done: boolean }) => !task.done,
+        );
+
+        if (undoneTasks.length === 0) {
+          await chatClient.say(
+            channel,
+            `@${newMsg.userInfo.displayName} You have no incomplete tasks.`,
+          );
+        } else {
+          undoneTasks.forEach((task: { id: number }) => markDone(task.id));
+          await chatClient.say(
+            channel,
+            `@${newMsg.userInfo.displayName} Marked ${undoneTasks.length} task(s) as done.`,
+          );
+        }
+      } else {
+        const task = findTask(params[0]);
+        if (task) {
+          markDone(params[0]);
+          await chatClient.say(
+            channel,
+            `Marked task #${task.id} as done: ${task.text}`,
+          );
+        }
+      }
+      break;
+
+    case "deltask":
+      if (params.length === 1) {
+        const task = findTask(params[0]);
+        if (task) {
+          deleteTask(params[0]);
+          await chatClient.say(
+            channel,
+            `Deleted task #${task.id}: ${task.text}`,
+          );
+        }
+      }
+      break;
+
+    case "cleartasks":
+      if (newMsg.userInfo.isBroadcaster) {
+        clearTasks();
+        await chatClient.say(channel, "All tasks have been cleared");
+      } else {
+        await chatClient.say(
+          channel,
+          "Only the broadcaster can clear all tasks",
+        );
+      }
+      break;
+
     case "so":
       if (!hasMinLevel(newMsg.userInfo, "moderator")) return;
 
@@ -160,6 +301,23 @@ const handleCommand = async ({
         await chatClient.say(channel, error.message);
       });
       break;
+    case "banger":
+      const currentPlayback = await spotifyClient.getCurrentlyPlaying();
+      if (
+        currentPlayback &&
+        currentPlayback.item &&
+        "artists" in currentPlayback.item
+      ) {
+        await spotifyClient.addToPlaylist(currentPlayback.item.uri);
+        await chatClient.say(
+          channel,
+          `Added ${currentPlayback.item.name} by ${currentPlayback.item.artists[0].name} to the bangers playlist!`,
+        );
+      } else {
+        await chatClient.say(channel, `No track is currently playing!`);
+      }
+      break;
+
     case "followage":
       getChannelFollowers(broadcasterId, newMsg.userInfo.userId).then(
         async (result) => {
