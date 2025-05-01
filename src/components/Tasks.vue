@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-[380px] h-[600px] fixed left-[30px] bottom-[30px] p-4 overflow-hidden bg-theme-900/90 rounded-lg"
+    class="w-[380px] h-[600px] fixed left-[40px] bottom-[40px] p-4 overflow-hidden bg-theme-900/90 rounded-lg"
   >
     <div class="mb-4">
       <h2 class="text-theme-300 text-2xl font-bold mb-2">Tasks</h2>

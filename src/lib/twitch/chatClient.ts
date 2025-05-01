@@ -16,6 +16,7 @@ import {
   shoutoutUser,
 } from "@/lib/twitch/apiClient";
 import { TwitchClient } from "@/lib/twitch/twitchClient";
+import { usePomodoroStore } from "@/store/pomodoro";
 import { ref } from "vue";
 
 console.log("TwitchClient.botAuthProvider!", TwitchClient.botAuthProvider!);
@@ -179,6 +180,8 @@ const handleCommand = async ({
     tasksByUser,
   } = useTasks();
 
+  const pomodoro = usePomodoroStore();
+
   switch (command) {
     case "task":
       if (params.length > 0) {
@@ -338,6 +341,151 @@ const handleCommand = async ({
         },
       );
       break;
+    case "startpomo":
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(
+          channel,
+          "Only the broadcaster can control the Pomodoro timer",
+        );
+        break;
+      }
+      pomodoro.start();
+      await chatClient.say(channel, "Pomodoro timer started!");
+      break;
+
+    case "stoppomo":
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(
+          channel,
+          "Only the broadcaster can control the Pomodoro timer",
+        );
+        break;
+      }
+      pomodoro.stop();
+      await chatClient.say(channel, "Pomodoro timer stopped!");
+      break;
+
+    case "reset":
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(
+          channel,
+          "Only the broadcaster can control the Pomodoro timer",
+        );
+        break;
+      }
+      pomodoro.reset();
+      await chatClient.say(channel, "Pomodoro timer reset!");
+      break;
+
+    case "timeadd":
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(
+          channel,
+          "Only the broadcaster can control the Pomodoro timer",
+        );
+        break;
+      }
+      if (params.length === 0) {
+        await chatClient.say(channel, "Usage: !timeadd <minutes>");
+        break;
+      }
+      const minutes = parseInt(params[0]);
+      if (isNaN(minutes) || minutes <= 0) {
+        await chatClient.say(
+          channel,
+          "Please provide a valid number of minutes!",
+        );
+        break;
+      }
+      pomodoro.addTime(minutes);
+      await chatClient.say(channel, `Added ${minutes} minutes to the timer!`);
+      break;
+
+    case "pomos":
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(
+          channel,
+          "Only the broadcaster can control the Pomodoro timer",
+        );
+        break;
+      }
+      if (params.length === 0) {
+        await chatClient.say(channel, "Usage: !pomos <count>");
+        break;
+      }
+      const count = parseInt(params[0]);
+      if (isNaN(count) || count <= 0) {
+        await chatClient.say(
+          channel,
+          "Please provide a valid number of pomodoros!",
+        );
+        break;
+      }
+      pomodoro.setTotalPomos(count);
+      await chatClient.say(channel, `Set total pomodoros to ${count}!`);
+      break;
+
+    case "pomotime":
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(
+          channel,
+          "Only the broadcaster can control the Pomodoro timer",
+        );
+        break;
+      }
+      if (params.length === 0) {
+        await chatClient.say(channel, "Usage: !pomotime <minutes>");
+        break;
+      }
+      const focusTime = parseInt(params[0]);
+      if (isNaN(focusTime) || focusTime <= 0) {
+        await chatClient.say(
+          channel,
+          "Please provide a valid number of minutes!",
+        );
+        break;
+      }
+      pomodoro.setFocusLength(focusTime);
+      await chatClient.say(channel, `Set focus time to ${focusTime} minutes!`);
+      break;
+
+    case "breaktime":
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(
+          channel,
+          "Only the broadcaster can control the Pomodoro timer",
+        );
+        break;
+      }
+      if (params.length === 0) {
+        await chatClient.say(channel, "Usage: !breaktime <minutes>");
+        break;
+      }
+      const breakTime = parseInt(params[0]);
+      if (isNaN(breakTime) || breakTime <= 0) {
+        await chatClient.say(
+          channel,
+          "Please provide a valid number of minutes!",
+        );
+        break;
+      }
+      pomodoro.setBreakLength(breakTime);
+      await chatClient.say(channel, `Set break time to ${breakTime} minutes!`);
+      break;
+
+    case "nextpomo":
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(
+          channel,
+          "Only the broadcaster can control the Pomodoro timer",
+        );
+        break;
+      }
+      pomodoro.nextPomo();
+      const modeText = pomodoro.state.value.isFocusMode ? "focus" : "break";
+      await chatClient.say(channel, `Moving to ${modeText} time!`);
+      break;
+
     default:
       await chatClient.say(
         channel,
