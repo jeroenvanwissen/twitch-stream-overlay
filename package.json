@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@microsoft/signalr": "^8.0.7",
     "@twurple/api": "^7.2.1",
     "@twurple/auth": "^7.2.1",
     "@twurple/chat": "^7.2.1",

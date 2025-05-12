@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import "@/lib/twitch/authClient";
 import { botUser, user } from "@/store/auth";
+import { pomodoroVisible, spotifyVisible, tasksVisible } from "@/store/visibility";
 import { ref } from "vue";
 
 import Badge from "@/components/Badge.vue";
@@ -23,9 +24,9 @@ const mainWindow = ref<HTMLDivElement>();
       ref="mainWindow"
       class="relative flex flex-col w-available h-available justify-center -ml-6 mr-[5%]"
     >
-      <NowPlaying v-if="user" />
-      <Pomodoro v-if="user" />
-      <Tasks v-if="user" />
+      <NowPlaying v-if="user && spotifyVisible" />
+      <Pomodoro v-if="user && pomodoroVisible" />
+      <Tasks v-if="user && tasksVisible" />
     </div>
 
     <div
