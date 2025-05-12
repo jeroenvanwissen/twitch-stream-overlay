@@ -1,6 +1,4 @@
 import {
-  castSocketInstance,
-  setCastSocketInstance,
   setSocketInstance,
   socketInstance,
 } from "@/store/socket";
@@ -17,13 +15,3 @@ export const initializeSocket = async (
   setSocketInstance(socket);
 };
 
-export const initializeCastSocket = async (
-  url: string,
-  accessToken: string,
-): Promise<void> => {
-  castSocketInstance.value?.dispose?.();
-
-  const socket = new SocketClient(url, accessToken, "castHub");
-  await socket.setup();
-  setCastSocketInstance(socket);
-};

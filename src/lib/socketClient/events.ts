@@ -1,5 +1,6 @@
 import { setVisibility } from "@/store/visibility";
 import { ref } from "vue";
+import { usePomodoroStore } from "@/store/pomodoro";
 
 interface WebSocketWithDispatch extends WebSocket {
   on?: (event: string, callback: Function) => void;
@@ -20,6 +21,25 @@ export const connect = (socket?: WebSocketWithDispatch | null) => {
   socket.addEventListener("setComponentVisibility", (e: any) => {
     const { componentName, visible } = e.detail;
     onToggleComponent(componentName, visible);
+  });
+
+  socket.addEventListener("pomodoro", (e: any) => {
+    const { action } = e.detail;
+    const pomodoroStore = usePomodoroStore();
+    
+    switch (action) {
+      case "start":
+        pomodoroStore.start();
+        break;
+      case "stop":
+        pomodoroStore.stop();
+        break;
+      case "reset":
+        pomodoroStore.reset();
+        break;
+      default:
+        console.warn("Unknown pomodoro action:", action);
+    }
   });
 
   // Maintain compatibility with old code that might use .on

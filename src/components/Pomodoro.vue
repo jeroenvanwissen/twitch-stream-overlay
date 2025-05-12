@@ -6,7 +6,7 @@
       {{ store.formattedTime() }}
     </h2>
     <div class="text-xl mb-2">
-      {{ store.state.value.isFocusMode ? "Work" : "Break" }}
+      {{ store.state.value.isFocusMode ? "Focus" : "Break" }}
     </div>
     <div class="text-lg text-theme-400">
       Pomo {{ store.state.value.currentPomo }}/{{
