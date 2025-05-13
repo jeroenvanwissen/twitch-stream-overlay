@@ -2,8 +2,8 @@ import {ChatClient, type ChatMessage} from '@twurple/chat';
 import type {HelixChatBadgeVersion} from "@twurple/api";
 
 import {scopes, user} from "@/store/auth";
-import {addMessage, chatBadges, Message} from "@/store/chat";
-import messageParser from "@/lib/twitch/messageParser";
+import {addMessage, chatBadges, ChatPermissions, Message, whitelistedUsers} from "@/store/chat";
+import messageParser, {ALLOWED_ATTR, ALLOWED_TAGS, FORBID_ATTR, FORBID_TAGS} from "@/lib/twitch/messageParser";
 import {getUserData} from "@/lib/twitch/getUserData";
 import {secondsToDuration} from "@/lib/dateTime";
 
@@ -75,7 +75,7 @@ messageHandler.value = chatClient.onMessage(async (channel: string, user: string
             userType: msg.userInfo.userType,
             pronoun: userData.pronoun,
         },
-        message: messageParser(msg.id, text, msg.emoteOffsets),
+        message: messageParser(msg.userInfo.userName, msg.id, text, msg.emoteOffsets),
     };
 
     console.log(newMsg);
@@ -110,6 +110,9 @@ const handleCommand = async ({channel, command, params, newMsg}: {channel:string
     console.log({channel, command, params, newMsg});
     const broadcasterId = (await getUserIdFromName(channel))!;
 
+    const name = params.at(0)!.replace('@', '');
+    const userId = await getUserIdFromName(name);
+
     switch (command) {
         case 'so':
             if (!hasMinLevel(newMsg.userInfo, 'moderator')) return;
@@ -118,8 +121,6 @@ const handleCommand = async ({channel, command, params, newMsg}: {channel:string
                 await chatClient.say(channel, `@${newMsg.userInfo.displayName} You need to specify a user to shoutout!`);
                 return;
             }
-            const name = params.at(0)!.replace('@', '');
-            const userId = await getUserIdFromName(name);
             await shoutoutUser(broadcasterId!, userId!).catch(async (e) => {
                 const error = JSON.parse(e.message.split('Body:')[1]);
                 await chatClient.say(channel, error.message);
@@ -137,6 +138,62 @@ const handleCommand = async ({channel, command, params, newMsg}: {channel:string
                         await chatClient.say(channel, `@${newMsg.userInfo.displayName} You are not following!`);
                     }
                 });
+            break;
+        case 'whitelist':
+            if (!hasMinLevel(newMsg.userInfo, 'moderator')) return;
+
+            if (params!.length == 0) {
+                await chatClient.say(channel, `@${newMsg.userInfo.displayName} You need to specify a user to whitelist!`);
+                return;
+            }
+
+            const permission: ChatPermissions = {
+                userName: newMsg.userInfo.userName,
+                ALLOWED_TAGS,
+                ALLOWED_ATTR,
+                FORBID_TAGS,
+                FORBID_ATTR,
+            }
+
+            let filtered = false;
+
+            // if params includes noimg remove img from elements
+            if (params.includes('noimg')) {
+                filtered = true;
+                permission.ALLOWED_TAGS = permission.ALLOWED_TAGS.filter((element) => element != 'img');
+                permission.FORBID_TAGS = [...FORBID_TAGS, ...ALLOWED_TAGS.filter((element) => element == 'img')];
+                permission.ALLOWED_ATTR = [];
+                permission.FORBID_ATTR = FORBID_ATTR;
+            }
+
+            if (userId) {
+                whitelistedUsers.value = [
+                    ...whitelistedUsers.value.filter((user => user.userName != newMsg.userInfo.userName)),
+                    permission
+                ];
+                if (filtered) {
+                    await chatClient.say(channel, `@${newMsg.userInfo.displayName} User ${params.at(0)} has been whitelisted with no images!`);
+                } else {
+                    await chatClient.say(channel, `@${newMsg.userInfo.displayName} User ${params.at(0)} has been whitelisted!`);
+                }
+            } else {
+                await chatClient.say(channel, `@${newMsg.userInfo.displayName} User ${params.at(0)} not found!`);
+            }
+            break;
+        case 'unwhitelist':
+            if (!hasMinLevel(newMsg.userInfo, 'moderator')) return;
+
+            if (params!.length == 0) {
+                await chatClient.say(channel, `@${newMsg.userInfo.displayName} You need to specify a user to remove from the whitelist!`);
+                return;
+            }
+
+            if (userId) {
+                whitelistedUsers.value = whitelistedUsers.value.filter((user) => user.userName != newMsg.userInfo.userName);
+                await chatClient.say(channel, `@${newMsg.userInfo.displayName} User ${params.at(0)} has been removed from the whitelist!`);
+            } else {
+                await chatClient.say(channel, `@${newMsg.userInfo.displayName} User ${params.at(0)} not found!`);
+            }
             break;
         default:
             await chatClient.say(channel, `@${newMsg.userInfo.displayName} Unknown command: ${command}`);

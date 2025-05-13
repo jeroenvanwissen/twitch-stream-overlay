@@ -1,10 +1,11 @@
 import {ref, watch} from "vue";
 import {HelixChatBadgeSet, type HelixChatBadgeVersion} from "@twurple/api";
 
-import type {MessageNode} from "@/lib/twitch/messageParser";
+import {MessageNode} from "@/lib/twitch/messageParser";
 import type {Pronoun} from "@/lib/twitch/getUserData";
 
 import {chatAnimationDuration, chatShowDuration} from "@/store/config";
+import {useLocalStorage} from "@vueuse/core";
 
 export interface Message {
     channelId: string;
@@ -42,8 +43,17 @@ export interface Message {
     animationState?: 'entering' | 'active' | 'leaving';
 }
 
+export interface ChatPermissions {
+    userName: string;
+    ALLOWED_TAGS: string[];
+    ALLOWED_ATTR: string[];
+    FORBID_TAGS: string[];
+    FORBID_ATTR: string[];
+}
+
 export const chatBadges = ref<HelixChatBadgeSet[]>([]);
 export const chatMessageQueue = ref<Message[]>([]);
+export const whitelistedUsers = useLocalStorage<ChatPermissions[]>('whitelistedUsers', []);
 
 export const MAX_MESSAGES = 4;
 

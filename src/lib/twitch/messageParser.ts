@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import {ChatPermissions, whitelistedUsers} from '@/store/chat';
 
 export interface MessageNode {
 	type: string;
@@ -57,8 +58,13 @@ const elementToMessageNode = (element: Element, messageId: string, index: number
     return node;
 };
 
-export default (messageId: string, message: string, emotes: Map<string, string[]>): MessageNode => {
-    message = sanitize(message);
+export default (username: string, messageId: string, message: string, emotes: Map<string, string[]>): MessageNode => {
+    const permissions = whitelistedUsers.value.find(user => user.userName === username);
+    if(!!permissions) {
+        message = sanitize(message, permissions);
+    } else {
+        message = sanitizeStrict(message);
+    }
 
     const nodes: MessageNode = {
         type: 'rootNode',
@@ -172,17 +178,18 @@ const processEmotes = (messageId: string, text: string, emotes: Map<string, stri
 
 export const ALLOWED_TAGS = ['img', 'br', 'p', 'a', 'marquee', 'div', 'span'];
 
-export const ALLOWED_ATTR = ['src', 'alt', 'href', 'width', 'style'];
+export const ALLOWED_ATTR = ['src', 'href', 'width', 'style'];
 
 export const FORBID_ATTR = ['onerror', 'onload', 'class', 'dir'];
 
 export const FORBID_TAGS = ['script', 'style', 'iframe', 'form', 'input', 'button'];
 
-export const sanitize = (message: string) => {
-    return DOMPurify.sanitize(message, {
-        FORBID_ATTR,
-        ALLOWED_TAGS,
-        ALLOWED_ATTR,
+export const sanitize = (message: string, customFilter: ChatPermissions) => {
+    console.log({
+        FORBID_ATTR: customFilter.FORBID_ATTR ?? FORBID_ATTR,
+        FORBID_TAGS: customFilter.FORBID_TAGS ?? FORBID_TAGS,
+        ALLOWED_TAGS : customFilter.ALLOWED_TAGS ?? ALLOWED_TAGS,
+        ALLOWED_ATTR: customFilter.ALLOWED_ATTR ?? ALLOWED_ATTR,
         ADD_ATTR: ['target'],
         ALLOW_DATA_ATTR: false,
         ALLOW_UNKNOWN_PROTOCOLS: false,
@@ -190,7 +197,19 @@ export const sanitize = (message: string) => {
         USE_PROFILES: { html: true },
         CUSTOM_ELEMENT_HANDLING: {},
         ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|xxx):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
-        FORBID_TAGS,
+    });
+    return DOMPurify.sanitize(message, {
+        FORBID_ATTR: customFilter.FORBID_ATTR ?? FORBID_ATTR,
+        FORBID_TAGS: customFilter.FORBID_TAGS ?? FORBID_TAGS,
+        ALLOWED_TAGS : customFilter.ALLOWED_TAGS ?? ALLOWED_TAGS,
+        ALLOWED_ATTR: customFilter.ALLOWED_ATTR ?? ALLOWED_ATTR,
+        ADD_ATTR: ['target'],
+        ALLOW_DATA_ATTR: false,
+        ALLOW_UNKNOWN_PROTOCOLS: false,
+        ADD_TAGS: [],
+        USE_PROFILES: { html: true },
+        CUSTOM_ELEMENT_HANDLING: {},
+        ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|xxx):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
     });
 }
 
