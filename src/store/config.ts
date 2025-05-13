@@ -16,6 +16,9 @@ export const textQueue: string[] = [];
 // add whitespace to not underflow the text
 export const texts = ref([
     "Stoney_Eagle",
+    'NoMercy TV',
+    'The Effortless Encoder',
+    'https://nomercy.tv',
 ]);
 
 export const extension = ref<VNodeRef>();

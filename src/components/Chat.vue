@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, watch, ref, nextTick} from "vue";
+import {onMounted, ref} from "vue";
 import {chatMessageQueue} from "@/store/chat";
 import MessageNode from "@/components/MessageNode.vue";
 
@@ -12,13 +12,6 @@ onMounted(() => {
   }, 1000);
 });
 
-// watch(chatMessageQueue, () => {
-//   setTimeout(() => {
-//     if (chatBox.value) {
-//       chatBox.value.scrollTop = chatBox.value.scrollHeight;
-//     }
-//   }, 500);
-// }, { deep: true });
 </script>
 
 <template>
@@ -37,7 +30,13 @@ onMounted(() => {
              ]">
           <div class="relative pt-3">
             <div class="shine-wrapper -mt-6 relative z-10 overflow-hidden banner-animate">
-              <div class="relative flex flex-row bg-theme-700 rounded-lg gap-1 h-6 px-2 py-1 items-center pr-12">
+              <div class="relative flex flex-row bg-theme-700 rounded-lg gap-1 h-6 px-2 py-1 items-center pr-12"
+                  :style="{
+                    '--color-300': `hsl(from ${message.userInfo.color} h calc(s * .30) l)`,
+                    '--color-500': `hsl(from ${message.userInfo.color} h calc(s * .50) l)`,
+                    '--color-700': `hsl(from ${message.userInfo.color} h s l)`,
+                  }"
+              >
                 <template v-for="badge in message.userInfo.badges">
                   <img :src="badge.getImageUrl(2)" alt="userImage" class="size-4" />
                 </template>

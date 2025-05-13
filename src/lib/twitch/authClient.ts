@@ -37,7 +37,7 @@ authProvider.addUserForToken(tokenData, scopes)
         const {chatClient} = await import('@/lib/twitch/chatClient');
         chatClient.connect();
 
-        const globalBadgeSet = await getGlobalBadges(data);
+        const globalBadgeSet = await getGlobalBadges();
         // const chatBadgeSets = await getChannelBadges(data);
 
         await import('@/lib/twitch/bot');

@@ -14,7 +14,7 @@ export const obtainmentTimestamp = useLocalStorage('obtainmentTimestamp', 0);
 export const userId = ref<string>('');
 export const user = ref<HelixUser>();
 
-export const botAccessToken = useLocalStorage('botAccessToken', import.meta.env.VITE_TWITCH_BOT_ACCESS_TOKEN);
+export const botAccessToken = useLocalStorage('botAccessToken', '');
 export const botRefreshToken = useLocalStorage('botRefreshToken', import.meta.env.VITE_TWITCH_BOT_REFRESH_TOKEN);
 export const botExpiresIn = useLocalStorage('botExpiresIn', 0);
 export const botObtainmentTimestamp = useLocalStorage('botObtainmentTimestamp', 0);

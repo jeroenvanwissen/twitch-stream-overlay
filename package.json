@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host  --force",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite build && vite preview --host --port=5501 ./"
   },
   "dependencies": {
     "@microsoft/signalr": "^8.0.7",

@@ -14,13 +14,13 @@ import Logo from "@/components/Logo.vue";
   <div ref="badge"
     class="absolute will-change-auto flex flex-col gap-4 flex-1 top-6 left-6 origin-top-left z-10 items-center justify-center bg-theme-700 rounded-[20px] w-[117.78px] h-[106px] ml-1.5 mt-1 p-[3px] text-center transform -skew-x-6 card scale-75">
     <div
-      class="flex items-center justify-center bg-theme-900 rounded-2xl h-[108px] w-[108px] m-0.5 p-[3px] relative -z-10 card2">
+      class="flex items-center justify-center bg-neutral-800 rounded-2xl h-[108px] w-[108px] m-0.5 p-[3px] relative -z-10 card2">
       <Logo class="transform -skew-x-[1deg] w-20 h-20"
             style="--color-logo-back: var(--color-600); --color-logo-front: var(--color-200);"
       />
     </div>
     <div ref="extension"
-      class="flex items-center justify-end bg-theme-800 rounded-[20px] text-theme-300 text-[50px] font-bold h-[92%] absolute left-1/2 pr-5 overflow-hidden origin-right transform -translate-y-1/2 top-1/2 -z-20 transition-[width] ease-out w-0 extension">
+      class="flex items-center justify-end rounded-[20px] text-theme-300 text-[50px] font-bold h-[92%] absolute left-1/2 pr-5 overflow-hidden origin-right transform -translate-y-1/2 top-1/2 -z-20 transition-[width] ease-out w-0 extension">
       <span ref="span" class="pb-[5px] whitespace-pre"></span>
     </div>
   </div>
@@ -34,9 +34,9 @@ import Logo from "@/components/Logo.vue";
   content: "";
   background-image: linear-gradient(
       var(--rotate, 1deg),
-      var(--color-200),
-      var(--color-600) 23%,
-      var(--color-900)
+      hsl(from var(--color-200) h 0% l),
+      hsl(from var(--color-600) h 0% l) 23%,
+      hsl(from var(--color-900) h 0% l)
   );
   @apply absolute rounded-[20px] h-[104%] w-[102%] -left-[1%] -top-[3%] -z-10;
 }
@@ -48,10 +48,14 @@ import Logo from "@/components/Logo.vue";
 .extension {
   background-image: linear-gradient(
       45deg,
-      var(--color-500),
-      var(--color-700) 23%,
-      var(--color-900)
+      hsl(from var(--color-500) h 0% l),
+      hsl(from var(--color-700) h 0% l) 23%,
+      hsl(from var(--color-900) h 0% l)
   );
+}
+
+.extension span {
+  color: white;
 }
 
 .extension::after {
@@ -77,6 +81,7 @@ import Logo from "@/components/Logo.vue";
       rgba(128, 186, 232, 0) 99%,
       rgba(125, 185, 232, 0) 100%
   );
+  filter: grayscale(1);
 }
 
 @keyframes spin {

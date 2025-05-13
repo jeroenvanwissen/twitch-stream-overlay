@@ -14,31 +14,31 @@ import {
 } from "@/store/auth";
 
 import {getParameterByName} from "@/lib/stringArray";
-import axios from "axios";
+import { RequestTokenData, TokenData } from './types/auth';
+import axiosClient from './lib/axiosClient';
 
 const code = getParameterByName<string>('code');
 const error = getParameterByName<string>('error');
 const error_description = getParameterByName<string>('error_description');
 
 const requestBotToken = async () => {
-    await axios.post<any, {
-        access_token: string;
-        refresh_token: string;
-        expires_in: number;
-        token_type: string;
-        scope: string[];
-    }>("https://id.twitch.tv/oauth2/token", {
+    await axiosClient('https://id.twitch.tv')
+        .post<TokenData,RequestTokenData>("oauth2/token", {
             grant_type: 'refresh_token',
             client_id: clientId,
             client_secret: clientSecret,
             refresh_token: botRefreshToken.value,
             scope: scopes.join(' ')
-        },
-        {headers: {'content-type': 'application/x-www-form-urlencoded'}
-    })
+        }, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+            }
+        })
         .then((response) => {
-            botAccessToken.value = response.access_token;
-            botRefreshToken.value = response.refresh_token;
+            botAccessToken.value = response.data.access_token;
+            botRefreshToken.value = response.data.refresh_token;
+
+            console.log('Bot token refreshed', response.data);
         })
         .catch((error) => console.error(error));
 }
@@ -47,14 +47,14 @@ if (error && error_description) {
     document.body.innerHTML = error_description;
     throw new Error(error_description);
 } else if (code) {
-    exchangeCode(clientId, clientSecret, code, location.origin)
-        .then(async (tokenData) => {
-            accessToken.value = tokenData.accessToken;
-            refreshToken.value = tokenData.refreshToken;
-            expiresIn.value = tokenData.expiresIn;
-            obtainmentTimestamp.value = tokenData.obtainmentTimestamp;
+    requestBotToken().then(() => {
+        exchangeCode(clientId, clientSecret, code, location.origin)
+            .then(async (tokenData) => {
+                accessToken.value = tokenData.accessToken;
+                refreshToken.value = tokenData.refreshToken;
+                expiresIn.value = tokenData.expiresIn;
+                obtainmentTimestamp.value = tokenData.obtainmentTimestamp;
 
-            requestBotToken().then(() => {
                 import('./App.vue')
                     .then(({default: App}) => {
                         createApp(App)
