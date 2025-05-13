@@ -61,14 +61,11 @@ authProvider
     userId.value = userData
 
     const { apiClient, getGlobalBadges } = await import('@/lib/twitch/apiClient')
-    console.log('userData', userData)
     user.value = (await apiClient?.users.getUserById(userData))!
     const { chatClient } = await import('@/lib/twitch/chatClient')
     chatClient.connect()
-    console.log('chatClient', chatClient)
     const globalBadgeSet = await getGlobalBadges()
     chatBadges.value = globalBadgeSet ?? []
-    console.log('globalBadgeSet')
   })
 
 const botAuthProvider = await createAuthProvider('bot')
@@ -83,7 +80,6 @@ botAuthProvider
     scopes
   )
   .then(async userData => {
-    console.log('botUserId', userData)
     botUserId.value = userData
     const { apiClient } = await import('@/lib/twitch/apiClient')
     botUser.value = (await apiClient?.users.getUserById(userData))!

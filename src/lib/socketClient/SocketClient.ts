@@ -1,4 +1,3 @@
-import { deviceInfo } from '@/lib/socketClient/device'
 import { connect, onConnect, onDisconnect } from '@/lib/socketClient/events'
 
 interface WebSocketWithDispatch extends WebSocket {
@@ -10,7 +9,6 @@ export class SocketClient {
   public connection: WebSocketWithDispatch | null = null
   private accessToken: string
   private baseUrl: string
-  private deviceInfo: ReturnType<typeof deviceInfo> = deviceInfo()
   private keepAliveInterval: number = 10000
   private endpoint: string
   private reconnectTimeout: number | null = null
@@ -36,8 +34,7 @@ export class SocketClient {
 
   private connect() {
     try {
-      const urlString = this.urlBuilder()
-      const wsUrl = `${this.baseUrl}/${this.endpoint}?access_token=${this.accessToken}${urlString}`
+      const wsUrl = `${this.baseUrl}/${this.endpoint}?access_token=${this.accessToken}`
       this.connection = new WebSocket(wsUrl)
       this.setupEventListeners()
     } catch (error) {
@@ -99,20 +96,6 @@ export class SocketClient {
         this.connect()
       }, this.reconnectInterval)
     }
-  }
-
-  private urlBuilder() {
-    const urlParams = new URLSearchParams([
-      ['client_id', this.deviceInfo.id],
-      ['client_name', this.deviceInfo.name],
-      ['client_type', this.deviceInfo.type ?? 'web'],
-      ['client_version', this.deviceInfo.version],
-      ['client_os', this.deviceInfo.os],
-      ['client_browser', this.deviceInfo.browser],
-      ['client_device', this.deviceInfo.device]
-    ])
-
-    return `&${urlParams.toString()}`
   }
 }
 

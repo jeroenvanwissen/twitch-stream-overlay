@@ -18,10 +18,8 @@ const bot = new Bot({
 })
 
 TwitchClient.botApiClient!.users.getUserByName(import.meta.env.VITE_TWITCH_BOT_NAME).then(user => {
-  console.log(user)
   botUserId.value = user!.id
   botUser.value = user!
-  console.log(user)
 })
 
 bot.onConnect(async () => {

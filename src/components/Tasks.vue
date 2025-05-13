@@ -56,9 +56,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
-import { useTasks } from '../composables/useTasks'
-
-const { tasksByUser, tasks } = useTasks()
+import { tasksByUser } from '../store/tasks'
 const hasTasks = computed(() => tasksByUser.value.size > 0)
 const containerRef = ref<HTMLDivElement>()
 const firstBlockRef = ref<HTMLDivElement>()

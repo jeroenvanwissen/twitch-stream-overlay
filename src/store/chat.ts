@@ -110,7 +110,3 @@ watch(chatShowDuration, newDuration => {
     return messageAge < newDuration
   })
 })
-//
-// watch(chatMessageQueue, (value) => {
-//     console.log(value);
-// });

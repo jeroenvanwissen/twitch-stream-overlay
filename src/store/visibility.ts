@@ -1,77 +1,19 @@
-import { ref, watch } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
 
-const STORAGE_KEY = 'component-visibility'
+export const pomodoroVisible = useLocalStorage<Boolean>('pomodoro-visibility', true)
+export const tasksVisible = useLocalStorage<Boolean>('tasks-visibility', true)
+export const spotifyVisible = useLocalStorage<Boolean>('spotify-visibility', true)
 
-// Load initial state from localStorage
-const loadState = () => {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved) {
-      const state = JSON.parse(saved)
-      return {
-        pomodoro: state.pomodoro ?? true,
-        tasks: state.tasks ?? true,
-        spotify: state.spotify ?? true
-      }
-    }
-  } catch (error) {
-    console.error('Error loading visibility state:', error)
-  }
-  return { pomodoro: true, tasks: true, spotify: true }
-}
+const visibilityMap = {
+  pomodoro: pomodoroVisible,
+  tasks: tasksVisible,
+  spotify: spotifyVisible
+} as const
 
-// Create reactive refs
-export const pomodoroVisible = ref(loadState().pomodoro)
-export const tasksVisible = ref(loadState().tasks)
-export const spotifyVisible = ref(loadState().spotify)
+export type ComponentKey = keyof typeof visibilityMap
 
-// Save state changes to localStorage
-const saveState = () => {
-  try {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        pomodoro: pomodoroVisible.value,
-        tasks: tasksVisible.value,
-        spotify: spotifyVisible.value
-      })
-    )
-  } catch (error) {
-    console.error('Error saving visibility state:', error)
-  }
-}
-
-// Watch for changes and save to localStorage
-watch(
-  [pomodoroVisible, tasksVisible, spotifyVisible],
-  () => {
-    saveState()
-  },
-  { deep: true }
-)
-
-export const setVisibility = (component: string, visible?: boolean) => {
-  switch (component) {
-    case 'pomodoro':
-      if (visible === undefined) {
-        pomodoroVisible.value = !pomodoroVisible.value
-      } else {
-        pomodoroVisible.value = visible
-      }
-      break
-    case 'tasks':
-      if (visible === undefined) {
-        tasksVisible.value = !tasksVisible.value
-      } else {
-        tasksVisible.value = visible
-      }
-      break
-    case 'spotify':
-      if (visible === undefined) {
-        spotifyVisible.value = !spotifyVisible.value
-      } else {
-        spotifyVisible.value = visible
-      }
-      break
-  }
+export function setVisibility(component: ComponentKey, visible?: boolean): void {
+  const storageRef = visibilityMap[component]
+  // if `visible` is undefined, toggle; otherwise set to that value
+  storageRef.value = visible ?? !storageRef.value
 }

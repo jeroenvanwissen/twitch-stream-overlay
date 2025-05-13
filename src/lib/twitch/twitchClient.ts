@@ -14,6 +14,5 @@ export const TwitchClient = {
     this.botAuthProvider = botAuthProvider
     this.userApiClient = new ApiClient({ authProvider: userAuthProvider })
     this.botApiClient = new ApiClient({ authProvider: botAuthProvider })
-    console.log('TwitchClient initialized')
   }
 }

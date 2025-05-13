@@ -1,129 +1,109 @@
-import { ref, watch } from "vue";
+import { useLocalStorage } from '@vueuse/core'
 
-interface PomodoroState {
-  isRunning: boolean;
-  isFocusMode: boolean;
-  focusLength: number;
-  breakLength: number;
-  totalPomos: number;
-  currentPomo: number;
-  timeRemaining: number;
+export interface Pomodoro {
+  isRunning: boolean
+  isFocusMode: boolean
+  focusLength: number
+  breakLength: number
+  totalPomos: number
+  currentPomo: number
+  timeRemaining: number
 }
 
-const STORAGE_KEY = "pomodoro-state";
-
-const defaultState: PomodoroState = {
+export const pomodoro = useLocalStorage<Pomodoro>('pomodoro', {
   isRunning: false,
   isFocusMode: true,
   focusLength: 50, // default 50 minutes
   breakLength: 10, // default 10 minutes
-  totalPomos: 1,
+  totalPomos: 5,
   currentPomo: 1,
-  timeRemaining: 50 * 60, // in seconds
-};
-
-// Load initial state from localStorage or use default
-const loadState = (): PomodoroState => {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  return saved ? JSON.parse(saved) : defaultState;
-};
-
-// Create reactive state
-const state = ref<PomodoroState>(loadState());
-
-// Save state changes to localStorage
-watch(
-  state,
-  (newState) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-  },
-  { deep: true },
-);
+  timeRemaining: 50 * 60 // in seconds
+})
 
 export const usePomodoroStore = () => {
   const start = () => {
-    state.value.isRunning = true;
-  };
+    pomodoro.value.isRunning = true
+  }
 
   const stop = () => {
-    state.value.isRunning = false;
-  };
+    pomodoro.value.isRunning = false
+  }
 
   const reset = () => {
-    state.value.isRunning = false;
-    state.value.isFocusMode = true;
-    state.value.timeRemaining = state.value.focusLength * 60;
-    state.value.currentPomo = 1;
-  };
+    pomodoro.value.isRunning = false
+    pomodoro.value.isFocusMode = true
+    pomodoro.value.timeRemaining = pomodoro.value.focusLength * 60
+    pomodoro.value.currentPomo = 1
+  }
 
   const setFocusLength = (minutes: number) => {
-    state.value.focusLength = minutes;
-    if (state.value.isFocusMode) {
-      state.value.timeRemaining = minutes * 60;
+    pomodoro.value.focusLength = minutes
+    if (pomodoro.value.isFocusMode) {
+      pomodoro.value.timeRemaining = minutes * 60
     }
-  };
+  }
 
   const setBreakLength = (minutes: number) => {
-    state.value.breakLength = minutes;
-    if (!state.value.isFocusMode) {
-      state.value.timeRemaining = minutes * 60;
+    pomodoro.value.breakLength = minutes
+    if (!pomodoro.value.isFocusMode) {
+      pomodoro.value.timeRemaining = minutes * 60
     }
-  };
+  }
 
   const setTotalPomos = (count: number) => {
-    state.value.totalPomos = count;
-  };
+    pomodoro.value.totalPomos = count
+  }
 
   const addTime = (minutes: number) => {
-    state.value.timeRemaining += minutes * 60;
-  };
+    pomodoro.value.timeRemaining += minutes * 60
+  }
 
   const tick = () => {
-    if (!state.value.isRunning || state.value.timeRemaining <= 0) return;
+    if (!pomodoro.value.isRunning || pomodoro.value.timeRemaining <= 0) return
 
-    state.value.timeRemaining--;
+    pomodoro.value.timeRemaining--
 
-    if (state.value.timeRemaining <= 0) {
-      if (state.value.isFocusMode) {
+    if (pomodoro.value.timeRemaining <= 0) {
+      if (pomodoro.value.isFocusMode) {
         // Going from focus to break
-        state.value.isFocusMode = false;
-        state.value.timeRemaining = state.value.breakLength * 60;
+        pomodoro.value.isFocusMode = false
+        pomodoro.value.timeRemaining = pomodoro.value.breakLength * 60
       } else {
         // Going from break to focus
-        if (state.value.currentPomo < state.value.totalPomos) {
-          state.value.currentPomo++;
-          state.value.isFocusMode = true;
-          state.value.timeRemaining = state.value.focusLength * 60;
+        if (pomodoro.value.currentPomo < pomodoro.value.totalPomos) {
+          pomodoro.value.currentPomo++
+          pomodoro.value.isFocusMode = true
+          pomodoro.value.timeRemaining = pomodoro.value.focusLength * 60
         } else {
-          state.value.isRunning = false;
+          pomodoro.value.isRunning = false
         }
       }
     }
-  };
+  }
 
   const formattedTime = (): string => {
-    const minutes = Math.floor(state.value.timeRemaining / 60);
-    const seconds = state.value.timeRemaining % 60;
-    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  };
+    const minutes = Math.floor(pomodoro.value.timeRemaining / 60)
+    const seconds = pomodoro.value.timeRemaining % 60
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  }
 
   const nextPomo = () => {
-    if (state.value.isFocusMode) {
+    if (pomodoro.value.isFocusMode) {
       // Going from focus to break
-      state.value.isFocusMode = false;
-      state.value.timeRemaining = state.value.breakLength * 60;
+      pomodoro.value.isFocusMode = false
+      pomodoro.value.timeRemaining = pomodoro.value.breakLength * 60
     } else {
       // Going from break to focus
-      if (state.value.currentPomo < state.value.totalPomos) {
-        state.value.currentPomo++;
+      if (pomodoro.value.currentPomo < pomodoro.value.totalPomos) {
+        pomodoro.value.currentPomo++
       }
-      state.value.isFocusMode = true;
-      state.value.timeRemaining = state.value.focusLength * 60;
+      pomodoro.value.isFocusMode = true
+      pomodoro.value.timeRemaining = pomodoro.value.focusLength * 60
     }
-  };
+  }
 
   return {
-    state,
+    state: pomodoro,
     start,
     stop,
     reset,
@@ -133,6 +113,6 @@ export const usePomodoroStore = () => {
     addTime,
     tick,
     formattedTime,
-    nextPomo,
-  };
-};
+    nextPomo
+  }
+}

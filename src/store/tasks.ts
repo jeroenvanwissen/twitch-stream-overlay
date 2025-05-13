@@ -1,44 +1,17 @@
+import { useLocalStorage } from '@vueuse/core'
 import { ref, watch } from 'vue'
 
-interface Task {
+export interface Task {
   id: number
   userId: string
   userName: string
   text: string
   done: boolean
   timestamp: number
+  focused: boolean
 }
 
-const STORAGE_KEY = 'tasks-state'
-
-// Load initial state from localStorage
-const loadTasks = (): Task[] => {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved) {
-      return JSON.parse(saved)
-    }
-  } catch (error) {
-    console.error('Error loading tasks:', error)
-  }
-  return []
-}
-
-// Create reactive tasks array
-export const tasks = ref<Task[]>(loadTasks())
-
-// Watch for changes and save to localStorage
-watch(
-  tasks,
-  () => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
-    } catch (error) {
-      console.error('Error saving tasks:', error)
-    }
-  },
-  { deep: true }
-)
+export const tasks = useLocalStorage<Task[]>('tasks', [])
 
 // Create a Map of tasks by user
 export const tasksByUser = ref(new Map<string, Task[]>())
@@ -67,7 +40,8 @@ export const addTask = (userId: string, userName: string, text: string) => {
     userName,
     text,
     done: false,
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    focused: false
   })
 }
 
@@ -75,15 +49,15 @@ export const addTasks = (userId: string, userName: string, textArray: string[]) 
   textArray.forEach(text => addTask(userId, userName, text))
 }
 
-export const toggleTask = (taskId: number) => {
-  const task = tasks.value.find(t => t.id === taskId)
+export const toggleTask = (taskId: number, userName: string) => {
+  const task = tasks.value.find(t => t.id === taskId && t.userName === userName)
   if (task) {
     task.done = !task.done
   }
 }
 
-export const deleteTask = (taskId: number) => {
-  const index = tasks.value.findIndex(t => t.id === taskId)
+export const deleteTask = (taskId: number, userName: string) => {
+  const index = tasks.value.findIndex(t => t.id === taskId && t.userName === userName)
   if (index !== -1) {
     tasks.value.splice(index, 1)
   }
@@ -93,32 +67,37 @@ export const clearTasks = () => {
   tasks.value = []
 }
 
-export const findTask = (id: string | number) => {
+export const findTask = (id: string | number, userName: string) => {
   const numId = typeof id === 'string' ? parseInt(id) : id
-  return tasks.value.find(t => t.id === numId)
+  return tasks.value.find(t => t.id === numId && t.userName === userName)
 }
 
-export const focusTask = (id: string | number) => {
+export const focusTask = (id: string | number, userName: string) => {
   const numId = typeof id === 'string' ? parseInt(id) : id
-  const task = findTask(numId)
+  const task = findTask(numId, userName)
   if (task) {
-    tasks.value.forEach(t => delete (t as any).focused)
-    ;(task as any).focused = true
+    // Only reset focus for tasks belonging to the same user
+    tasks.value.forEach(t => {
+      if (t.userName === userName) {
+        t.focused = false
+      }
+    })
+    task.focused = true
   }
 }
 
-export const nextTask = (id: string | number) => {
+export const nextTask = (id: string | number, userName: string) => {
   const numId = typeof id === 'string' ? parseInt(id) : id
-  const index = tasks.value.findIndex(t => t.id === numId)
+  const index = tasks.value.findIndex(t => t.id === numId && t.userName === userName)
   if (index !== -1 && index < tasks.value.length - 1) {
     const nextTask = tasks.value[index + 1]
-    focusTask(nextTask.id)
+    focusTask(nextTask.id, userName)
   }
 }
 
-export const markDone = (id: string | number) => {
+export const markDone = (id: string | number, userName: string) => {
   const numId = typeof id === 'string' ? parseInt(id) : id
-  const task = findTask(numId)
+  const task = findTask(numId, userName)
   if (task) {
     task.done = true
   }

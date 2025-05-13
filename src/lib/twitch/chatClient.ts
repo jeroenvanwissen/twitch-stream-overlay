@@ -8,13 +8,12 @@ import messageParser, { ALLOWED_ATTR, ALLOWED_TAGS, FORBID_ATTR, FORBID_TAGS } f
 import { scopes, user } from '@/store/auth'
 import { addMessage, chatBadges, ChatPermissions, Message, whitelistedUsers } from '@/store/chat'
 
-import { useTasks } from '@/composables/useTasks'
 import { getChannelBadges, getChannelFollowers, getUserIdFromName, shoutoutUser } from '@/lib/twitch/apiClient'
 import { TwitchClient } from '@/lib/twitch/twitchClient'
 import { usePomodoroStore } from '@/store/pomodoro'
+import { addTasks, clearTasks, deleteTask, findTask, focusTask, markDone, nextTask, tasksByUser } from '@/store/tasks'
 import { ref } from 'vue'
 
-console.log('TwitchClient.botAuthProvider!', TwitchClient.botAuthProvider!)
 export const chatClient = new ChatClient({
   authProvider: TwitchClient.botAuthProvider!,
   channels: [user.value!.name],
@@ -81,8 +80,6 @@ messageHandler.value = chatClient.onMessage(async (channel: string, user: string
     plainText: text
   }
 
-  console.log(newMsg)
-
   if (newMsg.isRedemption && newMsg.rewardId) {
     await handleRedemption(channel, newMsg)
   } else if (text.startsWith('!')) {
@@ -136,10 +133,6 @@ const handleCommand = async ({
 }) => {
   console.log({ channel, command, params, newMsg })
   const broadcasterId = (await getUserIdFromName(channel))!
-  const name = params.at(0)!.replace('@', '')
-  const userId = await getUserIdFromName(name)
-
-  const { addTasks, findTask, focusTask, nextTask, markDone, deleteTask, clearTasks, tasksByUser } = useTasks()
 
   const pomodoro = usePomodoroStore()
 
@@ -160,20 +153,28 @@ const handleCommand = async ({
 
     case 'focus':
       if (params.length === 1) {
-        const task = findTask(params[0])
+        const task = findTask(params[0], newMsg.userInfo.userName)
         if (task) {
-          focusTask(params[0])
-          await chatClient.say(channel, `Now focusing on task #${task.id}: ${task.text}`)
+          if (task.userId === newMsg.userInfo.userId) {
+            focusTask(parseInt(params[0]), newMsg.userInfo.userName)
+            await chatClient.say(channel, `Now focusing on task #${task.id}: ${task.text}`)
+          } else {
+            await chatClient.say(channel, `@${newMsg.userInfo.displayName} You can only focus on your own tasks!`)
+          }
         }
       }
       break
 
     case 'next':
       if (params.length === 1) {
-        const newTask = findTask(params[0])
+        const newTask = findTask(params[0], newMsg.userInfo.userName)
         if (newTask) {
-          nextTask(params[0])
-          await chatClient.say(channel, `Moving to next task #${newTask.id}: ${newTask.text}`)
+          if (newTask.userId === newMsg.userInfo.userId) {
+            nextTask(parseInt(params[0]), newMsg.userInfo.userName)
+            await chatClient.say(channel, `Moving to next task #${newTask.id}: ${newTask.text}`)
+          } else {
+            await chatClient.say(channel, `@${newMsg.userInfo.displayName} You can only move to your own tasks!`)
+          }
         }
       }
       break
@@ -188,29 +189,38 @@ const handleCommand = async ({
         if (undoneTasks.length === 0) {
           await chatClient.say(channel, `@${newMsg.userInfo.displayName} You have no incomplete tasks.`)
         } else {
-          undoneTasks.forEach((task: { id: number }) => markDone(task.id))
+          undoneTasks.forEach((task: { id: number }) => markDone(task.id, newMsg.userInfo.userName))
           await chatClient.say(channel, `@${newMsg.userInfo.displayName} Marked ${undoneTasks.length} task(s) as done.`)
         }
       } else {
-        const task = findTask(params[0])
+        const task = findTask(params[0], newMsg.userInfo.userName)
         if (task) {
-          markDone(params[0])
-          await chatClient.say(channel, `Marked task #${task.id} as done: ${task.text}`)
+          if (task.userId === newMsg.userInfo.userId) {
+            markDone(parseInt(params[0]), newMsg.userInfo.userName)
+            await chatClient.say(channel, `Marked task #${task.id} as done: ${task.text}`)
+          } else {
+            await chatClient.say(channel, `@${newMsg.userInfo.displayName} You can only mark your own tasks as done!`)
+          }
         }
       }
       break
 
     case 'deltask':
       if (params.length === 1) {
-        const task = findTask(params[0])
+        const task = findTask(params[0], newMsg.userInfo.userName)
         if (task) {
-          deleteTask(params[0])
-          await chatClient.say(channel, `Deleted task #${task.id}: ${task.text}`)
+          if (task.userId === newMsg.userInfo.userId) {
+            deleteTask(parseInt(params[0]), newMsg.userInfo.userName)
+            await chatClient.say(channel, `Deleted task #${task.id}: ${task.text}`)
+          } else {
+            await chatClient.say(channel, `@${newMsg.userInfo.displayName} You can only delete your own tasks!`)
+          }
         }
       }
       break
 
     case 'cleartasks':
+      console.log(newMsg.userInfo)
       if (newMsg.userInfo.isBroadcaster) {
         clearTasks()
         await chatClient.say(channel, 'All tasks have been cleared')
@@ -227,7 +237,7 @@ const handleCommand = async ({
         return
       }
 
-      await shoutoutUser(broadcasterId!, userId!).catch(async e => {
+      await shoutoutUser(broadcasterId!, (await getUserIdFromName(params.at(0)!.replace('@', '')))!).catch(async e => {
         const error = JSON.parse(e.message.split('Body:')[1])
         await chatClient.say(channel, error.message)
       })
@@ -395,7 +405,7 @@ const handleCommand = async ({
         permission.FORBID_ATTR = FORBID_ATTR
       }
 
-      if (userId) {
+      if (await getUserIdFromName(params.at(0)!.replace('@', ''))) {
         whitelistedUsers.value = [
           ...whitelistedUsers.value.filter(user => user.userName != newMsg.userInfo.userName),
           permission
@@ -423,7 +433,7 @@ const handleCommand = async ({
         return
       }
 
-      if (userId) {
+      if (await getUserIdFromName(params.at(0)!.replace('@', ''))) {
         whitelistedUsers.value = whitelistedUsers.value.filter(user => user.userName != newMsg.userInfo.userName)
         await chatClient.say(
           channel,

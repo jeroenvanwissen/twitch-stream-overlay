@@ -1,5 +1,5 @@
 import { usePomodoroStore } from '@/store/pomodoro'
-import { setVisibility } from '@/store/visibility'
+import { setVisibility, type ComponentKey } from '@/store/visibility'
 import { ref } from 'vue'
 
 interface WebSocketWithDispatch extends WebSocket {
@@ -71,6 +71,5 @@ export const onDisconnect = (socket?: WebSocketWithDispatch | null) => {
 }
 
 export const onToggleComponent = (componentName: string, visible: boolean) => {
-  console.log(`Toggling component visibility: ${componentName} -> ${visible}`)
-  setVisibility(componentName.toLowerCase(), visible)
+  setVisibility(componentName.toLowerCase() as ComponentKey, visible)
 }
