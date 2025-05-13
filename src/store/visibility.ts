@@ -1,29 +1,29 @@
-import { ref, watch } from "vue";
+import { ref, watch } from 'vue'
 
-const STORAGE_KEY = "component-visibility";
+const STORAGE_KEY = 'component-visibility'
 
 // Load initial state from localStorage
 const loadState = () => {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) {
-      const state = JSON.parse(saved);
+      const state = JSON.parse(saved)
       return {
         pomodoro: state.pomodoro ?? true,
         tasks: state.tasks ?? true,
-        spotify: state.spotify ?? true,
-      };
+        spotify: state.spotify ?? true
+      }
     }
   } catch (error) {
-    console.error("Error loading visibility state:", error);
+    console.error('Error loading visibility state:', error)
   }
-  return { pomodoro: true, tasks: true, spotify: true };
-};
+  return { pomodoro: true, tasks: true, spotify: true }
+}
 
 // Create reactive refs
-export const pomodoroVisible = ref(loadState().pomodoro);
-export const tasksVisible = ref(loadState().tasks);
-export const spotifyVisible = ref(loadState().spotify);
+export const pomodoroVisible = ref(loadState().pomodoro)
+export const tasksVisible = ref(loadState().tasks)
+export const spotifyVisible = ref(loadState().spotify)
 
 // Save state changes to localStorage
 const saveState = () => {
@@ -33,46 +33,45 @@ const saveState = () => {
       JSON.stringify({
         pomodoro: pomodoroVisible.value,
         tasks: tasksVisible.value,
-        spotify: spotifyVisible.value,
-      }),
-    );
+        spotify: spotifyVisible.value
+      })
+    )
   } catch (error) {
-    console.error("Error saving visibility state:", error);
+    console.error('Error saving visibility state:', error)
   }
-};
+}
 
 // Watch for changes and save to localStorage
 watch(
   [pomodoroVisible, tasksVisible, spotifyVisible],
   () => {
-    saveState();
+    saveState()
   },
-  { deep: true },
-);
-
+  { deep: true }
+)
 
 export const setVisibility = (component: string, visible?: boolean) => {
   switch (component) {
-    case "pomodoro":
+    case 'pomodoro':
       if (visible === undefined) {
-        pomodoroVisible.value = !pomodoroVisible.value;
+        pomodoroVisible.value = !pomodoroVisible.value
       } else {
-        pomodoroVisible.value = visible;
+        pomodoroVisible.value = visible
       }
-      break;
-    case "tasks":
+      break
+    case 'tasks':
       if (visible === undefined) {
-        tasksVisible.value = !tasksVisible.value;
+        tasksVisible.value = !tasksVisible.value
       } else {
-        tasksVisible.value = visible;
+        tasksVisible.value = visible
       }
-      break;
-    case "spotify":
+      break
+    case 'spotify':
       if (visible === undefined) {
-        spotifyVisible.value = !spotifyVisible.value;
+        spotifyVisible.value = !spotifyVisible.value
       } else {
-        spotifyVisible.value = visible;
+        spotifyVisible.value = visible
       }
-      break;
+      break
   }
-};
+}

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { badge, extension, span } from "@/store/config";
+import { badge, extension, span } from '@/store/config'
 
-import Logo from "@/components/Logo.vue";
+import Logo from '@/components/Logo.vue'
 </script>
 
 <template>
@@ -14,10 +14,7 @@ import Logo from "@/components/Logo.vue";
     >
       <Logo
         class="transform -skew-x-[-8deg] w-20 h-20"
-        style="
-          --color-logo-back: var(--color-600);
-          --color-logo-front: var(--color-200);
-        "
+        style="--color-logo-back: var(--color-600); --color-logo-front: var(--color-200)"
       />
     </div>
     <div
@@ -33,13 +30,8 @@ import Logo from "@/components/Logo.vue";
 /* Only keep what can't be done with Tailwind */
 .card::before {
   --card-width: 0;
-  content: "";
-  background-image: linear-gradient(
-    var(--rotate, 1deg),
-    var(--color-200),
-    var(--color-600) 23%,
-    var(--color-900)
-  );
+  content: '';
+  background-image: linear-gradient(var(--rotate, 1deg), var(--color-200), var(--color-600) 23%, var(--color-900));
   @apply absolute rounded-[20px] h-[104%] w-[102%] -left-[1%] -top-[3%] -z-10;
 }
 
@@ -48,16 +40,11 @@ import Logo from "@/components/Logo.vue";
 }
 
 .extension {
-  background-image: linear-gradient(
-    45deg,
-    var(--color-500),
-    var(--color-700) 23%,
-    var(--color-900)
-  );
+  background-image: linear-gradient(45deg, var(--color-500), var(--color-700) 23%, var(--color-900));
 }
 
 .extension::after {
-  content: "";
+  content: '';
   @apply absolute inset-0 w-full h-full;
   transform: translateX(-100%);
 }

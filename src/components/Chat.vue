@@ -1,24 +1,9 @@
 <script setup lang="ts">
-import MessageNode from "@/components/MessageNode.vue";
-import { chatMessageQueue } from "@/store/chat";
-import { onMounted, ref } from "vue";
+import MessageNode from '@/components/MessageNode.vue'
+import { chatMessageQueue } from '@/store/chat'
+import { ref } from 'vue'
 
-const chatBox = ref<HTMLElement | null>(null);
-
-onMounted(() => {
-  console.log("Chat mounted");
-  setTimeout(() => {
-    console.log("Connecting chat client");
-  }, 1000);
-});
-
-// watch(chatMessageQueue, () => {
-//   setTimeout(() => {
-//     if (chatBox.value) {
-//       chatBox.value.scrollTop = chatBox.value.scrollHeight;
-//     }
-//   }, 500);
-// }, { deep: true });
+const chatBox = ref<HTMLElement | null>(null)
 </script>
 
 <template>
@@ -27,65 +12,40 @@ onMounted(() => {
     ref="chatBox"
     class="w-available h-auto max-h-screen flex flex-col gap-3 pl-4 pt-2 pr-1 overflow-y-auto scrollbar-none"
   >
-    <TransitionGroup
-      name="list"
-      tag="div"
-      class="flex flex-col gap-3 will-change-auto"
-    >
+    <TransitionGroup name="list" tag="div" class="flex flex-col gap-3 will-change-auto">
       <div
         v-for="message in chatMessageQueue"
         :key="message.id"
-        :class="[
-          'flex flex-col message-container mt-3',
-          message.animationState,
-        ]"
+        :class="['flex flex-col message-container mt-3', message.animationState]"
       >
         <div class="relative pt-3">
-          <div
-            class="shine-wrapper -mt-6 relative z-10 overflow-hidden banner-animate"
-          >
-            <div
-              class="relative flex flex-row bg-theme-700 rounded-lg gap-1 h-6 px-2 py-1 items-center pr-12"
-            >
+          <div class="shine-wrapper -mt-6 relative z-10 overflow-hidden banner-animate">
+            <div class="relative flex flex-row bg-theme-700 rounded-lg gap-1 h-6 px-2 py-1 items-center pr-12">
               <template v-for="badge in message.userInfo.badges">
-                <img
-                  :src="badge.getImageUrl(2)"
-                  alt="userImage"
-                  class="size-4"
-                />
+                <img :src="badge.getImageUrl(2)" alt="userImage" class="size-4" />
               </template>
 
-              <span
-                class="text-white font-bold text-base self-start leading-none my-auto"
-              >
+              <span class="text-white font-bold text-lg self-start leading-none my-auto">
                 {{ message.userInfo.displayName }}
               </span>
               <span
                 v-if="message.userInfo.pronoun"
-                class="text-white text-xs font-semibold font-mono mb-0.5 ml-0.5 leading-none my-auto whitespace-nowrap"
+                class="text-white text-md font-semibold font-mono mb-0.5 ml-0.5 leading-none my-auto whitespace-nowrap"
               >
-                ({{ message.userInfo.pronoun.subject }}/{{
-                  message.userInfo.pronoun.object
-                }})
+                ({{ message.userInfo.pronoun.subject }}/{{ message.userInfo.pronoun.object }})
               </span>
             </div>
           </div>
 
           <div
-            class="absolute size-10 -right-1 -top-5 rounded-full overflow-hidden bg-black z-20 avatar-animate border border-theme-700"
+            class="absolute size-14 -right-1 -top-5 rounded-full overflow-hidden bg-black z-20 avatar-animate border border-theme-700"
           >
-            <img
-              class="size-available object-cover"
-              :src="message.userInfo.avatarUrl"
-              alt="profile picture"
-            />
+            <img class="size-available object-cover" :src="message.userInfo.avatarUrl" alt="profile picture" />
           </div>
         </div>
 
-        <div
-          class="flex flex-row p-3 bg-neutral-900 rounded-lg -mt-3 -ml-4 mr-4 pt-5 message-bubble"
-        >
-          <div class="message-content opacity-0 text-sm">
+        <div class="flex flex-row p-3 bg-neutral-900 rounded-lg -mt-3 -ml-4 mr-4 pt-5 message-bubble">
+          <div class="message-content opacity-0 text-lg">
             <MessageNode :node="message.message" />
           </div>
         </div>
@@ -163,13 +123,12 @@ onMounted(() => {
 
 /* Shine effect */
 .shine-wrapper::after {
-  content: "";
+  content: '';
   @apply absolute inset-0 w-full h-full pointer-events-none z-10;
   transform: translateX(100%); /* Changed from -100% to 100% */
   background: linear-gradient(
     65deg,
-    /* Changed from -65deg to 65deg to flip direction */ rgba(255, 255, 255, 0)
-      0%,
+    /* Changed from -65deg to 65deg to flip direction */ rgba(255, 255, 255, 0) 0%,
     rgba(255, 255, 255, 0) 35%,
     rgba(255, 255, 255, 0.2) 50%,
     rgba(128, 186, 232, 0) 65%,
@@ -179,12 +138,7 @@ onMounted(() => {
 }
 
 .shine-wrapper div {
-  background-image: linear-gradient(
-    45deg,
-    var(--color-300),
-    var(--color-500) 23%,
-    var(--color-700)
-  );
+  background-image: linear-gradient(45deg, var(--color-300), var(--color-500) 23%, var(--color-700));
 }
 
 .message-container.active .shine-wrapper::after {

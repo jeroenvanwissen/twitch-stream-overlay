@@ -1,6 +1,6 @@
 // twitchClient.ts
-import { ApiClient } from "@twurple/api";
-import { RefreshingAuthProvider } from "@twurple/auth";
+import { ApiClient } from '@twurple/api'
+import { RefreshingAuthProvider } from '@twurple/auth'
 
 // Export a singleton instance holder
 export const TwitchClient = {
@@ -9,14 +9,11 @@ export const TwitchClient = {
   userApiClient: null as ApiClient | null,
   botApiClient: null as ApiClient | null,
 
-  initialize(
-    userAuthProvider: RefreshingAuthProvider,
-    botAuthProvider: RefreshingAuthProvider,
-  ) {
-    this.userAuthProvider = userAuthProvider;
-    this.botAuthProvider = botAuthProvider;
-    this.userApiClient = new ApiClient({ authProvider: userAuthProvider });
-    this.botApiClient = new ApiClient({ authProvider: botAuthProvider });
-    console.log("TwitchClient initialized");
-  },
-};
+  initialize(userAuthProvider: RefreshingAuthProvider, botAuthProvider: RefreshingAuthProvider) {
+    this.userAuthProvider = userAuthProvider
+    this.botAuthProvider = botAuthProvider
+    this.userApiClient = new ApiClient({ authProvider: userAuthProvider })
+    this.botApiClient = new ApiClient({ authProvider: botAuthProvider })
+    console.log('TwitchClient initialized')
+  }
+}

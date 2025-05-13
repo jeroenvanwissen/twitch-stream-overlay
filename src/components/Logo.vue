@@ -1,13 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <svg
-    width="80"
-    height="80"
-    viewBox="0 0 80 80"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M18.4326 18.88C16.1285 18.88 14.5795 21.2417 15.4976 23.355L31.0782 59.2206C31.586 60.3895 32.7389 61.1456 34.0132 61.1456H38.9844C41.2896 61.1456 42.8386 58.7819 41.9184 56.6683L26.3046 20.8027C25.7963 19.6351 24.6441 18.88 23.3706 18.88H18.4326Z"
       fill="url(#paint0_linear_368_788)"

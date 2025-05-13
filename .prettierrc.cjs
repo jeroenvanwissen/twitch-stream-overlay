@@ -4,19 +4,19 @@ module.exports = {
   tabWidth: 2,
   useTabs: false,
   printWidth: 120,
-  endOfLine: "auto",
+  endOfLine: 'auto',
   singleQuote: true,
-  arrowParens: "avoid",
+  arrowParens: 'avoid',
   bracketSpacing: true,
-  trailingComma: "none",
-  quoteProps: "as-needed",
+  trailingComma: 'none',
+  quoteProps: 'as-needed',
   jsxBracketSameLine: false,
   overrides: [
     {
-      files: ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
       options: {
-        parser: "typescript",
-      },
-    },
-  ],
-};
+        parser: 'typescript'
+      }
+    }
+  ]
+}
