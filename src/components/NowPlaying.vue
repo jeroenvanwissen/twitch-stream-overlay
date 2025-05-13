@@ -49,7 +49,7 @@ onUnmounted(() => {
             {{ currentTrack.name }}
           </div>
           <div class="text-theme-400 text-lg">{{ currentTrack.artist }}</div>
-          <div class="text-green-500 text-md">
+          <div class="text-theme-200 text-md">
             {{ currentTrack.isPlaying ? 'Now Playing' : 'Paused' }}
           </div>
         </div>
@@ -57,7 +57,7 @@ onUnmounted(() => {
       <div class="w-full">
         <div class="relative w-full h-1 bg-gray-700 rounded">
           <div
-            class="absolute top-0 left-0 h-full bg-green-500 rounded transition-all duration-500"
+            class="absolute top-0 left-0 h-full bg-theme-200 rounded transition-all duration-500"
             :style="{
               width: `${(currentTrack.progressMs / currentTrack.durationMs) * 100}%`
             }"

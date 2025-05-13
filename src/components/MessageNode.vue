@@ -43,7 +43,7 @@ defineProps({
   <p
     v-else-if="node.type == 'p'"
     :id="node.id"
-    class="text-md leading-none font-medium"
+    class="text-lg leading-none font-medium"
     :class="node.classes"
     v-bind="node.attribs"
   >

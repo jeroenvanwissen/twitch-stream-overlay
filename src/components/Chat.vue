@@ -20,9 +20,9 @@ const chatBox = ref<HTMLElement | null>(null)
       >
         <div class="relative pt-3">
           <div class="shine-wrapper -mt-6 relative z-10 overflow-hidden banner-animate">
-            <div class="relative flex flex-row bg-theme-700 rounded-lg gap-1 h-6 px-2 py-1 items-center pr-12">
+            <div class="relative flex flex-row bg-theme-700 rounded-lg gap-1 h-8 px-2 py-1 items-center pr-12">
               <template v-for="badge in message.userInfo.badges">
-                <img :src="badge.getImageUrl(2)" alt="userImage" class="size-4" />
+                <img :src="badge.getImageUrl(2)" alt="userImage" class="size-6" />
               </template>
 
               <span class="text-white font-bold text-lg self-start leading-none my-auto">
@@ -38,14 +38,14 @@ const chatBox = ref<HTMLElement | null>(null)
           </div>
 
           <div
-            class="absolute size-14 -right-1 -top-5 rounded-full overflow-hidden bg-black z-20 avatar-animate border border-theme-700"
+            class="absolute size-16 -right-1 -top-5 rounded-full overflow-hidden bg-black z-20 avatar-animate border border-theme-700"
           >
             <img class="size-available object-cover" :src="message.userInfo.avatarUrl" alt="profile picture" />
           </div>
         </div>
 
         <div class="flex flex-row p-3 bg-neutral-900 rounded-lg -mt-3 -ml-4 mr-4 pt-5 message-bubble">
-          <div class="message-content opacity-0 text-lg">
+          <div class="message-content opacity-0 text-xl">
             <MessageNode :node="message.message" />
           </div>
         </div>

@@ -6,6 +6,7 @@ import { ref } from 'vue'
 
 import Badge from '@/components/Badge.vue'
 import Chat from '@/components/Chat.vue'
+import NextInQueue from '@/components/NextInQueue.vue'
 import NowPlaying from '@/components/NowPlaying.vue'
 import Pomodoro from '@/components/Pomodoro.vue'
 import Tasks from '@/components/Tasks.vue'
@@ -19,6 +20,7 @@ const mainWindow = ref<HTMLDivElement>()
     <Badge v-if="botUser" />
 
     <div ref="mainWindow" class="relative flex flex-col w-available h-available justify-center -ml-6 mr-[5%]">
+      <NextInQueue v-if="user && spotifyVisible" />
       <NowPlaying v-if="user && spotifyVisible" />
       <Pomodoro v-if="user && pomodoroVisible" />
       <Tasks v-if="user && tasksVisible" />
