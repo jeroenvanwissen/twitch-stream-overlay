@@ -10,6 +10,19 @@ import { addMessage, chatBadges, ChatPermissions, Message, whitelistedUsers } fr
 
 import { getChannelBadges, getChannelFollowers, getUserIdFromName, shoutoutUser } from '@/lib/twitch/apiClient'
 import { TwitchClient } from '@/lib/twitch/twitchClient'
+import {
+  activateCommand,
+  addCommand,
+  Command,
+  COMMAND_BLACKLIST,
+  commands,
+  deactivateCommand,
+  deleteCommand,
+  editCommand,
+  formatCommandMessage,
+  getCommand,
+  PUBLIC_COMMANDS
+} from '@/store/commands'
 import { usePomodoroStore } from '@/store/pomodoro'
 import { addTasks, clearTasks, deleteTask, findTask, focusTask, markDone, nextTask, tasksByUser } from '@/store/tasks'
 import { ref } from 'vue'
@@ -136,8 +149,109 @@ const handleCommand = async ({
 
   const pomodoro = usePomodoroStore()
 
+  // Try to handle as a custom command first
+  const customCommand = getCommand(command)
+  if (customCommand && customCommand.isActive) {
+    const formattedMessage = formatCommandMessage(customCommand.message, newMsg.userInfo.userName)
+    await chatClient.say(channel, formattedMessage)
+    return
+  }
+
+  // Handle built-in commands
   switch (command) {
+    case 'cadd':
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Only the broadcaster can manage commands!`)
+        return
+      }
+      if (params.length < 2) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Usage: !cadd <command> <message>`)
+        return
+      }
+      const commandName = params[0]
+      const commandMessage = params.slice(1).join(' ')
+      if (COMMAND_BLACKLIST.includes(commandName)) {
+        await chatClient.say(
+          channel,
+          `@${newMsg.userInfo.displayName} Command ${commandName} is a built-in command and cannot be added!`
+        )
+        return
+      }
+      if (addCommand(commandName, commandMessage)) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Command ${commandName} added successfully!`)
+      } else {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Command ${commandName} already exists!`)
+      }
+      break
+
+    case 'cdel':
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Only the broadcaster can manage commands!`)
+        return
+      }
+      if (params.length !== 1) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Usage: !cdel <command>`)
+        return
+      }
+      if (deleteCommand(params[0])) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Command ${params[0]} deleted successfully!`)
+      } else {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Command ${params[0]} not found!`)
+      }
+      break
+
+    case 'cactivate':
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Only the broadcaster can manage commands!`)
+        return
+      }
+      if (params.length !== 1) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Usage: !cactivate <command>`)
+        return
+      }
+      if (activateCommand(params[0])) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Command ${params[0]} activated successfully!`)
+      } else {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Command ${params[0]} not found!`)
+      }
+      break
+
+    case 'cdeactivate':
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Only the broadcaster can manage commands!`)
+        return
+      }
+      if (params.length !== 1) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Usage: !cdeactivate <command>`)
+        return
+      }
+      if (deactivateCommand(params[0])) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Command ${params[0]} deactivated successfully!`)
+      } else {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Command ${params[0]} not found!`)
+      }
+      break
+
+    case 'cedit':
+      if (!newMsg.userInfo.isBroadcaster) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Only the broadcaster can manage commands!`)
+        return
+      }
+      if (params.length < 2) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Usage: !cedit <command> <message>`)
+        return
+      }
+      const editCommandName = params[0]
+      const editCommandMessage = params.slice(1).join(' ')
+      if (editCommand(editCommandName, editCommandMessage)) {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Command ${editCommandName} edited successfully!`)
+      } else {
+        await chatClient.say(channel, `@${newMsg.userInfo.displayName} Command ${editCommandName} not found!`)
+      }
+      break
+
     case 'task':
+    case 'add':
       if (params.length > 0) {
         const tasks = params
           .join(' ')
@@ -206,6 +320,7 @@ const handleCommand = async ({
       break
 
     case 'deltask':
+    case 'taskdel':
       if (params.length === 1) {
         const task = findTask(params[0], newMsg.userInfo.userName)
         if (task) {
@@ -220,7 +335,6 @@ const handleCommand = async ({
       break
 
     case 'cleartasks':
-      console.log(newMsg.userInfo)
       if (newMsg.userInfo.isBroadcaster) {
         clearTasks()
         await chatClient.say(channel, 'All tasks have been cleared')
@@ -270,7 +384,7 @@ const handleCommand = async ({
         }
       })
       break
-    case 'startpomo':
+    case 'pstart':
       if (!newMsg.userInfo.isBroadcaster) {
         await chatClient.say(channel, 'Only the broadcaster can control the Pomodoro timer')
         break
@@ -279,7 +393,7 @@ const handleCommand = async ({
       await chatClient.say(channel, 'Pomodoro timer started!')
       break
 
-    case 'stoppomo':
+    case 'pstop':
       if (!newMsg.userInfo.isBroadcaster) {
         await chatClient.say(channel, 'Only the broadcaster can control the Pomodoro timer')
         break
@@ -288,7 +402,7 @@ const handleCommand = async ({
       await chatClient.say(channel, 'Pomodoro timer stopped!')
       break
 
-    case 'reset':
+    case 'preset':
       if (!newMsg.userInfo.isBroadcaster) {
         await chatClient.say(channel, 'Only the broadcaster can control the Pomodoro timer')
         break
@@ -297,7 +411,7 @@ const handleCommand = async ({
       await chatClient.say(channel, 'Pomodoro timer reset!')
       break
 
-    case 'timeadd':
+    case 'ptimeadd':
       if (!newMsg.userInfo.isBroadcaster) {
         await chatClient.say(channel, 'Only the broadcaster can control the Pomodoro timer')
         break
@@ -315,7 +429,7 @@ const handleCommand = async ({
       await chatClient.say(channel, `Added ${minutes} minutes to the timer!`)
       break
 
-    case 'pomos':
+    case 'ppomos':
       if (!newMsg.userInfo.isBroadcaster) {
         await chatClient.say(channel, 'Only the broadcaster can control the Pomodoro timer')
         break
@@ -333,7 +447,7 @@ const handleCommand = async ({
       await chatClient.say(channel, `Set total pomodoros to ${count}!`)
       break
 
-    case 'pomotime':
+    case 'ppomotime':
       if (!newMsg.userInfo.isBroadcaster) {
         await chatClient.say(channel, 'Only the broadcaster can control the Pomodoro timer')
         break
@@ -351,7 +465,7 @@ const handleCommand = async ({
       await chatClient.say(channel, `Set focus time to ${focusTime} minutes!`)
       break
 
-    case 'breaktime':
+    case 'pbreaktime':
       if (!newMsg.userInfo.isBroadcaster) {
         await chatClient.say(channel, 'Only the broadcaster can control the Pomodoro timer')
         break
@@ -369,7 +483,7 @@ const handleCommand = async ({
       await chatClient.say(channel, `Set break time to ${breakTime} minutes!`)
       break
 
-    case 'nextpomo':
+    case 'pnext':
       if (!newMsg.userInfo.isBroadcaster) {
         await chatClient.say(channel, 'Only the broadcaster can control the Pomodoro timer')
         break
@@ -442,6 +556,27 @@ const handleCommand = async ({
       } else {
         await chatClient.say(channel, `@${newMsg.userInfo.displayName} User ${params.at(0)} not found!`)
       }
+      break
+
+    case 'commands':
+      const activeCustomCommands = commands.value
+        .filter((cmd: Command) => cmd.isActive)
+        .map((cmd: Command) => cmd.name)
+        .sort()
+
+      const builtInCommands = COMMAND_BLACKLIST.filter(cmd => PUBLIC_COMMANDS.includes(cmd)).sort()
+
+      const commandsList = [
+        'Available commands:',
+        activeCustomCommands.length > 0
+          ? `Custom commands: ${activeCustomCommands.map(cmd => '!' + cmd).join(', ')}`
+          : null,
+        `Built-in commands: ${builtInCommands.map((cmd: string) => '!' + cmd).join(', ')}`
+      ]
+        .filter(Boolean)
+        .join(' | ')
+
+      await chatClient.say(channel, commandsList)
       break
     default:
       // await chatClient.say(
