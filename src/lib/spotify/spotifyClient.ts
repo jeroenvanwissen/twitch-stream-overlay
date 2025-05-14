@@ -1,3 +1,12 @@
+import {
+  spotifyAccessToken,
+  spotifyClientId,
+  spotifyClientSecret,
+  spotifyExpiresIn,
+  spotifyObtainmentTimestamp,
+  spotifyRedirectUri,
+  spotifyRefreshToken
+} from '@/store/auth'
 import SpotifyWebApi from 'spotify-web-api-node'
 
 class SpotifyClient {
@@ -7,11 +16,11 @@ class SpotifyClient {
   private constructor() {
     // Initialize with all credentials
     this.spotifyApi = new SpotifyWebApi({
-      clientId: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
-      clientSecret: import.meta.env.VITE_SPOTIFY_CLIENT_SECRET,
-      redirectUri: import.meta.env.VITE_SPOTIFY_REDIRECT_URI,
-      accessToken: import.meta.env.VITE_SPOTIFY_OAUTH_TOKEN,
-      refreshToken: import.meta.env.VITE_SPOTIFY_REFRESH_TOKEN
+      clientId: spotifyClientId,
+      clientSecret: spotifyClientSecret,
+      redirectUri: spotifyRedirectUri,
+      accessToken: spotifyAccessToken.value,
+      refreshToken: spotifyRefreshToken.value
     })
   }
 
@@ -34,19 +43,23 @@ class SpotifyClient {
             method: 'POST',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
-              Authorization:
-                'Basic ' +
-                btoa(import.meta.env.VITE_SPOTIFY_CLIENT_ID + ':' + import.meta.env.VITE_SPOTIFY_CLIENT_SECRET)
+              Authorization: 'Basic ' + btoa(spotifyClientId + ':' + spotifyClientSecret)
             },
             body: new URLSearchParams({
               grant_type: 'refresh_token',
-              refresh_token: import.meta.env.VITE_SPOTIFY_REFRESH_TOKEN
+              refresh_token: spotifyRefreshToken.value
             })
           })
 
           const data = await response.json()
           if (data.access_token) {
             this.spotifyApi.setAccessToken(data.access_token)
+            spotifyAccessToken.value = data.access_token
+            if (data.refresh_token) {
+              spotifyRefreshToken.value = data.refresh_token
+            }
+            spotifyExpiresIn.value = data.expires_in
+            spotifyObtainmentTimestamp.value = Date.now()
           } else {
             throw new Error('No access token received')
           }

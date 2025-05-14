@@ -1,3 +1,20 @@
+export enum SpotifyAccessTokenScope {
+  /** Read access to user's private library */
+  UserLibraryRead = 'user-library-read',
+
+  /** Read access to a user's player state */
+  UserReadPlaybackState = 'user-read-playback-state',
+
+  /** Write access to a user's playback state */
+  UserModifyPlaybackState = 'user-modify-playback-state',
+
+  /** Write access to user's public playlists */
+  PlaylistModifyPublic = 'playlist-modify-public',
+
+  /** Write access to user's private playlists */
+  PlaylistModifyPrivate = 'playlist-modify-private'
+}
+
 export enum TwitchAccessTokenScope {
   /** View analytics data for the Twitch Extensions owned by the authenticated account.
    * API: Get Extension Analytics */

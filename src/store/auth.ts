@@ -3,6 +3,7 @@ import type { HelixUser } from '@twurple/api'
 import { useLocalStorage } from '@vueuse/core'
 import { ref } from 'vue'
 
+// Twitch Client IDs
 export const clientId = import.meta.env.VITE_TWITCH_CLIENT_ID
 export const clientSecret = import.meta.env.VITE_TWITCH_CLIENT_SECRET
 export const twitchAuthUrl = import.meta.env.VITE_TWITCH_AUTH_URL
@@ -20,6 +21,16 @@ export const botExpiresIn = useLocalStorage('botExpiresIn', 0)
 export const botObtainmentTimestamp = useLocalStorage('botObtainmentTimestamp', 0)
 export const botUserId = ref<string>('')
 export const botUser = ref<HelixUser>()
+
+// Spotify Auth
+export const spotifyClientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID
+export const spotifyClientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET
+export const spotifyRedirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI
+
+export const spotifyAccessToken = useLocalStorage('spotifyAccessToken', import.meta.env.VITE_SPOTIFY_OAUTH_TOKEN)
+export const spotifyRefreshToken = useLocalStorage('spotifyRefreshToken', import.meta.env.VITE_SPOTIFY_REFRESH_TOKEN)
+export const spotifyExpiresIn = useLocalStorage('spotifyExpiresIn', 0)
+export const spotifyObtainmentTimestamp = useLocalStorage('spotifyObtainmentTimestamp', 0)
 
 export const scopes: TwitchAccessTokenScope[] = [
   TwitchAccessTokenScope.ChatRead,
