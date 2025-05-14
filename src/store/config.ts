@@ -33,7 +33,6 @@ export const toggle = async () => {
   setTimeout(() => {
     ;(extension.value as unknown as HTMLDivElement)!.classList.add('active')
   }, 800)
-
   ;(badge.value as unknown as HTMLDivElement).classList.toggle('active')
 
   await sleep(badgeTransitionDuration.value)
@@ -48,7 +47,6 @@ export const open = async () => {
   setTimeout(() => {
     ;(extension.value as unknown as HTMLDivElement)!.classList.add('active')
   }, 800)
-
   ;(badge.value as unknown as HTMLDivElement).classList.add('active')
 
   await sleep(badgeTransitionDuration.value)
@@ -67,7 +65,6 @@ export const close = async (skip = false): Promise<void> => {
     setTimeout(() => {
       ;(extension.value as unknown as HTMLDivElement)!.classList.remove('active')
     }, 800)
-
     ;(badge.value as unknown as HTMLDivElement)!.classList.remove('active')
 
     setTimeout(() => {
@@ -80,12 +77,20 @@ export const cycle = async () => {
   if (!extension.value || !badge.value || !span.value) return
 
   index += 1
-
-  ;(span.value as unknown as HTMLSpanElement).innerText = texts.value[index % texts.value.length]!
+  const currentIndex = index % texts.value.length
+  const currentText = texts.value[currentIndex]!
+  ;(span.value as unknown as HTMLSpanElement).innerText = currentText
 
   await open()
   await sleep(badgeOpenDuration.value)
   await close()
+
+  // Remove temporary text if it's not the first entry
+  if (currentIndex > 0) {
+    texts.value.splice(currentIndex, 1)
+    // Adjust index since we removed an item
+    index = index > 0 ? index - 1 : 0
+  }
 }
 
 export const roulette = async () => {
@@ -114,7 +119,6 @@ export const processQueue = async () => {
   clearInterval(interval)
 
   await close(intercept)
-
   ;(span.value as unknown as HTMLSpanElement).innerText = textQueue.shift()!
 
   await open()
@@ -137,7 +141,6 @@ export const messageNow = async (text: string) => {
 
 watch(extension, async value => {
   if (!value || !badge.value || !extension.value || !span.value) return
-
   ;(value as unknown as HTMLDivElement).style.transitionDuration = `${badgeTransitionDuration.value * 1000}ms`
 
   await roulette()

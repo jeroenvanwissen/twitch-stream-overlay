@@ -2,9 +2,16 @@ import { usePomodoroStore } from '@/store/pomodoro'
 import { setVisibility, type ComponentKey } from '@/store/visibility'
 import { ref } from 'vue'
 
+import { texts } from '@/store/config'
+
 interface WebSocketWithDispatch extends WebSocket {
   on?: (event: string, callback: Function) => void
   off?: (event: string, callback: Function) => void
+}
+
+const onAddBadgeText = (text: string) => {
+  if (!text) return
+  texts.value.push(text)
 }
 
 export const connect = (socket?: WebSocketWithDispatch | null) => {
@@ -21,6 +28,11 @@ export const connect = (socket?: WebSocketWithDispatch | null) => {
   socket.addEventListener('setComponentVisibility', (e: any) => {
     const { componentName, visible } = e.detail
     onToggleComponent(componentName, visible)
+  })
+
+  socket.addEventListener('addBadgeText', (e: any) => {
+    const { text } = e.detail
+    onAddBadgeText(text)
   })
 
   socket.addEventListener('pomodoro', (e: any) => {
