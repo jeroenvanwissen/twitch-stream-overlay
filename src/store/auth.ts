@@ -1,45 +1,69 @@
-import {useLocalStorage} from "@vueuse/core";
-import {ref} from "vue";
-import type {HelixUser} from "@twurple/api";
-import {TwitchAccessTokenScope} from "@/lib/twitch/authScopes";
+import { ref } from 'vue';
+import type { HelixUser } from '@twurple/api';
+import { useLocalStorage } from '@vueuse/core';
 
+import { TwitchAccessTokenScope } from '@/lib/twitch/authScopes';
+
+// Twitch Client IDs
 export const clientId = import.meta.env.VITE_TWITCH_CLIENT_ID;
 export const clientSecret = import.meta.env.VITE_TWITCH_CLIENT_SECRET;
 export const twitchAuthUrl = import.meta.env.VITE_TWITCH_AUTH_URL;
 
-export const accessToken = useLocalStorage('accessToken', '');
-export const refreshToken = useLocalStorage('refreshToken', '');
+export const accessToken = useLocalStorage('accessToken', import.meta.env.VITE_TWITCH_CLIENT_ACCESS_TOKEN);
+export const refreshToken = useLocalStorage('refreshToken', import.meta.env.VITE_TWITCH_CLIENT_REFRESH_TOKEN);
 export const expiresIn = useLocalStorage('expiresIn', 0);
 export const obtainmentTimestamp = useLocalStorage('obtainmentTimestamp', 0);
 export const userId = ref<string>('');
 export const user = ref<HelixUser>();
 
-export const botAccessToken = useLocalStorage('botAccessToken', '');
+export const botAccessToken = useLocalStorage('botAccessToken', import.meta.env.VITE_TWITCH_BOT_ACCESS_TOKEN);
 export const botRefreshToken = useLocalStorage('botRefreshToken', import.meta.env.VITE_TWITCH_BOT_REFRESH_TOKEN);
 export const botExpiresIn = useLocalStorage('botExpiresIn', 0);
 export const botObtainmentTimestamp = useLocalStorage('botObtainmentTimestamp', 0);
 export const botUserId = ref<string>('');
 export const botUser = ref<HelixUser>();
 
+// Spotify Auth
+export const spotifyClientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+export const spotifyClientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
+export const spotifyRedirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+
+export const spotifyAccessToken = useLocalStorage('spotifyAccessToken', import.meta.env.VITE_SPOTIFY_OAUTH_TOKEN);
+export const spotifyRefreshToken = useLocalStorage('spotifyRefreshToken', import.meta.env.VITE_SPOTIFY_REFRESH_TOKEN);
+export const spotifyExpiresIn = useLocalStorage('spotifyExpiresIn', 0);
+export const spotifyExpiresAt = useLocalStorage('spotifyExpiresAt', Date.now());
+export const spotifyObtainmentTimestamp = useLocalStorage('spotifyObtainmentTimestamp', 0);
+
+export const discordClientId = useLocalStorage('discordClientId', import.meta.env.VITE_DISCORD_CLIENT_ID);
+export const discordClientSecret = useLocalStorage('discordClientSecret', import.meta.env.VITE_DISCORD_CLIENT_SECRET);
+export const discordRedirectUri = useLocalStorage('discordRedirectUri', import.meta.env.VITE_DISCORD_REDIRECT_URI);
+export const discordAccessToken = useLocalStorage('discordAccessToken', import.meta.env.VITE_DISCORD_OAUTH_TOKEN);
+export const discordExpiresIn = useLocalStorage('discordExpiresIn', 0);
+export const discordExpiresAt = useLocalStorage('discordExpiresAt', Date.now());
+export const discordSessionToken = useLocalStorage('discordSessionToken', import.meta.env.VITE_DISCORD_SESSION_TOKEN);
+
+export const spotifyUserId = useLocalStorage('spotifyUserId', import.meta.env.VITE_SPOTIFy_USER_ID);
+export const spotifySocketAccessToken = useLocalStorage('spotifySocketAccessToken', import.meta.env.VITE_SPOTIFY_SOCKET_ACCESS_TOKEN);
+
 export const scopes: TwitchAccessTokenScope[] = [
-    TwitchAccessTokenScope.ChatRead,
-    TwitchAccessTokenScope.ChatEdit,
-    TwitchAccessTokenScope.ChannelReadSubscriptions,
-    TwitchAccessTokenScope.UserReadSubscriptions,
-    TwitchAccessTokenScope.ModerationRead,
-    TwitchAccessTokenScope.ModeratorManageBannedUsers,
-    TwitchAccessTokenScope.ModeratorManageBlockedTerms,
-    TwitchAccessTokenScope.ModeratorManageChatMessages,
-    TwitchAccessTokenScope.ModeratorManageChatSettings,
-    TwitchAccessTokenScope.ModeratorManageShoutouts,
-    TwitchAccessTokenScope.ModeratorReadShoutouts,
-    TwitchAccessTokenScope.ModeratorManageWarnings,
-    TwitchAccessTokenScope.ModeratorReadChatMessages,
-    TwitchAccessTokenScope.ModeratorReadChatSettings,
-    TwitchAccessTokenScope.ModeratorReadChatters,
-    TwitchAccessTokenScope.ModeratorManageAnnouncements,
-    TwitchAccessTokenScope.ModeratorReadFollowers,
-    TwitchAccessTokenScope.ModeratorReadWarnings,
-    TwitchAccessTokenScope.UserReadModeratedChannels,
-    TwitchAccessTokenScope.UserWriteChat,
+  TwitchAccessTokenScope.ChatRead,
+  TwitchAccessTokenScope.ChatEdit,
+  TwitchAccessTokenScope.ChannelReadSubscriptions,
+  TwitchAccessTokenScope.UserReadSubscriptions,
+  TwitchAccessTokenScope.ModerationRead,
+  TwitchAccessTokenScope.ModeratorManageBannedUsers,
+  TwitchAccessTokenScope.ModeratorManageBlockedTerms,
+  TwitchAccessTokenScope.ModeratorManageChatMessages,
+  TwitchAccessTokenScope.ModeratorManageChatSettings,
+  TwitchAccessTokenScope.ModeratorManageShoutouts,
+  TwitchAccessTokenScope.ModeratorReadShoutouts,
+  TwitchAccessTokenScope.ModeratorManageWarnings,
+  TwitchAccessTokenScope.ModeratorReadChatMessages,
+  TwitchAccessTokenScope.ModeratorReadChatSettings,
+  TwitchAccessTokenScope.ModeratorReadChatters,
+  TwitchAccessTokenScope.ModeratorManageAnnouncements,
+  TwitchAccessTokenScope.ModeratorReadFollowers,
+  TwitchAccessTokenScope.ModeratorReadWarnings,
+  TwitchAccessTokenScope.UserReadModeratedChannels,
+  TwitchAccessTokenScope.UserWriteChat,
 ];

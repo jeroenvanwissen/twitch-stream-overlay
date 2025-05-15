@@ -1,0 +1,227 @@
+export function isSpotifyConnectEvent(data: SpotifyEvent): data is SpotifyConnectEvent {
+  return (data as SpotifyConnectEvent).headers?.['Spotify-Connection-Id'] !== undefined;
+}
+
+export function isSpotifyMessageEvent(data: SpotifyEvent): data is SpotifyMessageEvent {
+  return (data as SpotifyMessageEvent).payloads !== undefined && data.uri == 'wss://event';
+}
+
+export enum SpotifyEventType {
+  PLAYER_STATE_CHANGED = 'PLAYER_STATE_CHANGED',
+}
+
+export interface SpotifyConnectEvent {
+  headers: SpotifyConnectHeaders;
+  method: string;
+  type: string;
+  uri: string;
+}
+
+export interface SpotifyConnectHeaders {
+  'Spotify-Connection-Id': string;
+}
+
+export interface SpotifyMessageEvent {
+  headers: SpotifyHeaders;
+  payloads: SpotifyPayload[];
+  type: string;
+  uri: string;
+}
+
+export type SpotifyEvent = SpotifyConnectEvent | SpotifyMessageEvent;
+
+export interface SpotifyHeaders {
+  'content-type': string;
+}
+
+export interface SpotifyPayload {
+  events: SpotifyEventElement[];
+}
+
+export interface SpotifyEventElement {
+  source: string;
+  type: string;
+  uri: null;
+  href: string;
+  event: SpotifyEventEvent;
+  user: SpotifyUser;
+}
+
+export interface SpotifyEventEvent {
+  event_id: number;
+  state: SpotifyState;
+}
+
+export interface SpotifyState {
+  device: SpotifyDevice;
+  shuffle_state: boolean;
+  repeat_state: string;
+  timestamp: number;
+  context: SpotifyContext;
+  progress_ms: number;
+  item: SpotifyItem;
+  currently_playing_type: string;
+  actions: SpotifyActions;
+  is_playing: boolean;
+}
+
+export interface SpotifyActions {
+  disallows: SpotifyDisallows;
+}
+
+export interface SpotifyDisallows {
+  resuming: boolean;
+  toggling_repeat_context: boolean;
+  toggling_repeat_track: boolean;
+  toggling_shuffle: boolean;
+}
+
+export interface SpotifyContext {
+  external_urls: SpotifyExternalUrls;
+  href: string;
+  type: string;
+  uri: string;
+}
+
+export interface SpotifyExternalUrls {
+  spotify: string;
+}
+
+export interface SpotifyDevice {
+  id: string;
+  is_active: boolean;
+  is_private_session: boolean;
+  is_restricted: boolean;
+  name: string;
+  supports_volume: boolean;
+  type: string;
+  volume_percent: number;
+}
+
+export interface SpotifyItem {
+  album: SpotifyAlbum;
+  artists: SpotifyArtist[];
+  disc_number: number;
+  duration_ms: number;
+  explicit: boolean;
+  external_ids: SpotifyExternalIDS;
+  external_urls: SpotifyExternalUrls;
+  href: string;
+  id: string;
+  is_local: boolean;
+  is_playable: boolean;
+  name: string;
+  popularity: number;
+  preview_url: string;
+  track_number: number;
+  type: string;
+  uri: string;
+}
+
+export interface SpotifyAlbum {
+  album_type: string;
+  artists: SpotifyArtist[];
+  external_urls: SpotifyExternalUrls;
+  href: string;
+  id: string;
+  images: SpotifyImage[];
+  is_playable: boolean;
+  name: string;
+  release_date: Date;
+  release_date_precision: string;
+  total_tracks: number;
+  type: string;
+  uri: string;
+}
+
+export interface SpotifyArtist {
+  external_urls: SpotifyExternalUrls;
+  href: string;
+  id: string;
+  name: string;
+  type: string;
+  uri: string;
+}
+
+export interface SpotifyImage {
+  height: number;
+  url: string;
+  width: number;
+}
+
+export interface SpotifyExternalIDS {
+  isrc: string;
+}
+
+export interface SpotifyUser {
+  id: string;
+}
+
+export interface SpotifyQueue {
+  currently_playing: SpotifyCurrentlyPlaying;
+  queue: SpotifyCurrentlyPlaying[];
+}
+
+export interface SpotifyCurrentlyPlaying {
+  album: SpotifyAlbum;
+  artists: SpotifyArtist[];
+  available_markets: string[];
+  disc_number: number;
+  duration_ms: number;
+  explicit: boolean;
+  external_ids: SpotifyExternalIDS;
+  external_urls: SpotifyExternalUrls;
+  href: string;
+  id: string;
+  is_playable: boolean;
+  linked_from: LinkedFrom;
+  restrictions: SpotifyRestrictions;
+  name: string;
+  popularity: number;
+  preview_url: string;
+  track_number: number;
+  type: string;
+  uri: string;
+  is_local: boolean;
+}
+
+export interface SpotifyRestrictions {
+  reason: string;
+}
+
+export interface SpotifyExternalIDS {
+  isrc: string;
+  ean: string;
+  upc: string;
+}
+
+export interface LinkedFrom {}
+
+export interface SpotifyMe {
+  country: string;
+  display_name: string;
+  email: string;
+  explicit_content: SpotifyExplicitContent;
+  external_urls: SpotifyExternalUrls;
+  followers: SpotifyFollowers;
+  href: string;
+  id: string;
+  images: SpotifyImage[];
+  product: string;
+  type: string;
+  uri: string;
+}
+
+export interface SpotifyExplicitContent {
+  filter_enabled: boolean;
+  filter_locked: boolean;
+}
+
+export interface SpotifyExternalUrls {
+  spotify: string;
+}
+
+export interface SpotifyFollowers {
+  href: null;
+  total: number;
+}

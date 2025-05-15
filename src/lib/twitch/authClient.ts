@@ -1,57 +1,92 @@
-import {RefreshingAuthProvider, StaticAuthProvider} from '@twurple/auth';
+import { RefreshingAuthProvider } from '@twurple/auth';
 
+import { TwitchClient } from '@/lib/twitch/twitchClient';
 import {
-    accessToken,
-    clientId,
-    clientSecret,
-    expiresIn,
-    obtainmentTimestamp,
-    refreshToken,
-    scopes, user, userId
-} from "@/store/auth";
+  accessToken,
+  botAccessToken,
+  botExpiresIn,
+  botObtainmentTimestamp,
+  botRefreshToken,
+  botUser,
+  botUserId,
+  clientId,
+  clientSecret,
+  expiresIn,
+  obtainmentTimestamp,
+  refreshToken,
+  scopes,
+  user,
+  userId,
+} from '@/store/auth';
+import { chatBadges } from '@/store/chat';
 
-import {chatBadges} from "@/store/chat";
+type AuthType = 'user' | 'bot';
 
-const tokenData = {
-    accessToken: accessToken.value,
-    refreshToken: refreshToken.value,
-    obtainmentTimestamp: obtainmentTimestamp.value,
-    expiresIn: expiresIn.value
-};
+async function createAuthProvider(type: AuthType = 'user'): Promise<RefreshingAuthProvider> {
+  const provider = new RefreshingAuthProvider({
+    clientId: clientId,
+    clientSecret: clientSecret,
+    appImpliedScopes: scopes,
+  });
 
-export const authProvider = new RefreshingAuthProvider(
-    {
-        clientId: clientId,
-        clientSecret: clientSecret,
-        appImpliedScopes: scopes,
+  provider.onRefresh(async (_, newTokenData) => {
+    if (type === 'bot') {
+      botAccessToken.value = newTokenData.accessToken;
+      botRefreshToken.value = newTokenData.refreshToken;
+      botExpiresIn.value = newTokenData.expiresIn;
+      botObtainmentTimestamp.value = newTokenData.obtainmentTimestamp;
+    } else {
+      accessToken.value = newTokenData.accessToken;
+      refreshToken.value = newTokenData.refreshToken;
+      expiresIn.value = newTokenData.expiresIn;
+      obtainmentTimestamp.value = newTokenData.obtainmentTimestamp;
     }
-);
+  });
+  return provider;
+}
 
-authProvider.addUserForToken(tokenData, scopes)
-    .then(async (data) => {
-        userId.value = data;
+//TODO: Refactor the logic so that we don't have to import the authClient in the apiClient here.
+// Create and export providers
+const authProvider = await createAuthProvider('user');
+authProvider
+  .addUserForToken(
+    {
+      accessToken: accessToken.value,
+      refreshToken: refreshToken.value,
+      obtainmentTimestamp: obtainmentTimestamp.value,
+      expiresIn: expiresIn.value,
+    },
+    scopes,
+  )
+  .then(async userData => {
+    userId.value = userData;
 
-        const {apiClient, getGlobalBadges, getChannelBadges} = await import('@/lib/twitch/apiClient');
-        user.value = (await apiClient.users.getUserById(data))!;
+    const { apiClient, getGlobalBadges } = await import('@/lib/twitch/apiClient');
+    user.value = (await apiClient?.users.getUserById(userData))!;
+    const { chatClient } = await import('@/lib/twitch/chatClient');
+    chatClient.connect();
+    const globalBadgeSet = await getGlobalBadges();
+    chatBadges.value = globalBadgeSet ?? [];
+  });
 
-        const {chatClient} = await import('@/lib/twitch/chatClient');
-        chatClient.connect();
+const botAuthProvider = await createAuthProvider('bot');
+botAuthProvider
+  .addUserForToken(
+    {
+      accessToken: botAccessToken.value,
+      refreshToken: botRefreshToken.value,
+      obtainmentTimestamp: botObtainmentTimestamp.value,
+      expiresIn: botExpiresIn.value,
+    },
+    scopes,
+  )
+  .then(async userData => {
+    botUserId.value = userData;
+    const { apiClient } = await import('@/lib/twitch/apiClient');
+    botUser.value = (await apiClient?.users.getUserById(userData))!;
+  });
 
-        const globalBadgeSet = await getGlobalBadges();
-        // const chatBadgeSets = await getChannelBadges(data);
+TwitchClient.initialize(authProvider, botAuthProvider);
 
-        await import('@/lib/twitch/bot');
-
-        chatBadges.value = globalBadgeSet;
-    });
-
-authProvider.onRefresh(async (id, newTokenData) => {
-    accessToken.value = newTokenData.accessToken;
-    refreshToken.value = newTokenData.refreshToken;
-    expiresIn.value = newTokenData.expiresIn;
-    obtainmentTimestamp.value = newTokenData.obtainmentTimestamp;
-});
-
-
-export const staticAuthProvider = new StaticAuthProvider(clientId, accessToken.value, scopes);
-
+export { authProvider, botAuthProvider };
+export type { AuthType };

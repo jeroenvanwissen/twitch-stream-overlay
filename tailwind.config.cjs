@@ -1,5 +1,4 @@
 const plugin = require('tailwindcss/plugin');
-const radialGradientPlugin = require("./radialGradientPlugin");
 import scrollBar from 'tailwind-scrollbar';
 
 /** @type {import('tailwindcss').Config} */
@@ -85,6 +84,61 @@ module.exports = {
 				"4xl": ["3.05rem", { lineHeight: "120%" }],
 				"5xl": ["3.8rem", { lineHeight: "120%" }],
 			},
+			keyframes: {
+				'accordion-down': {
+					from: { height: 0 },
+					to: { height: 'var(--radix-accordion-content-height)' },
+				},
+				'accordion-up': {
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: 0 },
+				},
+				backAndForth: {
+					'0%': {
+						transform: 'translateX(0)',
+						opacity: 0,
+					},
+					'5%': {
+						transform: 'translateX(0)',
+						opacity: 1,
+					},
+					'20%': {
+						transform: 'translateX(0)',
+						opacity: 1,
+					},
+					'80%': {
+						transform: 'translateX(calc(-100% + var(--marquee-width, 250px)))',
+						opacity: 1,
+					},
+					'98%': {
+						transform: 'translateX(calc(-100% + var(--marquee-width, 250px)))',
+						opacity: 1,
+					},
+					'99%': {
+						transform: 'translateX(calc(-100% + var(--marquee-width, 250px)))',
+						opacity: 0,
+					},
+					'100%': {
+						transform: 'translateX(0)',
+						opacity: 0,
+					},
+				},
+				swing: {
+					'0%': { transform: "rotate(0)" },
+					'20%': { transform: "rotate(15deg)" },
+					'20.01%': { transform: "rotate(15deg)" },
+					'80%': { transform: "rotate(-15deg)" },
+					'80.01%': { transform: "rotate(-15deg)" },
+					'100%': { transform: "rotate(0)" },
+				}
+			},
+			animation: {
+				'accordion-down': 'accordion-down 0.2s ease-out',
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				marquee: 'backAndForth 8s linear infinite',
+				pause: 'animation-play-state: paused',
+				swing: 'swing 0.5s infinite'
+			},
 			colors: {
 				theme: {
 					50: "hsl(from var(--color-50) h s l / <alpha-value>)",
@@ -108,10 +162,8 @@ module.exports = {
 		},
 	},
 	plugins: [
-		// require('@tailwindcss/forms'),
 		require('tailwind-children'),
 		scrollBar({nocompatible: true}),
-		radialGradientPlugin,
 		plugin(({ addVariant }) => {
 			addVariant('range-track', [
 				'&::-webkit-slider-runnable-track',

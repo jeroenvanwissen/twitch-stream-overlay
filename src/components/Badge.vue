@@ -16,8 +16,7 @@ import Logo from "@/components/Logo.vue";
     <div
       class="flex items-center justify-center bg-neutral-800 rounded-2xl h-[108px] w-[108px] m-0.5 p-[3px] relative -z-10 card2">
       <Logo class="transform -skew-x-[1deg] w-20 h-20"
-            style="--color-logo-back: var(--color-600); --color-logo-front: var(--color-200);"
-      />
+        style="--color-logo-back: var(--color-600); --color-logo-front: var(--color-200);" />
     </div>
     <div ref="extension"
       class="flex items-center justify-end rounded-[20px] text-theme-300 text-[50px] font-bold h-[92%] absolute left-1/2 pr-5 overflow-hidden origin-right transform -translate-y-1/2 top-1/2 -z-20 transition-[width] ease-out w-0 extension">
@@ -27,17 +26,14 @@ import Logo from "@/components/Logo.vue";
 </template>
 
 <style scoped>
-
 /* Only keep what can't be done with Tailwind */
 .card::before {
   --card-width: 0;
   content: "";
-  background-image: linear-gradient(
-      var(--rotate, 1deg),
+  background-image: linear-gradient(var(--rotate, 1deg),
       hsl(from var(--color-200) h 0% l),
       hsl(from var(--color-600) h 0% l) 23%,
-      hsl(from var(--color-900) h 0% l)
-  );
+      hsl(from var(--color-900) h 0% l));
   @apply absolute rounded-[20px] h-[104%] w-[102%] -left-[1%] -top-[3%] -z-10;
 }
 
@@ -46,12 +42,10 @@ import Logo from "@/components/Logo.vue";
 }
 
 .extension {
-  background-image: linear-gradient(
-      45deg,
+  background-image: linear-gradient(45deg,
       hsl(from var(--color-500) h 0% l),
       hsl(from var(--color-700) h 0% l) 23%,
-      hsl(from var(--color-900) h 0% l)
-  );
+      hsl(from var(--color-900) h 0% l));
 }
 
 .extension span {
@@ -72,25 +66,37 @@ import Logo from "@/components/Logo.vue";
 .extension.active::after {
   animation: slide 10s forwards;
   animation-iteration-count: 1;
-  background: linear-gradient(
-      -65deg,
+  background: linear-gradient(-65deg,
       rgba(255, 255, 255, 0) 0%,
       rgba(255, 255, 255, 0) 35%,
       rgba(255, 255, 255, 0.2) 50%,
       rgba(128, 186, 232, 0) 65%,
       rgba(128, 186, 232, 0) 99%,
-      rgba(125, 185, 232, 0) 100%
-  );
+      rgba(125, 185, 232, 0) 100%);
   filter: grayscale(1);
 }
 
 @keyframes spin {
-  0%, 100% { --rotate: 1deg; }
-  10%, 95% { --rotate: 359deg; }
+
+  0%,
+  100% {
+    --rotate: 1deg;
+  }
+
+  10%,
+  95% {
+    --rotate: 359deg;
+  }
 }
 
 @keyframes slide {
-  10% { transform: translateX(-100%); }
-  30%, 100% { transform: translateX(100%); }
+  10% {
+    transform: translateX(-100%);
+  }
+
+  30%,
+  100% {
+    transform: translateX(100%);
+  }
 }
 </style>
