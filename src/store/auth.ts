@@ -7,7 +7,6 @@ import { TwitchAccessTokenScope } from '@/lib/twitch/authScopes';
 // Twitch Client IDs
 export const clientId = import.meta.env.VITE_TWITCH_CLIENT_ID;
 export const clientSecret = import.meta.env.VITE_TWITCH_CLIENT_SECRET;
-export const twitchAuthUrl = import.meta.env.VITE_TWITCH_AUTH_URL;
 
 export const accessToken = useLocalStorage('accessToken', import.meta.env.VITE_TWITCH_CLIENT_ACCESS_TOKEN);
 export const refreshToken = useLocalStorage('refreshToken', import.meta.env.VITE_TWITCH_CLIENT_REFRESH_TOKEN);
@@ -32,11 +31,9 @@ export const spotifyAccessToken = useLocalStorage('spotifyAccessToken', import.m
 export const spotifyRefreshToken = useLocalStorage('spotifyRefreshToken', import.meta.env.VITE_SPOTIFY_REFRESH_TOKEN);
 export const spotifyExpiresIn = useLocalStorage('spotifyExpiresIn', 0);
 export const spotifyExpiresAt = useLocalStorage('spotifyExpiresAt', Date.now());
-export const spotifyObtainmentTimestamp = useLocalStorage('spotifyObtainmentTimestamp', 0);
 
 export const discordClientId = useLocalStorage('discordClientId', import.meta.env.VITE_DISCORD_CLIENT_ID);
 export const discordClientSecret = useLocalStorage('discordClientSecret', import.meta.env.VITE_DISCORD_CLIENT_SECRET);
-export const discordRedirectUri = useLocalStorage('discordRedirectUri', import.meta.env.VITE_DISCORD_REDIRECT_URI);
 export const discordAccessToken = useLocalStorage('discordAccessToken', import.meta.env.VITE_DISCORD_OAUTH_TOKEN);
 export const discordExpiresIn = useLocalStorage('discordExpiresIn', 0);
 export const discordExpiresAt = useLocalStorage('discordExpiresAt', Date.now());

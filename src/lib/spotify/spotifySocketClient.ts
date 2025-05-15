@@ -1,10 +1,13 @@
-import { SpotifyEvent, SpotifyEventType, isSpotifyConnectEvent, isSpotifyMessageEvent } from '@/types/spotify';
+import {type SpotifyEvent, SpotifyEventType} from "@/types/spotify/shared";
+import { isSpotifyConnectEvent } from "@/types/spotify/connect";
+import { isSpotifyMessageEvent } from '@/types/spotify/state';
 
 import { spotifyClient } from '@/lib/spotify/spotifyClient';
 import { DiscordClient } from '@/lib/discord/discordClient';
 
 import { spotifyAccessToken } from '@/store/auth';
 import { setSpotifyState } from '@/store/spotify';
+import {isSpotifyBroadcastEvent} from "@/types/spotify/broadcast";
 
 class SpotifySocketClient {
   private socket: WebSocket | null = null;
@@ -49,7 +52,11 @@ class SpotifySocketClient {
       if (isSpotifyConnectEvent(data)) {
         const connectionId = data.headers['Spotify-Connection-Id'];
         await spotifyClient.initializeConnection(connectionId, this.discordTokenResponse.access_token);
-      } else if (isSpotifyMessageEvent(data)) {
+      }
+      else if (isSpotifyBroadcastEvent(data)) {
+        console.log(data);
+      }
+      else if (isSpotifyMessageEvent(data)) {
         for (const payload of data.payloads) {
           for (const event of payload.events) {
             if (event.type === SpotifyEventType.PLAYER_STATE_CHANGED) {

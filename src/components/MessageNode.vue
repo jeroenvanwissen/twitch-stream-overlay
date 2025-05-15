@@ -1,14 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-interface MessageNode {
-  type: string;
-  id: string;
-  classes?: string[];
-  children?: MessageNode[];
-  text?: string;
-  attribs?: Record<string, string>;
-}
+import type {MessageNode} from "@/types/chat";
 
 defineProps({
   node: {

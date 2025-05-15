@@ -1,7 +1,7 @@
 import { watch } from 'vue';
 import SpotifyWebApi from 'spotify-web-api-node';
 
-import type { SpotifyQueue, SpotifyState } from '@/types/spotify';
+import type { SpotifyQueue, SpotifyState } from '@/types/spotify/state';
 
 import {
   spotifyAccessToken,

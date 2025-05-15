@@ -1,46 +1,18 @@
-export function isSpotifyConnectEvent(data: SpotifyEvent): data is SpotifyConnectEvent {
-  return (data as SpotifyConnectEvent).headers?.['Spotify-Connection-Id'] !== undefined;
-}
+import {SpotifyEvent, SpotifyEventType, SpotifyGenricEvent} from "@/types/spotify/shared";
 
 export function isSpotifyMessageEvent(data: SpotifyEvent): data is SpotifyMessageEvent {
-  return (data as SpotifyMessageEvent).payloads !== undefined && data.uri == 'wss://event';
+  return (data as SpotifyMessageEvent).uri == 'wss://event';
 }
 
-export enum SpotifyEventType {
-  PLAYER_STATE_CHANGED = 'PLAYER_STATE_CHANGED',
-}
+export interface SpotifyMessageEvent extends SpotifyGenricEvent<SpotifyMessageEventPayload> {}
 
-export interface SpotifyConnectEvent {
-  headers: SpotifyConnectHeaders;
-  method: string;
-  type: string;
-  uri: string;
-}
-
-export interface SpotifyConnectHeaders {
-  'Spotify-Connection-Id': string;
-}
-
-export interface SpotifyMessageEvent {
-  headers: SpotifyHeaders;
-  payloads: SpotifyPayload[];
-  type: string;
-  uri: string;
-}
-
-export type SpotifyEvent = SpotifyConnectEvent | SpotifyMessageEvent;
-
-export interface SpotifyHeaders {
-  'content-type': string;
-}
-
-export interface SpotifyPayload {
+export interface SpotifyMessageEventPayload {
   events: SpotifyEventElement[];
 }
 
 export interface SpotifyEventElement {
   source: string;
-  type: string;
+  type: SpotifyEventType.PLAYER_STATE_CHANGED;
   uri: null;
   href: string;
   event: SpotifyEventEvent;
@@ -196,32 +168,3 @@ export interface SpotifyExternalIDS {
 }
 
 export interface LinkedFrom {}
-
-export interface SpotifyMe {
-  country: string;
-  display_name: string;
-  email: string;
-  explicit_content: SpotifyExplicitContent;
-  external_urls: SpotifyExternalUrls;
-  followers: SpotifyFollowers;
-  href: string;
-  id: string;
-  images: SpotifyImage[];
-  product: string;
-  type: string;
-  uri: string;
-}
-
-export interface SpotifyExplicitContent {
-  filter_enabled: boolean;
-  filter_locked: boolean;
-}
-
-export interface SpotifyExternalUrls {
-  spotify: string;
-}
-
-export interface SpotifyFollowers {
-  href: null;
-  total: number;
-}

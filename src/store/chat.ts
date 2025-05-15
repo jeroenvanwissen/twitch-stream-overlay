@@ -1,55 +1,10 @@
 import { ref, watch } from 'vue';
-import { HelixChatBadgeSet, type HelixChatBadgeVersion } from '@twurple/api';
-
-import { MessageNode } from '@/lib/twitch/messageParser';
-import type { Pronoun } from '@/lib/twitch/getUserData';
-
-import { chatAnimationDuration, chatShowDuration } from '@/store/config';
+import { HelixChatBadgeSet } from '@twurple/api';
 import { useLocalStorage } from '@vueuse/core';
 
-export interface Message {
-  channelId: string;
-  date: Date;
-  id: string;
-  emoteOffsets: Map<string, string[]>;
-  isCheer: boolean;
-  isFirst: boolean;
-  isHighlight: boolean;
-  isRedemption: boolean;
-  isReply: boolean;
-  isReturningChatter: boolean;
-  message: MessageNode;
-  parentMessageId: string | null;
-  parentMessageText: string | null;
-  rewardId: string | null;
-  userInfo: {
-    avatarUrl?: string;
-    badgeInfo: Map<string, string>;
-    badges: HelixChatBadgeVersion[];
-    color: string;
-    displayName: string;
-    id: string;
-    isArtist: boolean;
-    isBroadcaster: boolean;
-    isFounder: boolean;
-    isMod: boolean;
-    isSubscriber: boolean;
-    isVip: boolean;
-    userId: string;
-    userName: string;
-    userType?: string;
-    pronoun?: Pronoun | null;
-  };
-  animationState?: 'entering' | 'active' | 'leaving';
-}
+import type { ChatPermissions, Message } from '@/types/chat';
 
-export interface ChatPermissions {
-  userName: string;
-  ALLOWED_TAGS: string[];
-  ALLOWED_ATTR: string[];
-  FORBID_TAGS: string[];
-  FORBID_ATTR: string[];
-}
+import { chatAnimationDuration, chatShowDuration } from '@/store/config';
 
 export const chatBadges = ref<HelixChatBadgeSet[]>([]);
 export const chatMessageQueue = ref<Message[]>([]);

@@ -1,14 +1,8 @@
 import DOMPurify from 'dompurify';
-import { ChatPermissions, whitelistedUsers } from '@/store/chat';
 
-export interface MessageNode {
-  type: string;
-  id: string;
-  classes?: string[];
-  children?: MessageNode[];
-  text?: string;
-  attribs?: Record<string, string>;
-}
+import type { ChatPermissions, MessageNode } from '@/types/chat';
+
+import { whitelistedUsers } from '@/store/chat';
 
 const parseHTML = (html: string): DocumentFragment => {
   const parser = new DOMParser();
