@@ -8,17 +8,17 @@ import { TwitchAccessTokenScope } from '@/lib/twitch/authScopes';
 export const clientId = import.meta.env.VITE_TWITCH_CLIENT_ID;
 export const clientSecret = import.meta.env.VITE_TWITCH_CLIENT_SECRET;
 
-export const accessToken = useLocalStorage('accessToken', import.meta.env.VITE_TWITCH_CLIENT_ACCESS_TOKEN);
-export const refreshToken = useLocalStorage('refreshToken', import.meta.env.VITE_TWITCH_CLIENT_REFRESH_TOKEN);
-export const expiresIn = useLocalStorage('expiresIn', 0);
-export const obtainmentTimestamp = useLocalStorage('obtainmentTimestamp', 0);
+export const accessToken = useLocalStorage('twitchAccessToken', import.meta.env.VITE_TWITCH_CLIENT_ACCESS_TOKEN);
+export const refreshToken = useLocalStorage('twitchRefreshToken', import.meta.env.VITE_TWITCH_CLIENT_REFRESH_TOKEN);
+export const expiresIn = useLocalStorage('twitchExpiresIn', 0);
+export const obtainmentTimestamp = useLocalStorage('twitchObtainmentTimestamp', 0);
 export const userId = ref<string>('');
 export const user = ref<HelixUser>();
 
-export const botAccessToken = useLocalStorage('botAccessToken', import.meta.env.VITE_TWITCH_BOT_ACCESS_TOKEN);
-export const botRefreshToken = useLocalStorage('botRefreshToken', import.meta.env.VITE_TWITCH_BOT_REFRESH_TOKEN);
-export const botExpiresIn = useLocalStorage('botExpiresIn', 0);
-export const botObtainmentTimestamp = useLocalStorage('botObtainmentTimestamp', 0);
+export const botAccessToken = useLocalStorage('twitchBotAccessToken', import.meta.env.VITE_TWITCH_BOT_ACCESS_TOKEN);
+export const botRefreshToken = useLocalStorage('twitchBotRefreshToken', import.meta.env.VITE_TWITCH_BOT_REFRESH_TOKEN);
+export const botExpiresIn = useLocalStorage('twitchBotExpiresIn', 0);
+export const botObtainmentTimestamp = useLocalStorage('twitchBotObtainmentTimestamp', 0);
 export const botUserId = ref<string>('');
 export const botUser = ref<HelixUser>();
 

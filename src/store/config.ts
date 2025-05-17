@@ -1,5 +1,6 @@
 import { ref, type VNodeRef, watch } from 'vue';
 import type { HelixUser } from '@twurple/api';
+import {useLocalStorage} from "@vueuse/core";
 
 export const badgeTransitionDuration = ref(2);
 export const badgeOpenDuration = ref(10);
@@ -14,7 +15,7 @@ export const latestFollower = ref<HelixUser>();
 export const textQueue: string[] = [];
 
 // add whitespace to not underflow the text
-export const texts = ref(['Stoney_Eagle', 'NoMercy TV', 'The Effortless Encoder', 'https://nomercy.tv']);
+export const texts = useLocalStorage('texts',JSON.parse(import.meta.env.VITE_BADGE_TEXTS) as string[]);
 
 export const extension = ref<VNodeRef>();
 export const badge = ref<VNodeRef>();
