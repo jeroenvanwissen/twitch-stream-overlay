@@ -15,6 +15,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
 import { usePomodoroStore } from '../store/pomodoro'
+import { socketInstance } from '../store/socket'
 
 const store = usePomodoroStore()
 
@@ -23,6 +24,15 @@ let timer: number
 onMounted(() => {
   timer = window.setInterval(() => {
     store.tick()
+    socketInstance.value.connection!.send(
+      JSON.stringify({
+        event: 'matrixPomo',
+        data: {
+          timeleft: store.state.value.timeRemaining,
+          session: store.state.value.isFocusMode ? 'focus' : 'break'
+        }
+      })
+    )
   }, 1000)
 })
 

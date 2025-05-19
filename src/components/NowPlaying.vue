@@ -29,7 +29,7 @@ const updateNowPlaying = async () => {
 
 onMounted(async () => {
   await updateNowPlaying()
-  refreshInterval.value = setInterval(updateNowPlaying, 5000)
+  refreshInterval.value = setInterval(updateNowPlaying, 10000)
 })
 
 onUnmounted(() => {

@@ -26,7 +26,7 @@ const updateQueue = async () => {
 
 onMounted(async () => {
   await updateQueue()
-  refreshInterval.value = setInterval(updateQueue, 5000)
+  refreshInterval.value = setInterval(updateQueue, 10000)
 })
 
 onUnmounted(() => {

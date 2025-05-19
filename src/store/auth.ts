@@ -31,6 +31,7 @@ export const spotifyAccessToken = useLocalStorage('spotifyAccessToken', import.m
 export const spotifyRefreshToken = useLocalStorage('spotifyRefreshToken', import.meta.env.VITE_SPOTIFY_REFRESH_TOKEN)
 export const spotifyExpiresIn = useLocalStorage('spotifyExpiresIn', 0)
 export const spotifyObtainmentTimestamp = useLocalStorage('spotifyObtainmentTimestamp', 0)
+export const spotifyExpiresAt = useLocalStorage('spotifyExpiresAt', Date.now())
 
 export const scopes: TwitchAccessTokenScope[] = [
   TwitchAccessTokenScope.ChatRead,
