@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue';
 
-import type { SpotifyCurrentlyPlaying, SpotifyState } from '@/types/spotify/state';
+import type { SpotifyState } from '@/types/spotify/state';
+import {SpotifyCurrentlyPlaying} from "@/types/spotify/queue";
 
 const me = ref<SpotifyApi.CurrentUsersProfileResponse>(<SpotifyApi.CurrentUsersProfileResponse>{});
 export const spotifyMe = computed(() => me.value);

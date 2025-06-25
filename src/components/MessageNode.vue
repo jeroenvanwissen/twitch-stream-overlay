@@ -25,7 +25,7 @@ defineProps({
       <MessageNode :node="child" />
     </template>
   </span>
-  <p v-else-if="node.type == 'p'" :id="node.id" class="text-md leading-none font-medium" :class="node.classes"
+  <p v-else-if="node.type == 'p'" :id="node.id" class="text-[1.1rem] leading-7 font-medium" :class="node.classes"
     v-bind="node.attribs">
     {{ node.text }}
   </p>
@@ -34,10 +34,8 @@ defineProps({
       <MessageNode :node="child" />
     </template>
   </div>
-  <img v-else-if="node.type == 'emote'" :id="node.id" class="size-6" :class="node.classes" v-bind="node.attribs" alt=""
-    src="" />
-  <img v-else-if="node.type == 'img'" :id="node.id" class="h-6" :class="node.classes" v-bind="node.attribs" alt=""
-    src="" />
+  <img v-else-if="node.type == 'emote'" :id="node.id" class="size-7 mx-1" :class="node.classes" v-bind="node.attribs" alt="" />
+  <img v-else-if="node.type == 'img'" :id="node.id" class="h-7" :class="node.classes" v-bind="node.attribs" alt="" />
   <marquee v-else-if="node.type == 'marquee'" :id="node.id" :class="node.classes" v-bind="node.attribs">
     <template v-for="child in node.children ?? []" :id="child.id">
       <MessageNode :node="child" />

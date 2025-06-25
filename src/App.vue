@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import '@/lib/twitch/authClient';
 import '@/lib/spotify/spotifyClient';
 import '@/lib/spotify/spotifySocketClient';
@@ -15,6 +15,11 @@ import NowPlaying from '@/components/NowPlaying.vue';
 const chatWindow = ref<HTMLDivElement>();
 const mainWindow = ref<HTMLDivElement>();
 
+// onMounted(async () => {
+//
+//   const { bot } = await import('@/lib/twitch/bot');
+// });
+
 </script>
 
 <template>
@@ -22,7 +27,7 @@ const mainWindow = ref<HTMLDivElement>();
     <Badge v-if="botUser" />
 
     <div ref="mainWindow" class="relative flex flex-col w-available h-available justify-center -ml-6 mr-[5%]">
-      <NextInQueue v-if="user && spotifyVisible" />
+<!--      <NextInQueue v-if="user && spotifyVisible" />-->
       <NowPlaying v-if="user && spotifyVisible" />
     </div>
 

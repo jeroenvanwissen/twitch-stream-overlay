@@ -1,3 +1,4 @@
+import {watch} from "vue";
 import {type SpotifyEvent, SpotifyEventType} from "@/types/spotify/shared";
 import { isSpotifyConnectEvent } from "@/types/spotify/connect";
 import { isSpotifyMessageEvent } from '@/types/spotify/state';
@@ -5,9 +6,10 @@ import { isSpotifyMessageEvent } from '@/types/spotify/state';
 import { spotifyClient } from '@/lib/spotify/spotifyClient';
 import { DiscordClient } from '@/lib/discord/discordClient';
 
-import { spotifyAccessToken } from '@/store/auth';
-import { setSpotifyState } from '@/store/spotify';
+import {spotifyAccessToken, spotifyUserId} from '@/store/auth';
+import {setSpotifyState, spotifyState} from '@/store/spotify';
 import {isSpotifyBroadcastEvent} from "@/types/spotify/broadcast";
+import {isSpotifyLikeEvent, SpotifyLikePayload} from "@/types/spotify/like";
 
 class SpotifySocketClient {
   private socket: WebSocket | null = null;
@@ -47,6 +49,7 @@ class SpotifySocketClient {
 
     this.socket.onmessage = async (event: MessageEvent) => {
       const data = JSON.parse(event.data) as SpotifyEvent;
+      // console.log(data);
       if (data.type !== 'message') return;
 
       if (isSpotifyConnectEvent(data)) {
@@ -63,6 +66,27 @@ class SpotifySocketClient {
               setSpotifyState(event.event.state);
             }
           }
+        }
+      }
+      else if (isSpotifyLikeEvent(data)) {
+        try {
+          for (const payloadString of data.payloads) {
+            const payload = JSON.parse(payloadString) as SpotifyLikePayload;
+
+            const likedItems = payload.items.filter(item => item.type === 'track' && !item.removed);
+
+            if (likedItems.length > 0) {
+              const currentTrackId = spotifyState.value?.item?.id;
+              if (currentTrackId && likedItems.some(item => item.identifier === currentTrackId)) {
+                setSpotifyState({
+                  ...spotifyState.value,
+                  is_liked: true
+                });
+              }
+            }
+          }
+        } catch (error) {
+
         }
       }
     };

@@ -1,7 +1,8 @@
 import { watch } from 'vue';
 import SpotifyWebApi from 'spotify-web-api-node';
 
-import type { SpotifyQueue, SpotifyState } from '@/types/spotify/state';
+import type { SpotifyState } from '@/types/spotify/state';
+import type {SpotifyQueue} from "@/types/spotify/queue";
 
 import {
   spotifyAccessToken,
@@ -68,8 +69,6 @@ class SpotifyClient {
   }
 
   private async refreshToken() {
-    if (this.attempts >= this.maxAttempts) return false; // prevent infinite loop
-
     // return if will not expire within 5 minutes
     if (Date.now() <= spotifyExpiresAt.value - 300000) return;
 
@@ -105,16 +104,18 @@ class SpotifyClient {
     }
   }
 
-  public async addToQueue(trackUrl: string): Promise<boolean> {
-    if (this.attempts >= this.maxAttempts) return false;
+  public async addToQueue(trackUrl: string) {
     try {
       await this.refreshToken();
 
       const trackId = trackUrl.split('/').pop()?.split('?')[0];
       if (!trackId) throw new Error('Invalid Spotify URL');
 
+      const track = await this.spotifyApi.getTrack(trackId);
+
       await this.spotifyApi.addToQueue(`spotify:track:${trackId}`);
-      return true;
+
+      return track;
     } catch (error) {
       this.attempts += 1;
       console.error('Error adding track to queue:', error);
@@ -159,7 +160,6 @@ class SpotifyClient {
   }
 
   public async addToPlaylist(trackUri: string): Promise<boolean> {
-    if (this.attempts >= this.maxAttempts) return false;
     try {
       await this.refreshToken();
 

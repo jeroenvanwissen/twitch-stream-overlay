@@ -8,6 +8,7 @@ import { TwitchClient } from '@/lib/twitch/twitchClient';
 import { botUser, botUserId, user } from '@/store/auth';
 import { latestSubscriber, messageNow } from '@/store/config';
 
+console.log('Creating bot client for', user.value!.name);
 const bot = new Bot({
   authProvider: botAuthProvider,
   channels: [user.value!.name, 'aaoa_'],

@@ -6,8 +6,8 @@ export const badgeTransitionDuration = ref(2);
 export const badgeOpenDuration = ref(10);
 export const badgeClosedDuration = ref(10);
 
-export const chatShowDuration = ref(12);
-export const chatAnimationDuration = ref(0.5);
+export const chatShowDuration = ref(30);
+export const chatAnimationDuration = ref(0.75);
 
 export const latestSubscriber = ref<HelixUser>();
 export const latestFollower = ref<HelixUser>();

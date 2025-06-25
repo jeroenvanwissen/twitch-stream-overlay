@@ -22,35 +22,35 @@ onMounted(() => {
         'flex flex-col message-container mt-3',
         message.animationState
       ]">
-        <div class="relative pt-3">
-          <div class="shine-wrapper -mt-6 relative z-10 overflow-hidden banner-animate">
-            <div class="relative flex flex-row bg-theme-700 rounded-lg gap-1 h-6 px-2 py-1 items-center pr-12" :style="{
+        <div class="relative pt-3" :style="{
               '--color-300': `hsl(from ${message.userInfo.color} h calc(s * .30) l)`,
               '--color-500': `hsl(from ${message.userInfo.color} h calc(s * .50) l)`,
               '--color-700': `hsl(from ${message.userInfo.color} h s l)`,
             }">
+          <div class="shine-wrapper -mt-6 relative z-10 overflow-hidden banner-animate">
+            <div class="relative flex flex-row bg-theme-700 rounded-lg gap-1 h-8 px-2 items-center pr-12">
               <template v-for="badge in message.userInfo.badges">
-                <img :src="badge.getImageUrl(2)" alt="userImage" class="size-4" />
+                <img :src="badge.getImageUrl(2)" alt="userImage" class="size-5" />
               </template>
 
-              <span class="text-white font-bold text-base self-start leading-none my-auto">
+              <span class="text-white font-bold text-lg self-start leading-none my-auto">
                 {{ message.userInfo.displayName }}
               </span>
               <span v-if="message.userInfo.pronoun"
-                class="text-white text-xs font-semibold font-mono mb-0.5 ml-0.5 leading-none my-auto whitespace-nowrap">
+                class="text-white text-sm font-semibold font-mono ml-0.5 translate-y-0.5 leading-none my-auto whitespace-nowrap">
                 ({{ message.userInfo.pronoun.subject }}/{{ message.userInfo.pronoun.object }})
               </span>
             </div>
           </div>
 
           <div
-            class="absolute size-10 -right-1 -top-5 rounded-full overflow-hidden bg-black z-20 avatar-animate border border-theme-700">
+            class="absolute size-14 -right-1 -top-5 rounded-full overflow-hidden bg-black z-20 avatar-animate border border-theme-700">
             <img class="size-available object-cover" :src="message.userInfo.avatarUrl" alt="profile picture" />
           </div>
         </div>
 
         <div class="flex flex-row p-3 bg-neutral-900 rounded-lg -mt-3 -ml-4 mr-4 pt-5 message-bubble">
-          <div class="message-content opacity-0 text-sm">
+          <div class="message-content opacity-0">
             <MessageNode :node="message.message" />
           </div>
         </div>

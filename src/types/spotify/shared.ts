@@ -1,6 +1,7 @@
 import {SpotifyConnectEvent} from "@/types/spotify/connect";
 import {SpotifyBroadcastEvent} from "@/types/spotify/broadcast";
 import {SpotifyMessageEvent} from "@/types/spotify/state";
+import {SpotifyLikeEvent} from "@/types/spotify/like";
 
 export enum SpotifyEventType {
     PLAYER_STATE_CHANGED = 'PLAYER_STATE_CHANGED',
@@ -8,7 +9,7 @@ export enum SpotifyEventType {
     PUT = 'PUT',
 }
 
-export type SpotifyEvent = SpotifyConnectEvent | SpotifyBroadcastEvent | SpotifyMessageEvent;
+export type SpotifyEvent = SpotifyConnectEvent | SpotifyBroadcastEvent | SpotifyMessageEvent | SpotifyLikeEvent;
 
 export interface SpotifyGenricEvent<T> {
     headers: SpotifyHeaders;
