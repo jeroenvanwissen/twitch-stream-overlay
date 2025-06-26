@@ -1,31 +1,25 @@
-import {Command} from "@/types/chat";
+import type { Command } from '@/types/chat';
 
-import followage from './followage';
-import shoutout from './shoutout';
-import song from './song';
-import unwhitelist from './unwhitelist';
-import whitelist from './whitelist';
-import commands from "./commands";
-import command from "./command";
-
-const cmds: Command[] = [
-    command,
-    commands,
-    followage,
-    shoutout,
-    song,
-    unwhitelist,
-    whitelist,
-];
-
-cmds.forEach(command => {
-    command.init();
+const commandFiles = import.meta.glob('./*.ts', {
+	import: 'default',
+	eager: true,
 });
 
-export const allCommands = cmds;
+const commands: Command[] = [];
 
-export const broadcasterCommands = cmds.filter(command => command.permission === 'broadcaster');
-export const moderatorCommands = cmds.filter(command => command.permission === 'moderator');
-export const vipCommands = cmds.filter(command => command.permission === 'vip');
-export const subscriberCommands = cmds.filter(command => command.permission === 'subscriber');
-export const everyoneCommands = cmds.filter(command => command.permission === 'everyone');
+Object.entries(commandFiles)
+	.forEach((page) => {
+		commands.push(page[1] as Command);
+	});
+
+commands.forEach((command) => {
+	command.init();
+});
+
+export const allCommands = commands;
+
+export const broadcasterCommands = commands.filter(command => command.permission === 'broadcaster');
+export const moderatorCommands = commands.filter(command => command.permission === 'moderator');
+export const vipCommands = commands.filter(command => command.permission === 'vip');
+export const subscriberCommands = commands.filter(command => command.permission === 'subscriber');
+export const everyoneCommands = commands.filter(command => command.permission === 'everyone');

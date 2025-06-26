@@ -9,29 +9,30 @@
  *   - `prependTo`: A function that prepends the element to a parent element and returns the element.
  *   - `get`: A function that returns the element.
  */
-export const createElement = <K extends keyof HTMLElementTagNameMap>(type: K, id: string, unique?: boolean) => {
-  let el: HTMLElementTagNameMap[K];
+export function createElement<K extends keyof HTMLElementTagNameMap>(type: K, id: string, unique?: boolean) {
+	let el: HTMLElementTagNameMap[K];
 
-  if (unique) {
-    el = (document.getElementById(id) ?? document.createElement(type)) as HTMLElementTagNameMap[K];
-  } else {
-    el = document.createElement(type);
-  }
-  el.id = id;
+	if (unique) {
+		el = (document.getElementById(id) ?? document.createElement(type)) as HTMLElementTagNameMap[K];
+	}
+	else {
+		el = document.createElement(type);
+	}
+	el.id = id;
 
-  return {
-    addClasses: (names: string[]) => addClasses(el, names),
-    appendTo: <T extends Element>(parent: T) => {
-      parent.appendChild(el);
-      return el;
-    },
-    prependTo: <T extends Element>(parent: T) => {
-      parent.prepend(el);
-      return el;
-    },
-    get: () => el,
-  };
-};
+	return {
+		addClasses: (names: string[]) => addClasses(el, names),
+		appendTo: <T extends Element>(parent: T) => {
+			parent.appendChild(el);
+			return el;
+		},
+		prependTo: <T extends Element>(parent: T) => {
+			parent.prepend(el);
+			return el;
+		},
+		get: () => el,
+	};
+}
 
 /**
  * Adds the specified CSS class names to the given element's class list.
@@ -44,20 +45,20 @@ export const createElement = <K extends keyof HTMLElementTagNameMap>(type: K, id
  *   - `get`: A function that returns the element.
  * @template T - The type of the element to add the classes to.
  */
-export const addClasses = <T extends Element>(el: T, names: string[]) => {
-  for (const name of names.filter(Boolean)) {
-    el.classList?.add(name.trim());
-  }
-  return {
-    appendTo: <T extends Element>(parent: T) => {
-      parent.appendChild(el);
-      return el;
-    },
-    prependTo: <T extends Element>(parent: T) => {
-      parent.prepend(el);
-      return el;
-    },
-    addClasses: (names: string[]) => addClasses(el, names),
-    get: () => el,
-  };
-};
+export function addClasses<T extends Element>(el: T, names: string[]) {
+	for (const name of names.filter(Boolean)) {
+		el.classList?.add(name.trim());
+	}
+	return {
+		appendTo: <T extends Element>(parent: T) => {
+			parent.appendChild(el);
+			return el;
+		},
+		prependTo: <T extends Element>(parent: T) => {
+			parent.prepend(el);
+			return el;
+		},
+		addClasses: (names: string[]) => addClasses(el, names),
+		get: () => el,
+	};
+}

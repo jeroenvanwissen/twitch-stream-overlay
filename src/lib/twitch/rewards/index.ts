@@ -1,10 +1,10 @@
-import {Reward} from "@/types/chat";
-import songReward from "./songReward";
+import type { Reward } from '@/types/chat';
+import songReward from './songReward';
 
 export const rewards: Reward[] = [
-    songReward
+	songReward,
 ];
 
-rewards.forEach(reward => {
-    reward.init();
+rewards.forEach((reward) => {
+	reward.init();
 });

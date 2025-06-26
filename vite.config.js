@@ -23,6 +23,10 @@ export default defineConfig({
   },
   build: {
     outDir: 'docs',
+    target: 'ES2022',
+    emptyOutDir: true,
+    minify: 'esbuild',
+    cssMinify: 'esbuild',
   },
   server: {
     open: true,

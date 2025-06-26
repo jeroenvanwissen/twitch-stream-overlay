@@ -23,9 +23,9 @@ export const botUserId = ref<string>('');
 export const botUser = ref<HelixUser>();
 
 // Spotify Auth
-export const spotifyClientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-export const spotifyClientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
-export const spotifyRedirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+export const spotifyClientId = useLocalStorage('spotifyClientId', import.meta.env.VITE_SPOTIFY_CLIENT_ID);
+export const spotifyClientSecret = useLocalStorage('spotifyClientSecret', import.meta.env.VITE_SPOTIFY_CLIENT_SECRET);
+export const spotifyRedirectUri = useLocalStorage('spotifyRedirectUri', import.meta.env.VITE_SPOTIFY_REDIRECT_URI);
 
 export const spotifyAccessToken = useLocalStorage('spotifyAccessToken', import.meta.env.VITE_SPOTIFY_OAUTH_TOKEN);
 export const spotifyRefreshToken = useLocalStorage('spotifyRefreshToken', import.meta.env.VITE_SPOTIFY_REFRESH_TOKEN);
@@ -43,24 +43,24 @@ export const spotifyUserId = useLocalStorage('spotifyUserId', import.meta.env.VI
 export const spotifySocketAccessToken = useLocalStorage('spotifySocketAccessToken', import.meta.env.VITE_SPOTIFY_SOCKET_ACCESS_TOKEN);
 
 export const scopes: TwitchAccessTokenScope[] = [
-  TwitchAccessTokenScope.ChatRead,
-  TwitchAccessTokenScope.ChatEdit,
-  TwitchAccessTokenScope.ChannelReadSubscriptions,
-  TwitchAccessTokenScope.UserReadSubscriptions,
-  TwitchAccessTokenScope.ModerationRead,
-  TwitchAccessTokenScope.ModeratorManageBannedUsers,
-  TwitchAccessTokenScope.ModeratorManageBlockedTerms,
-  TwitchAccessTokenScope.ModeratorManageChatMessages,
-  TwitchAccessTokenScope.ModeratorManageChatSettings,
-  TwitchAccessTokenScope.ModeratorManageShoutouts,
-  TwitchAccessTokenScope.ModeratorReadShoutouts,
-  TwitchAccessTokenScope.ModeratorManageWarnings,
-  TwitchAccessTokenScope.ModeratorReadChatMessages,
-  TwitchAccessTokenScope.ModeratorReadChatSettings,
-  TwitchAccessTokenScope.ModeratorReadChatters,
-  TwitchAccessTokenScope.ModeratorManageAnnouncements,
-  TwitchAccessTokenScope.ModeratorReadFollowers,
-  TwitchAccessTokenScope.ModeratorReadWarnings,
-  TwitchAccessTokenScope.UserReadModeratedChannels,
-  TwitchAccessTokenScope.UserWriteChat,
+	TwitchAccessTokenScope.ChatRead,
+	TwitchAccessTokenScope.ChatEdit,
+	TwitchAccessTokenScope.ChannelReadSubscriptions,
+	TwitchAccessTokenScope.UserReadSubscriptions,
+	TwitchAccessTokenScope.ModerationRead,
+	TwitchAccessTokenScope.ModeratorManageBannedUsers,
+	TwitchAccessTokenScope.ModeratorManageBlockedTerms,
+	TwitchAccessTokenScope.ModeratorManageChatMessages,
+	TwitchAccessTokenScope.ModeratorManageChatSettings,
+	TwitchAccessTokenScope.ModeratorManageShoutouts,
+	TwitchAccessTokenScope.ModeratorReadShoutouts,
+	TwitchAccessTokenScope.ModeratorManageWarnings,
+	TwitchAccessTokenScope.ModeratorReadChatMessages,
+	TwitchAccessTokenScope.ModeratorReadChatSettings,
+	TwitchAccessTokenScope.ModeratorReadChatters,
+	TwitchAccessTokenScope.ModeratorManageAnnouncements,
+	TwitchAccessTokenScope.ModeratorReadFollowers,
+	TwitchAccessTokenScope.ModeratorReadWarnings,
+	TwitchAccessTokenScope.UserReadModeratedChannels,
+	TwitchAccessTokenScope.UserWriteChat,
 ];
