@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Twitch Authentication</title>
+</head>
+<body>
+  <h2>Authenticating with Twitch...</h2>
+  <script>
+    window.onload = function() {
+      const fragment = new URLSearchParams(window.location.hash.substr(1));
+      const accessToken = fragment.get('access_token');
+
+      if (accessToken) {
+        window.opener.postMessage(
+          { type: 'twitch-token', token: accessToken },
+          window.location.origin
+        );
+      } else {
+        console.error('No access token found in URL');
+      }
+
+      setTimeout(() => window.close(), 1000);
+    };
+  </script>
+</body>
+</html>

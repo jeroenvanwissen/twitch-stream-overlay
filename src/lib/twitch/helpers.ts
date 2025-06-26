@@ -11,7 +11,9 @@ export function hasMinLevel(userInfo: Message['userInfo'], minLevel: string) {
 		return true;
 	if (minLevel === 'subscriber' && (userInfo.isSubscriber || userInfo.isMod || userInfo.isVip))
 		return true;
-	return true;
+	if (minLevel === 'everyone')
+		return true;
+	return false;
 }
 
 export function useLocalStorage<T>(key: string, initialValue: T[] = []) {

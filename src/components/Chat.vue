@@ -46,7 +46,7 @@ onMounted(() => {
 					</div>
 
 					<div
-						class="absolute size-14 -right-1 -top-5 rounded-full overflow-hidden bg-black z-20 avatar-animate border border-theme-700"
+						class="absolute size-14 -right-1 -top-5 rounded-full overflow-hidden bg-theme-700 z-20 avatar-animate border border-theme-700"
 					>
 						<img class="size-available object-cover" :src="message.userInfo.avatarUrl" alt="profile picture">
 					</div>

@@ -86,7 +86,9 @@ function createUUID() {
 				|| ''
 			).toLowerCase(),
 			engine: this.parser.getEngine().name ?? '',
+			// @ts-ignore
 			arch: navigator.platform,
+			// @ts-ignore
 			vendor: navigator.vendor,
 			// @ts-ignore
 			name: navigator.userAgentData?.brands?.[navigator.userAgentData?.brands.length - 2]?.brand

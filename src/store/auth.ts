@@ -42,6 +42,13 @@ export const discordSessionToken = useLocalStorage('discordSessionToken', import
 export const spotifyUserId = useLocalStorage('spotifyUserId', import.meta.env.VITE_SPOTIFy_USER_ID);
 export const spotifySocketAccessToken = useLocalStorage('spotifySocketAccessToken', import.meta.env.VITE_SPOTIFY_SOCKET_ACCESS_TOKEN);
 
+export const isConnectedToOBS = useLocalStorage('isConnectedToOBS', false);
+export const obsAddress = useLocalStorage('obsAddress', 'localhost:4455');
+export const obsPassword = useLocalStorage('obsPassword', '');
+
+export const twitchAuthenticated = useLocalStorage('twitchAuthenticated', false);
+export const spotifyAuthenticated = useLocalStorage('spotifyAuthenticated', false);
+
 export const scopes: TwitchAccessTokenScope[] = [
 	TwitchAccessTokenScope.ChatRead,
 	TwitchAccessTokenScope.ChatEdit,

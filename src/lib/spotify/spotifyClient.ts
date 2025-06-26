@@ -275,6 +275,90 @@ class SpotifyClient {
 			console.error('Error initializing connection:', error);
 		}
 	}
+
+	public async nextTrack(): Promise<void> {
+		if (this.attempts >= this.maxAttempts)
+			return;
+		try {
+			await this.refreshToken();
+
+			await this.spotifyApi.skipToNext();
+		}
+		catch (error) {
+			this.attempts += 1;
+			console.error('Error skipping to next track:', error);
+		}
+	}
+
+	public async previousTrack(): Promise<void> {
+		if (this.attempts >= this.maxAttempts)
+			return;
+		try {
+			await this.refreshToken();
+
+			await this.spotifyApi.skipToPrevious();
+		}
+		catch (error) {
+			this.attempts += 1;
+			console.error('Error skipping to previous track:', error);
+		}
+	}
+
+	public async pausePlayback(): Promise<void> {
+		if (this.attempts >= this.maxAttempts)
+			return;
+		try {
+			await this.refreshToken();
+
+			await this.spotifyApi.pause();
+		}
+		catch (error) {
+			this.attempts += 1;
+			console.error('Error pausing playback:', error);
+		}
+	}
+
+	public async resumePlayback(): Promise<void> {
+		if (this.attempts >= this.maxAttempts)
+			return;
+		try {
+			await this.refreshToken();
+
+			await this.spotifyApi.play();
+		}
+		catch (error) {
+			this.attempts += 1;
+			console.error('Error resuming playback:', error);
+		}
+	}
+
+	public async volume(volume?: number): Promise<void | number> {
+		if (this.attempts >= this.maxAttempts)
+			return;
+		try {
+			await this.refreshToken();
+
+			if (volume === undefined) {
+				const state = await this.getPlayerState();
+				if (state && state.device && state.device.volume_percent !== undefined) {
+					volume = state.device.volume_percent;
+				}
+				else {
+					throw new Error('Volume not specified and no current player state found');
+				}
+			}
+
+			if (volume < 0 || volume > 100) {
+				throw new Error('Volume must be between 0 and 100');
+			}
+
+			await this.spotifyApi.setVolume(volume);
+		}
+		catch (error) {
+			this.attempts += 1;
+			console.error('Error setting volume:', error);
+		}
+	}
 }
 
 export const spotifyClient = SpotifyClient.getInstance();

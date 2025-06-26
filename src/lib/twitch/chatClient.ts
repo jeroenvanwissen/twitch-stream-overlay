@@ -36,7 +36,7 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 	const userData = (await getUserData(channel, msg.userInfo.userId))!;
 
 	if (userData.badges.length === 0) {
-		const channelBadges = await getChannelBadges(channel, msg.userInfo.userId);
+		const channelBadges = await getChannelBadges(channel);
 
 		userData.badges
             = msg.userInfo.badges.size > 0

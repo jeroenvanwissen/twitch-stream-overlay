@@ -50,7 +50,7 @@ bot.onTimeout(async ({ broadcasterName, userName, duration }) => {
 });
 
 bot.onLeave(async ({ broadcasterName, userName }) => {
-	await console.log(broadcasterName, `Goodbye, @${userName}!`);
+	console.log(broadcasterName, `Goodbye, @${userName}!`);
 });
 
 bot.onRaid(async ({ broadcasterName, userName, viewerCount }) => {
