@@ -16,8 +16,8 @@ import {
 	moderatorCommands,
 	subscriberCommands,
 	vipCommands,
-} from '@/lib/twitch/commands';
-import { rewards } from '@/lib/twitch/rewards';
+} from '@/commands';
+import { rewards } from '@/rewards';
 import { hasMinLevel } from '@/lib/twitch/helpers';
 
 export const chatClient = new ChatClient({
@@ -69,7 +69,7 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 			avatarUrl: userData.profile_image_url,
 			badgeInfo: msg.userInfo.badgeInfo,
 			badges: userData.badges,
-			color: msg.userInfo.color ?? '#FFFFFF',
+			color: msg.userInfo.color || '#FF000',
 			displayName: msg.userInfo.displayName,
 			id: msg.userInfo.userId,
 			isArtist: msg.userInfo.isArtist,

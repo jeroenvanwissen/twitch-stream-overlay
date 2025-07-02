@@ -1,6 +1,6 @@
 import type { Command as BaseCommand, Message } from '@/types/chat';
 import chatClient from '@/lib/twitch/chatClient';
-import { allCommands } from '@/lib/twitch/commands/index';
+import { allCommands } from './index';
 
 interface CommandWithMethods extends BaseCommand<{ commands: BaseCommand[] }> {
 	add: (channel: string, broadcasterId: string, commandName: string, params: string[], message: Message) => Promise<void>;

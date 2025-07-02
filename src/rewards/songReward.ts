@@ -15,7 +15,7 @@ const reward: Reward = {
 		}
 
 		const trackId = message.plainText.includes('spotify.com/track/')
-			? message.plainText.split('/').pop()?.split('?')[0]
+			? message.plainText.split('/').pop()?.split('?').at(0)
 			: message.plainText.split(':').pop();
 
 		const queueResponse = await spotifyClient.addToQueue(trackId!);

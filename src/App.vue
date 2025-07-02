@@ -10,14 +10,10 @@ import { spotifyVisible } from '@/store/visibility';
 import Badge from '@/components/Badge.vue';
 import Chat from '@/components/Chat.vue';
 import NowPlaying from '@/components/NowPlaying.vue';
+import VideoElement from '@/components/VideoElement.vue';
 
 const chatWindow = ref<HTMLDivElement>();
 const mainWindow = ref<HTMLDivElement>();
-
-// onMounted(async () => {
-//
-//   const { bot } = await import('@/lib/twitch/bot');
-// });
 </script>
 
 <template>
@@ -27,6 +23,8 @@ const mainWindow = ref<HTMLDivElement>();
 		<div ref="mainWindow" class="relative flex flex-col w-available h-available justify-center -ml-6 mr-[5%]">
 			<!--      <NextInQueue v-if="user && spotifyVisible" /> -->
 			<NowPlaying v-if="user && spotifyVisible" />
+
+			<VideoElement />
 		</div>
 
 		<div ref="chatWindow" class="absolute top-0 right-0 flex flex-col w-1/4 h-available mb-16 mr-6 mt-6">
@@ -35,4 +33,5 @@ const mainWindow = ref<HTMLDivElement>();
 	</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

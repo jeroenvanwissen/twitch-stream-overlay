@@ -38,8 +38,8 @@ export class DiscordClient {
 			const response = await axios.post(
 				`${this.API_ENDPOINT}/oauth2/token`,
 				{
-					client_id: discordClientId,
-					client_secret: discordClientSecret,
+					client_id: discordClientId.value,
+					client_secret: discordClientSecret.value,
 					grant_type: 'client_credentials',
 					scope: 'identify connections',
 				},

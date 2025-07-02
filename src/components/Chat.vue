@@ -23,9 +23,9 @@ onMounted(() => {
 			]"
 			>
 				<div class="relative pt-3" :style="{
-					'--color-300': `hsl(from ${message.userInfo.color} h calc(s * .30) l)`,
-					'--color-500': `hsl(from ${message.userInfo.color} h calc(s * .50) l)`,
-					'--color-700': `hsl(from ${message.userInfo.color} h s l)`,
+					'--color-300': `hsl(from ${message.userInfo.color || '#FF0000'} h calc(s * .30) l)`,
+					'--color-500': `hsl(from ${message.userInfo.color || '#FF0000'} h calc(s * .50) l)`,
+					'--color-700': `hsl(from ${message.userInfo.color || '#FF0000'} h s l)`,
 				}"
 				>
 					<div class="shine-wrapper -mt-6 relative z-10 overflow-hidden banner-animate">
