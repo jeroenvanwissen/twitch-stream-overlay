@@ -1,9 +1,16 @@
 import type { Reward } from '@/types/chat';
-import songReward from './songReward';
 
-export const rewards: Reward[] = [
-	songReward,
-];
+const rewardFiles = import.meta.glob('./*.ts', {
+	import: 'default',
+	eager: true,
+});
+
+export const rewards: Reward[] = [];
+
+Object.entries(rewardFiles)
+	.forEach((page) => {
+		rewards.push(page[1] as Reward);
+	});
 
 rewards.forEach((reward) => {
 	reward.init();

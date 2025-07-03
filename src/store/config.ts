@@ -10,6 +10,11 @@ export const badgeClosedDuration = ref(10);
 export const chatShowDuration = ref(30);
 export const chatAnimationDuration = ref(0.75);
 
+// Lists rotation configuration
+export const listsShowDuration = ref(15); // Duration in seconds each list is shown
+export const listsSwitchDelay = ref(60); // Delay in seconds between lists
+export const listsAnimationDuration = ref(0.75); // Duration of animation in seconds
+
 export const latestSubscriber = ref<HelixUser>();
 export const latestFollower = ref<HelixUser>();
 
@@ -21,6 +26,8 @@ export const texts = useLocalStorage('texts', JSON.parse(import.meta.env.VITE_BA
 export const extension = ref<VNodeRef>();
 export const badge = ref<VNodeRef>();
 export const span = ref<VNodeRef>();
+
+export const defaultColor = '#f72264';
 
 let intercept = false;
 let interval: NodeJS.Timeout;

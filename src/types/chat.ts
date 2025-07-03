@@ -30,7 +30,7 @@ export interface Message {
 		avatarUrl?: string;
 		badgeInfo: Map<string, string>;
 		badges: HelixChatBadgeVersion[];
-		color: string;
+		color: string | undefined;
 		displayName: string;
 		id: string;
 		isArtist: boolean;
@@ -74,7 +74,7 @@ export interface Command<T extends Record<string, unknown> = Record<string, unkn
 export interface Reward<T extends Record<string, unknown> = Record<string, unknown>> {
 	name: string;
 	id: string;
-	storage: Record<string, any>;
+	storage: T;
 	init: () => void;
 	callback: ({ channel, broadcasterId, message }: {
 		channel: string;
@@ -82,4 +82,11 @@ export interface Reward<T extends Record<string, unknown> = Record<string, unkno
 		message: Message;
 	}) => void;
 	[key: string]: T[keyof T] | string | Record<string, any> | (() => void) | Function;
+}
+
+export interface UserRecord {
+	userId: string;
+	displayName: string;
+	count: number;
+	dates: Date[];
 }

@@ -11,7 +11,7 @@ import { latestSubscriber, messageNow } from '@/store/config';
 console.log('Creating bot client for', user.value!.name);
 const bot = new Bot({
 	authProvider: botAuthProvider,
-	channels: [user.value!.name, 'aaoa_'],
+	channels: [user.value!.name!],
 	debug: false,
 	chatClientOptions: {
 		requestMembershipEvents: true,
@@ -25,7 +25,7 @@ TwitchClient.botApiClient!.users.getUserByName(import.meta.env.VITE_TWITCH_BOT_N
 
 bot.onConnect(async () => {
 	// await apiClient.moderation.deleteChatMessages(user.value!.id);
-	await bot.say(user.value!.name, 'Chatbot connected!');
+	await bot.say(user.value!.name!, 'Chatbot connected!');
 });
 
 bot.onJoin(async ({ broadcasterName, userName }) => {

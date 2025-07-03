@@ -4,25 +4,26 @@ export default antfu({
 	vue: {
 		a11y: true,
 		overrides: {
-			'vue/no-deprecated-slot-attribute': 'off',
-			'vue/multi-word-component-names': 'off',
-			'vue/no-reserved-component-names': 'off',
 			'prefer-regex-literals': 'off',
 			'regexp/prefer-w': 'off',
-			'vue/first-attribute-linebreak': 'off',
 			'vue-a11y/no-distracting-elements': 'off',
+			'vue/first-attribute-linebreak': 'off',
+			'vue/multi-word-component-names': 'off',
+			'vue/no-deprecated-slot-attribute': 'off',
+			'vue/no-reserved-component-names': 'off',
 		},
 	},
 	typescript: {
 		overrides: {
 			'@typescript-eslint/ban-ts-comment': 'off',
-			'perfectionist/sort-imports': 'off',
+			'antfu/no-top-level-await': 'off',
 			'antfu/top-level-function': 'off',
 			'no-async-promise-executor': 'off',
 			'no-console': 'off',
-			'ts/no-unsafe-function-type': 'off',
 			'node/prefer-global/process': 'off',
-			'antfu/no-top-level-await': 'off',
+			'perfectionist/sort-imports': 'off',
+			'ts/consistent-type-definitions': 'off',
+			'ts/no-unsafe-function-type': 'off',
 		},
 	},
 	js: {

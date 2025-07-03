@@ -22,7 +22,7 @@ import { hasMinLevel } from '@/lib/twitch/helpers';
 
 export const chatClient = new ChatClient({
 	authProvider: TwitchClient.botAuthProvider!,
-	channels: [user.value!.name],
+	channels: [user.value!.name!],
 	authIntents: scopes,
 	isAlwaysMod: true,
 });
@@ -69,7 +69,7 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 			avatarUrl: userData.profile_image_url,
 			badgeInfo: msg.userInfo.badgeInfo,
 			badges: userData.badges,
-			color: msg.userInfo.color || '#FF000',
+			color: msg.userInfo.color,
 			displayName: msg.userInfo.displayName,
 			id: msg.userInfo.userId,
 			isArtist: msg.userInfo.isArtist,

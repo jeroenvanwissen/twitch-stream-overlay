@@ -64,7 +64,19 @@ authProvider
 		userId.value = userData;
 
 		const { apiClient, getGlobalBadges } = await import('@/lib/twitch/apiClient');
-		user.value = (await apiClient?.users.getUserById(userData))!;
+		const u = (await apiClient?.users.getUserById(userData));
+		user.value = {
+			id: u!.id!,
+			name: u!.name!,
+			displayName: u!.displayName!,
+			description: u!.description!,
+			profilePictureUrl: u!.profilePictureUrl!,
+			offlinePlaceholderUrl: u!.offlinePlaceholderUrl!,
+			broadcasterType: u!.broadcasterType!,
+			type: u!.type!,
+			creationDate: u!.creationDate!,
+		};
+
 		const { chatClient } = await import('@/lib/twitch/chatClient');
 		chatClient.connect();
 		const globalBadgeSet = await getGlobalBadges();
@@ -84,8 +96,20 @@ botAuthProvider
 	)
 	.then(async (userData) => {
 		botUserId.value = userData;
+
 		const { apiClient } = await import('@/lib/twitch/apiClient');
-		botUser.value = (await apiClient?.users.getUserById(userData))!;
+		const u = (await apiClient?.users.getUserById(userData));
+		botUser.value = {
+			id: u!.id!,
+			name: u!.name!,
+			displayName: u!.displayName!,
+			description: u!.description!,
+			profilePictureUrl: u!.profilePictureUrl!,
+			offlinePlaceholderUrl: u!.offlinePlaceholderUrl!,
+			broadcasterType: u!.broadcasterType!,
+			type: u!.type!,
+			creationDate: u!.creationDate!,
+		};
 	});
 
 TwitchClient.initialize(authProvider, botAuthProvider);

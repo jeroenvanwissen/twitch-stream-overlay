@@ -63,4 +63,14 @@ export async function shoutoutUser(broadcaster: string, user: string) {
 	});
 }
 
+export async function getChannelRewards(broadcaster: string) {
+	const broadcasterId = (await getUserIdFromName(broadcaster));
+	if (!broadcasterId) {
+		return [];
+	}
+	return await apiClient.asUser(userId.value, (ctx) => {
+		return ctx.channelPoints.getCustomRewards(broadcasterId);
+	});
+}
+
 export default apiClient;

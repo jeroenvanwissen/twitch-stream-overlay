@@ -1,0 +1,16 @@
+import type { Reward } from '@/types/chat';
+
+interface {{titleName}}Storage extends Record<string, unknown> {
+}
+
+const reward: Reward<{{titleName}}Storage> = {
+	name: '{{name}}',
+	id: '{{id}}',
+	storage: {},
+	init: () => {},
+	callback: async ({ channel, broadcasterId, message }) => {
+		console.log(`Reward "{{name}}" triggered by ${message.userInfo.displayName} in channel ${channel}`);
+	},
+};
+
+export default reward;

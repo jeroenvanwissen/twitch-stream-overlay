@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { chatMessageQueue } from '@/store/chat';
 import MessageNode from '@/components/MessageNode.vue';
+import { defaultColor } from '@/store/config';
 
 const chatBox = ref<HTMLElement | null>(null);
-
-onMounted(() => {
-	console.log('Chat mounted');
-	setTimeout(() => {
-		console.log('Connecting chat client');
-	}, 1000);
-});
 </script>
 
 <template>
@@ -23,9 +17,9 @@ onMounted(() => {
 			]"
 			>
 				<div class="relative pt-3" :style="{
-					'--color-300': `hsl(from ${message.userInfo.color || '#FF0000'} h calc(s * .30) l)`,
-					'--color-500': `hsl(from ${message.userInfo.color || '#FF0000'} h calc(s * .50) l)`,
-					'--color-700': `hsl(from ${message.userInfo.color || '#FF0000'} h s l)`,
+					'--color-300': `hsl(from ${message.userInfo.color || defaultColor} h calc(s * .30) l)`,
+					'--color-500': `hsl(from ${message.userInfo.color || defaultColor} h calc(s * .50) l)`,
+					'--color-700': `hsl(from ${message.userInfo.color || defaultColor} h s l)`,
 				}"
 				>
 					<div class="shine-wrapper -mt-6 relative z-10 overflow-hidden banner-animate">

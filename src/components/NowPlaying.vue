@@ -134,9 +134,9 @@ watch(spotifyState, (newValue) => {
 .now-playing-card #background {
 	background-image: linear-gradient(
 		45deg,
-		hsl(from var(--color-300) h s l),
-		hsl(from var(--color-600) h s l) 15%,
-		hsl(from var(--color-900) h s l)
+		hsl(from var(--color-300) h s l / 50%),
+		hsl(from var(--color-600) h s l / 50%) 15%,
+		hsl(from var(--color-900) h s l / 90%)
 	);
 	z-index: -9;
 }

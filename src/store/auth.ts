@@ -1,4 +1,3 @@
-import { ref } from 'vue';
 import type { HelixUser } from '@twurple/api';
 import { useLocalStorage } from '@vueuse/core';
 
@@ -12,15 +11,15 @@ export const accessToken = useLocalStorage('twitchAccessToken', import.meta.env.
 export const refreshToken = useLocalStorage('twitchRefreshToken', import.meta.env.VITE_TWITCH_CLIENT_REFRESH_TOKEN);
 export const expiresIn = useLocalStorage('twitchExpiresIn', 0);
 export const obtainmentTimestamp = useLocalStorage('twitchObtainmentTimestamp', 0);
-export const userId = ref<string>('');
-export const user = ref<HelixUser>();
+export const userId = useLocalStorage<string>('userId', '');
+export const user = useLocalStorage<Partial<HelixUser>>('user', <Partial<HelixUser>>{});
 
 export const botAccessToken = useLocalStorage('twitchBotAccessToken', import.meta.env.VITE_TWITCH_BOT_ACCESS_TOKEN);
 export const botRefreshToken = useLocalStorage('twitchBotRefreshToken', import.meta.env.VITE_TWITCH_BOT_REFRESH_TOKEN);
 export const botExpiresIn = useLocalStorage('twitchBotExpiresIn', 0);
 export const botObtainmentTimestamp = useLocalStorage('twitchBotObtainmentTimestamp', 0);
-export const botUserId = ref<string>('');
-export const botUser = ref<HelixUser>();
+export const botUserId = useLocalStorage<string>('botUserId', '');
+export const botUser = useLocalStorage<Partial<HelixUser>>('botUser', <Partial<HelixUser>>{});
 
 // Spotify Auth
 export const spotifyClientId = useLocalStorage('spotifyClientId', import.meta.env.VITE_SPOTIFY_CLIENT_ID);
