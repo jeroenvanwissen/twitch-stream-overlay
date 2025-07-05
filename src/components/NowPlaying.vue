@@ -103,7 +103,7 @@ watch(spotifyState, (newValue) => {
 				</div>
 				<div :key="spotifyState.item?.name" class="flex flex-col w-available flex-1 overflow-hidden">
 					<div class="text-theme-100 font-bold text-xl overflow-hidden transition-all duration-300">
-						<Marquee :text="spotifyState.item?.name" />
+						<Marquee :key="spotifyState.item?.name" :text="spotifyState.item?.name" />
 					</div>
 					<div class="text-theme-100 text-lg transition-all duration-300 text-semibold">
 						{{ spotifyState.item?.artists.at(0)?.name }}

@@ -21,12 +21,15 @@ const reward: Reward<{ hydrates: Ref<UserRecord[]> }> = {
 			}
 		}
 		else {
-			reward.storage.hydrates.value.push({
-				userId: message.userInfo.userId,
-				displayName: message.userInfo.displayName,
-				count: 1,
-				dates: [new Date()],
-			});
+			reward.storage.hydrates.value = [
+				...hydrates.filter(hydrate => hydrate.userId !== message.userInfo.userId),
+				{
+					userId: message.userInfo.userId,
+					displayName: message.userInfo.displayName,
+					count: 1,
+					dates: [new Date()],
+				},
+			];
 		}
 	},
 };

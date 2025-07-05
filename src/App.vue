@@ -31,7 +31,7 @@ const mainWindow = ref<HTMLDivElement>();
 			<div class="absolute top-[calc(100%/8)] flex flex-col gap-4 ml-6">
 				<ListsRotator v-if="botUser && user" direction="left" />
 				<!-- dev only, lists all reward ids -->
-				<!-- <RewardsList v-if="botUser && user" /> -->
+				<!--				<RewardsList v-if="botUser && user" /> -->
 			</div>
 		</div>
 

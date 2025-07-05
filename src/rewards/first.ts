@@ -19,17 +19,22 @@ const reward: Reward<{ firsts: Ref<UserRecord[]> }> = {
 				user.count += 1;
 				user.dates.push(new Date());
 				reward.storage.firsts.value = [...firsts];
+
 				const text = `@${message.userInfo.displayName} you have been first ${user.count} times!, the last time was on ${user.dates.at(-1)?.toLocaleDateString()}`;
 				await chatClient.say(channel, text);
 			}
 		}
 		else {
-			reward.storage.firsts.value.push({
-				userId: message.userInfo.userId,
-				displayName: message.userInfo.displayName,
-				count: 1,
-				dates: [new Date()],
-			});
+			reward.storage.firsts.value = [
+				...firsts.filter(first => first.userId !== message.userInfo.userId),
+				{
+					userId: message.userInfo.userId,
+					displayName: message.userInfo.displayName,
+					count: 1,
+					dates: [new Date()],
+				},
+			];
+
 			const text = `@${message.userInfo.displayName} this the first time you been first!`;
 			await chatClient.say(channel, text);
 		}

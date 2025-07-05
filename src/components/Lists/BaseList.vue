@@ -17,7 +17,7 @@ defineProps({
 		</h2>
 		<ul>
 			<template v-for="item in items" :key="item.name">
-				<li class="ml-6 py-1 list-disc font-semibold">
+				<li class="ml-6 py-1 list-disc font-semibold whitespace-nowrap">
 					<slot name="item" :item="item as typeof items[number]" />
 				</li>
 			</template>
