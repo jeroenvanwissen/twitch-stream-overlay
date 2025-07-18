@@ -6,7 +6,7 @@ import chatClient from '@/lib/twitch/chatClient';
 import { replaceTemplatePlaceholders } from '@/lib/utils';
 import type { Ref } from 'vue';
 
-interface UnlurkStorage extends Record<string, unknown> {
+interface UnlurkStorage {
 	lurkers: Ref<string[], string[]>;
 	snarkyReplies: string[];
 	notLurkingUnlurkReplies: string[];

@@ -1,12 +1,12 @@
 import type { Ref } from 'vue';
+import { useLocalStorage } from '@vueuse/core';
 
 import type { Command } from '@/types/chat';
 
 import chatClient from '@/lib/twitch/chatClient';
 import { replaceTemplatePlaceholders } from '@/lib/utils';
-import { useLocalStorage } from '@vueuse/core';
 
-interface LurkStorage extends Record<string, unknown> {
+interface LurkStorage {
 	lurkers: Ref<string[], string[]>;
 	snarkyLurkReplies: string[];
 	alreadyLurkingReplies: string[];
