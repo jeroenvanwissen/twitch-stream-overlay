@@ -15,36 +15,3 @@ export function hasMinLevel(userInfo: Message['userInfo'], minLevel: string) {
 		return true;
 	return false;
 }
-
-export function useLocalStorage<T>(key: string, initialValue: T[] = []) {
-	const items: T[] = initialValue;
-
-	const init = () => {
-		const itemsString = localStorage.getItem(key);
-		if (itemsString) {
-			const arr = JSON.parse(itemsString);
-			if (Array.isArray(arr)) {
-				items.push(...arr);
-			}
-		}
-	};
-
-	const save = () => {
-		localStorage.setItem(key, JSON.stringify(items));
-	};
-
-	const clear = () => {
-		localStorage.removeItem(key);
-	};
-
-	const get = () => {
-		return items;
-	};
-
-	return {
-		init,
-		save,
-		clear,
-		get,
-	};
-}

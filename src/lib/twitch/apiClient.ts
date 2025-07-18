@@ -2,15 +2,15 @@ import { ApiClient } from '@twurple/api';
 
 import { userId } from '@/store/auth';
 import { authProvider } from './authClient';
+import type { HelixChatAnnouncementColor } from '@twurple/api/lib/interfaces/endpoints/chat.external';
 
 export const apiClient = new ApiClient({
 	authProvider,
 });
 
 export async function getUserIdFromName(name: string) {
-	return await apiClient.users.getUserByName(name).then((user) => {
-		return user?.id;
-	});
+	const user = await apiClient.users.getUserByName(name);
+	return user!.id;
 }
 
 // location.reload();
@@ -70,6 +70,16 @@ export async function getChannelRewards(broadcaster: string) {
 	}
 	return await apiClient.asUser(userId.value, (ctx) => {
 		return ctx.channelPoints.getCustomRewards(broadcasterId);
+	});
+}
+
+export async function announce(broadcaster: string, message: string, color: HelixChatAnnouncementColor = 'primary') {
+	const broadcasterId = (await getUserIdFromName(broadcaster));
+	if (!broadcasterId) {
+		return [];
+	}
+	return await apiClient.asUser(userId.value, (ctx) => {
+		return ctx.chat.sendAnnouncement(broadcasterId, { message, color });
 	});
 }
 
