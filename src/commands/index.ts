@@ -16,6 +16,8 @@ commands.forEach((command) => {
 	command.init();
 });
 
+console.log('Commands loaded:', commands);
+
 export const allCommands = commands;
 
 export const broadcasterCommands = commands.filter(command => command.permission === 'broadcaster');

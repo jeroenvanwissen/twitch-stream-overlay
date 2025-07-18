@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { chatMessageQueue } from '@/store/chat';
 import MessageNode from '@/components/MessageNode.vue';
 import { defaultColor } from '@/store/config';
+// import { setupEventSub } from '@/lib/twitch/bot';
 
 const chatBox = ref<HTMLElement | null>(null);
+
+onMounted(() => {
+	// setupEventSub();
+});
 </script>
 
 <template>
@@ -47,7 +52,7 @@ const chatBox = ref<HTMLElement | null>(null);
 				</div>
 
 				<div class="flex flex-row p-3 bg-neutral-900 rounded-lg -mt-3 -ml-4 mr-4 pt-5 message-bubble">
-					<div class="message-content opacity-0">
+					<div class="message-content text-[1.1rem] leading-7 font-medium max-h-96 overflow-clip text-white w-available">
 						<MessageNode :node="message.message" />
 					</div>
 				</div>

@@ -24,7 +24,7 @@ const command: Command = {
 
 		await playBlerp('nomercy');
 
-		await spotifyClient.volume(70!);
+		await spotifyClient.volume(70);
 	},
 };
 

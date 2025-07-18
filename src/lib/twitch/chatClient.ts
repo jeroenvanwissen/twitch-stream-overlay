@@ -19,6 +19,7 @@ import {
 } from '@/commands';
 import { rewards } from '@/rewards';
 import { hasMinLevel } from '@/lib/twitch/helpers';
+import { useLocalStorage } from '@vueuse/core';
 
 export const chatClient = new ChatClient({
 	authProvider: TwitchClient.botAuthProvider!,
@@ -28,11 +29,34 @@ export const chatClient = new ChatClient({
 });
 export default chatClient;
 
+interface WelcomeUser {
+	name: string;
+	hasSpoken: boolean;
+}
+
+const welcomeUsers = ref<WelcomeUser[]>([]);
+const knownUsers = useLocalStorage<string[]>('knownUsers', []);
+
 const messageHandler = ref();
 
 messageHandler.value?.unbind();
 
 messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => {
+	if (!welcomeUsers.value.some(u => u.name === user)) {
+		welcomeUsers.value = [...welcomeUsers.value, { name: user, hasSpoken: true }];
+
+		if (knownUsers.value.includes(user)) {
+			await chatClient.say(channel, `Welcome back @${msg.userInfo.displayName}!`);
+		}
+		else {
+			await chatClient.say(channel, `Welcome @${msg.userInfo.displayName}!`);
+		}
+	}
+
+	if (!knownUsers.value.includes(user)) {
+		knownUsers.value = [...knownUsers.value, user];
+	}
+
 	const userData = (await getUserData(channel, msg.userInfo.userId))!;
 
 	if (userData.badges.length === 0) {
@@ -87,6 +111,8 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 		plainText: text,
 	};
 
+	console.log(toRaw(message));
+
 	if (message.isRedemption && message.rewardId) {
 		await handleReward(channel, user, text, message);
 	}
@@ -94,13 +120,13 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 		await handleCommand(channel, user, text, message);
 	}
 	else {
-		console.log(toRaw(message));
 		await addMessage(message);
 	}
 });
 
 async function handleReward(channel: string, user: string, text: string, message: Message) {
 	const broadcasterId = (await getUserIdFromName(channel))!;
+	console.log('handleReward', channel, user, text, message);
 
 	rewards
 		.filter(c => c.id === message.rewardId)
@@ -169,4 +195,8 @@ chatClient.onSubGift(async (channel, recipientName, subInfo) => {
 	else {
 		await chatClient.say(channel, `Thanks ${gifterName} for gifting a sub to ${recipientName}!`);
 	}
+});
+
+chatClient.onMessage(async (channel, user, text, msg) => {
+
 });

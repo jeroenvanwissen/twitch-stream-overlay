@@ -40,7 +40,7 @@ export async function getUserData(channel: string, id: string) {
 	if (!userData)
 		return null;
 
-	const pronoun = await fetch(`https://api.pronouns.alejo.io/v1/users/${userData.name}`)
+	const pronoun = await fetch(`https://api.pronouns.alejo.io/v1/users/${userData.name}?v=${Math.random()}`)
 		.then(res => res.json())
 		.then((res) => {
 			return toRaw(pronouns.value[res.pronoun_id]);

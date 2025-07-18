@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 // Controls which list is currently visible
-const showCommands = ref(true);
+const showCommands = ref(false);
 
 // Animation states
 const isVisible = ref(false);

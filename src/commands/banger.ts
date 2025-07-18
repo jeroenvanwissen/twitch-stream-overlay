@@ -16,9 +16,9 @@ const command: Command = {
 		}
 
 		const currentPlayback = await spotifyClient.getCurrentlyPlaying();
-		if (currentPlayback && currentPlayback.item && 'artists' in currentPlayback.item) {
+		if (currentPlayback?.item) {
 			await spotifyClient.addToPlaylist(currentPlayback.item.uri);
-			const text = `Added ${currentPlayback.item.name} by ${currentPlayback.item.artists[0].name} to the bangers playlist!`;
+			const text = `Added ${currentPlayback.item.name} to the bangers playlist!`;
 
 			await chatClient.say(channel, text);
 		}

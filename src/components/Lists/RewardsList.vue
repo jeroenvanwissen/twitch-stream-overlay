@@ -14,6 +14,7 @@ watch(user, async (value) => {
 		return;
 
 	rewards.value = await getChannelRewards(value.name);
+	console.log('Rewards loaded:', rewards.value);
 });
 </script>
 

@@ -19,8 +19,6 @@ const command: CommandWithMethods = {
 	},
 	init() {
 		this.load();
-
-		console.log('Commands loaded:', this.storage.commands);
 	},
 	async callback({ channel, broadcasterId, commandName, params, message }) {
 		if (allCommands.some(cmd => cmd.name === params.at(1))) {

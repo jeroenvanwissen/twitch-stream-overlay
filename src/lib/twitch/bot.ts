@@ -1,12 +1,27 @@
+import { ref } from 'vue';
 import { Bot } from '@twurple/easy-bot';
+import { useLocalStorage } from '@vueuse/core';
 
 import { secondsToDuration } from '@/lib/dateTime';
 import apiClient, { getUserIdFromName, shoutoutUser } from '@/lib/twitch/apiClient';
 import { botAuthProvider } from '@/lib/twitch/authClient';
 import chatClient from '@/lib/twitch/chatClient';
 import { TwitchClient } from '@/lib/twitch/twitchClient';
-import { botUser, botUserId, user } from '@/store/auth';
+import { accessToken, botUser, botUserId, clientId, user } from '@/store/auth';
 import { latestSubscriber, messageNow } from '@/store/config';
+
+import type { EventSubChannelAdBreakBeginEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelAdBreakBeginEvent';
+import { EventSubWsListener } from '@twurple/eventsub-ws';
+import { ApiClient } from '@twurple/api';
+import { StaticAuthProvider } from '@twurple/auth';
+
+interface WelcomeUser {
+	name: string;
+	hasSpoken: boolean;
+}
+
+const welcomeUsers = ref<WelcomeUser[]>([]);
+const knownUsers = useLocalStorage<string[]>('knownUsers', []);
 
 console.log('Creating bot client for', user.value!.name);
 const bot = new Bot({
@@ -28,8 +43,31 @@ bot.onConnect(async () => {
 	await bot.say(user.value!.name!, 'Chatbot connected!');
 });
 
-bot.onJoin(async ({ broadcasterName, userName }) => {
-	await console.log(broadcasterName, `Welcome, @${userName}!`);
+bot.onJoin(async ({ userName }) => {
+	console.log(`${userName} has joined the channel!`);
+
+	if (!welcomeUsers.value.some(u => u.name === userName)) {
+		welcomeUsers.value.push({ name: userName, hasSpoken: false });
+	}
+});
+bot.onLeave(async ({ userName }) => {
+	console.log(`${userName} has left the channel!`);
+});
+
+bot.onMessage(async ({ broadcasterName, userName }) => {
+	if (!welcomeUsers.value.some(u => u.name === userName)) {
+		welcomeUsers.value = welcomeUsers.value.filter(u => u.name !== userName);
+		if (knownUsers.value.includes(userName)) {
+			await bot.say(broadcasterName, `Welcome back @${userName}!`);
+		}
+		else {
+			await bot.say(broadcasterName, `Welcome @${userName}!`);
+		}
+	}
+
+	if (!knownUsers.value.includes(userName)) {
+		knownUsers.value = [...knownUsers.value, userName];
+	}
 });
 
 bot.onSubGift(async ({ broadcasterName, gifterName, userName }) => {
@@ -47,10 +85,6 @@ bot.onTimeout(async ({ broadcasterName, userName, duration }) => {
 			duration! > 3600 ? secondsToDuration(duration!) : duration
 		} seconds!`,
 	);
-});
-
-bot.onLeave(async ({ broadcasterName, userName }) => {
-	console.log(broadcasterName, `Goodbye, @${userName}!`);
 });
 
 bot.onRaid(async ({ broadcasterName, userName, viewerCount }) => {
@@ -91,4 +125,19 @@ bot.onGiftPaidUpgrade(async ({ broadcasterName, gifterDisplayName, userName }) =
 	await bot.say(broadcasterName, `Thanks @${userName} for continuing the gift sub gifted by ${gifterDisplayName}!`);
 });
 
-// location.reload();
+async function handleAdBreakStart(data: EventSubChannelAdBreakBeginEvent) {
+	console.log('Ad break started:', data);
+	// await bot.say(user.value!.name!, `Ad break started! Duration: ${data.durationSeconds} seconds.`);
+}
+
+export async function setupEventSub() {
+	console.log('Setting up EventSub listener for ad break events...', clientId.value, accessToken.value);
+
+	const authProvider = new StaticAuthProvider(clientId.value, accessToken.value);
+	const apiClient = new ApiClient({ authProvider });
+	const eventSub = new EventSubWsListener({ apiClient });
+
+	eventSub.onChannelAdBreakBegin(user.value!.id!, handleAdBreakStart);
+
+	eventSub.start();
+}

@@ -4,6 +4,8 @@ import type { ChatPermissions, MessageNode } from '@/types/chat';
 
 import { whitelistedUsers } from '@/store/chat';
 
+const httpRegex = /^https?:\/\/(?:www\.)?[-\w@:%.+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-\w()@:%+.~#?&/=]*$/;
+
 function parseHTML(html: string): DocumentFragment {
 	const parser = new DOMParser();
 	const doc = parser.parseFromString(html, 'text/html');
@@ -42,6 +44,7 @@ function elementToMessageNode(element: Element, messageId: string, index: number
 			node.children?.push(elementToMessageNode(child, messageId, childIndex));
 		}
 		else if (child.nodeType === 3 && child.textContent?.trim()) {
+			console.log({ child });
 			// Text node
 			node.children?.push({
 				type: 'p',
@@ -53,6 +56,22 @@ function elementToMessageNode(element: Element, messageId: string, index: number
 	});
 
 	return node;
+}
+
+function createLinkNode(messageId: string, url: string, index: number): MessageNode {
+	return {
+		type: 'a',
+		id: `${messageId}-link-${index}`,
+		classes: ['message-link'],
+		text: url,
+		attribs: {
+			'href': url,
+			'target': '_blank',
+			'rel': 'noopener noreferrer',
+			'data-og-fetch': 'true', // Mark for OG metadata fetching
+		},
+		children: [],
+	};
 }
 
 export default (username: string, messageId: string, message: string, emotes: Map<string, string[]>): MessageNode => {
@@ -71,6 +90,9 @@ export default (username: string, messageId: string, message: string, emotes: Ma
 		children: [],
 	};
 
+	// Track found URLs
+	const foundUrls: string[] = [];
+
 	// Parse HTML elements first
 	const fragment = parseHTML(message);
 	let plainText = '';
@@ -81,16 +103,21 @@ export default (username: string, messageId: string, message: string, emotes: Ma
 			plainText += node.textContent;
 		}
 		else if (node instanceof Element) {
-			// If we have accumulated text, process it first
+			// If we have accumulated text, process it first with link detection
 			if (plainText) {
-				nodes.children?.push({
-					type: 'p',
-					id: `${messageId}-text-${index}`,
-					classes: ['message-text'],
-					text: plainText,
-				});
+				const textNodes = processTextWithLinks(messageId, plainText, index, foundUrls);
+				nodes.children?.push(...textNodes);
 				plainText = '';
 			}
+
+			// Check if this element is an anchor with href
+			if (node.tagName.toLowerCase() === 'a' && node.hasAttribute('href')) {
+				const href = node.getAttribute('href');
+				if (href && httpRegex.test(href)) {
+					foundUrls.push(href);
+				}
+			}
+
 			// Add the allowed element as a MessageNode
 			nodes.children?.push(elementToMessageNode(node, messageId, index));
 		}
@@ -99,23 +126,93 @@ export default (username: string, messageId: string, message: string, emotes: Ma
 		}
 	});
 
-	// Process any remaining text with emotes
-	if (plainText && emotes.size) {
-		// Use existing emote processing logic for the plainText
-		const emoteNodes = processEmotes(messageId, plainText, emotes);
-		nodes.children?.push(...(emoteNodes.children || []));
+	// Process any remaining text with links and emotes
+	if (plainText) {
+		if (emotes.size) {
+			// First process emotes
+			const emoteNodes = processEmotes(messageId, plainText, emotes);
+
+			// Then check for links in each text node of the emote processing result
+			const finalNodes: MessageNode[] = [];
+			emoteNodes.children?.forEach((child, index) => {
+				if (child.type === 'p' && child.text) {
+					// Process text nodes for links
+					finalNodes.push(...processTextWithLinks(messageId, child.text, index, foundUrls));
+				}
+				else {
+					finalNodes.push(child);
+				}
+			});
+
+			nodes.children?.push(...finalNodes);
+		}
+		else {
+			// Just process for links
+			const textNodes = processTextWithLinks(messageId, plainText, 0, foundUrls);
+			nodes.children?.push(...textNodes);
+		}
 	}
-	else if (plainText) {
+
+	// Add OG preview nodes at the end for each found URL
+	foundUrls.forEach((url, index) => {
 		nodes.children?.push({
+			type: 'og-preview',
+			id: `${messageId}-og-preview-${index}`,
+			classes: ['message-og-preview', 'w-full', 'empty:hidden'],
+			attribs: {
+				url,
+			},
+			children: [],
+		});
+	});
+
+	return nodes;
+};
+
+// Update the processTextWithLinks function to track found URLs
+function processTextWithLinks(messageId: string, text: string, index: number, foundUrls: string[]): MessageNode[] {
+	const nodes: MessageNode[] = [];
+	const words = text.split(' ');
+	let currentText = '';
+
+	words.forEach((word, wordIndex) => {
+		if (httpRegex.test(word)) {
+			// If we have accumulated text, add it first
+			if (currentText) {
+				nodes.push({
+					type: 'p',
+					id: `${messageId}-text-${index}-${wordIndex}`,
+					classes: ['message-text'],
+					text: currentText.trim(),
+				});
+				currentText = '';
+			}
+
+			// Add the link node
+			nodes.push(createLinkNode(messageId, word, wordIndex));
+
+			// Track the URL for OG metadata
+			foundUrls.push(word);
+
+			currentText = ' '; // Add space after link
+		}
+		else {
+			currentText += (currentText ? ' ' : '') + word;
+		}
+	});
+
+	// Add any remaining text
+	if (currentText.trim()) {
+		nodes.push({
 			type: 'p',
-			id: `${messageId}-text-final`,
+			id: `${messageId}-text-${index}-final`,
 			classes: ['message-text'],
-			text: plainText,
+			text: currentText.trim(),
 		});
 	}
 
 	return nodes;
-};
+}
 
 // Helper function to process emotes (extracted from original logic)
 function processEmotes(messageId: string, text: string, emotes: Map<string, string[]>): MessageNode {
@@ -178,7 +275,7 @@ function processEmotes(messageId: string, text: string, emotes: Map<string, stri
 	return nodes;
 }
 
-export const ALLOWED_TAGS = ['img', 'br', 'p', 'a', 'marquee', 'div', 'span'];
+export const ALLOWED_TAGS = ['img', 'br', 'p', 'a', 'b', 'u', 'i', 'strong', 'small', 'marquee', 'div', 'span'];
 
 export const ALLOWED_ATTR = ['src', 'href', 'width', 'style'];
 

@@ -4,8 +4,8 @@ import { useLocalStorage } from '@vueuse/core';
 import { TwitchAccessTokenScope } from '@/lib/twitch/authScopes';
 
 // Twitch Client IDs
-export const clientId = import.meta.env.VITE_TWITCH_CLIENT_ID;
-export const clientSecret = import.meta.env.VITE_TWITCH_CLIENT_SECRET;
+export const clientId = useLocalStorage('twitchClientId', import.meta.env.VITE_TWITCH_CLIENT_ID);
+export const clientSecret = useLocalStorage('twitchClientSecret', import.meta.env.VITE_TWITCH_CLIENT_SECRET);
 
 export const accessToken = useLocalStorage('twitchAccessToken', import.meta.env.VITE_TWITCH_CLIENT_ACCESS_TOKEN);
 export const refreshToken = useLocalStorage('twitchRefreshToken', import.meta.env.VITE_TWITCH_CLIENT_REFRESH_TOKEN);
@@ -49,6 +49,7 @@ export const twitchAuthenticated = useLocalStorage('twitchAuthenticated', false)
 export const spotifyAuthenticated = useLocalStorage('spotifyAuthenticated', false);
 
 export const scopes: TwitchAccessTokenScope[] = [
+	TwitchAccessTokenScope.ChannelReadAds,
 	TwitchAccessTokenScope.ChatRead,
 	TwitchAccessTokenScope.ChatEdit,
 	TwitchAccessTokenScope.ChannelReadSubscriptions,

@@ -11,16 +11,16 @@ const command: Command = {
 	storage: {},
 	init: () => {},
 	callback: async ({ channel, params, message }) => {
-		if (params!.length === 0) {
+		if (!params || params.length === 0) {
 			await chatClient.say(channel, `@${message.userInfo.displayName} You need to specify a user to shoutout!`);
 			return;
 		}
 
-		const name = params.at(0)?.replace('@', '');
-		const userId = await getUserIdFromName(name ?? message.userInfo.userName);
+		const name = params.at(0)!.replace('@', '')!.toLowerCase();
+		const userId = await getUserIdFromName(name);
 
 		const permission: ChatPermissions = {
-			userName: message.userInfo.userName,
+			userName: name,
 			ALLOWED_TAGS,
 			ALLOWED_ATTR,
 			FORBID_TAGS,
@@ -40,7 +40,7 @@ const command: Command = {
 
 		if (userId) {
 			whitelistedUsers.value = [
-				...whitelistedUsers.value.filter(user => user.userName !== message.userInfo.userName),
+				...whitelistedUsers.value.filter(user => user.userName !== name),
 				permission,
 			];
 			if (filtered) {

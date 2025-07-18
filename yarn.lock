@@ -1458,6 +1458,15 @@
     klona "^2.0.4"
     tslib "^2.0.3"
 
+"@twurple/common@7.3.0":
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/@twurple/common/-/common-7.3.0.tgz#5821bd20b618b0c8ccb932e114245673b4ccdd47"
+  integrity sha512-BGNniY7PBIohxfpRQ1bsOxUaktZcXZOExq8ojCtnsNBVDlchNEX2fYsere03ZwTLd48XBtxsdaUaeQXbx1aXLw==
+  dependencies:
+    "@d-fischer/shared-utils" "^3.6.1"
+    klona "^2.0.4"
+    tslib "^2.0.3"
+
 "@twurple/easy-bot@^7.2.1":
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/@twurple/easy-bot/-/easy-bot-7.2.1.tgz#abe6c701b3fd6ff01deeaeffcabee9ee7a7b7cdb"
@@ -1497,6 +1506,18 @@
     "@twurple/auth" "7.2.1"
     "@twurple/common" "7.2.1"
     "@twurple/eventsub-base" "7.2.1"
+    tslib "^2.0.3"
+
+"@twurple/pubsub@^7.3.0":
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/@twurple/pubsub/-/pubsub-7.3.0.tgz#33b71440b4e8bc969ef2f00d78806a6b86668862"
+  integrity sha512-HnVolxlS7X3OZGc3A1zpG3Hxh+ACORYsYLTCRvaXcCYdxqNzlp3YDHPiiVrAMk2xayNkjNCF7Ee46axSSsTjqw==
+  dependencies:
+    "@d-fischer/connection" "^9.0.0"
+    "@d-fischer/logger" "^4.2.1"
+    "@d-fischer/shared-utils" "^3.6.1"
+    "@d-fischer/typed-event-emitter" "^3.3.0"
+    "@twurple/common" "7.3.0"
     tslib "^2.0.3"
 
 "@types/chromecast-caf-receiver@^6.0.20":

@@ -178,7 +178,9 @@ class SpotifyClient {
 		try {
 			await this.refreshToken();
 
-			const playlistId = import.meta.env.VITE_SPOTIFY_BANGER_PLAYLIST_URI.split(':').pop();
+			const playlistId = import.meta.env.VITE_SPOTIFY_BANGER_PLAYLIST_URI.includes('open.spotify.com/playlist/')
+				? import.meta.env.VITE_SPOTIFY_BANGER_PLAYLIST_URI.split('/').pop()?.split('?').at(0)
+				: import.meta.env.VITE_SPOTIFY_BANGER_PLAYLIST_URI.split(':').pop();
 			if (!playlistId)
 				throw new Error('Invalid playlist URI');
 

@@ -8,7 +8,7 @@ export const blerps = {
 };
 
 export const video = ref<HTMLVideoElement | null>(null);
-export const hasvideo = ref(false);
+export const hasVideo = ref(false);
 export async function playBlerp(blerp: keyof typeof blerps) {
 	return await new Promise<void>((resolve, reject) => {
 		if (!video.value) {
@@ -25,12 +25,12 @@ export async function playBlerp(blerp: keyof typeof blerps) {
 				return;
 			video.value.removeAttribute('src');
 			videoBite.value = null;
-			hasvideo.value = false;
+			hasVideo.value = false;
 			resolve();
 		});
 
 		video.value.play()
-			.then(() => hasvideo.value = true)
+			.then(() => hasVideo.value = true)
 			.catch((err) => {
 				console.error('Error playing video:', err);
 				reject(err);
