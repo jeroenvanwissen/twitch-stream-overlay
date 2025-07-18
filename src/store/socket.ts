@@ -1,24 +1,27 @@
+import SocketClient from '@/lib/socketClient/SocketClient';
 import { computed, ref, toRaw } from 'vue';
 
-import type SocketClient from '@/lib/socketClient/SocketClient';
-import type { HubConnection } from '@microsoft/signalr';
+interface WebSocketWithDispatch extends WebSocket {
+    on?: (event: string, callback: Function) => void;
+    off?: (event: string, callback: Function) => void;
+}
 
 const si = ref<SocketClient>(<SocketClient>{});
 export const socketInstance = computed(() => si.value);
-export function setSocketInstance(value: SocketClient) {
-	si.value = value;
-}
+export const setSocketInstance = (value: SocketClient) => {
+    si.value = value;
+};
 
-export function useSocket() {
-	return toRaw(si.value.connection) as HubConnection;
-}
+export const useSocket = () => {
+    return toRaw(si.value.connection) as WebSocketWithDispatch;
+};
 
 const castSi = ref<SocketClient>(<SocketClient>{});
 export const castSocketInstance = computed(() => castSi.value);
-export function setCastSocketInstance(value: SocketClient) {
-	castSi.value = value;
-}
+export const setCastSocketInstance = (value: SocketClient) => {
+    castSi.value = value;
+};
 
-export function useCastSocket() {
-	return toRaw(castSi.value.connection) as HubConnection;
-}
+export const useCastSocket = () => {
+    return toRaw(castSi.value.connection) as WebSocketWithDispatch;
+};
