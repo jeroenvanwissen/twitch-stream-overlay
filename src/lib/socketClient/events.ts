@@ -1,3 +1,4 @@
+import { usePomodoroStore } from '@/store/pomodoro'
 import { setVisibility, type ComponentKey } from '@/store/visibility'
 import { ref } from 'vue'
 
@@ -17,34 +18,36 @@ export const connect = (socket?: WebSocketWithDispatch | null) => {
     const { componentName, visible } = e.detail
     onToggleComponent(componentName, visible)
   })
-  //   socket.addEventListener('setComponentVisibility', (e: any) => {
-  //     const { componentName, visible } = e.detail
-  //     onToggleComponent(componentName, visible)
-  //   })
+
+  // This event can be used to trigger visibility on OBS scene changes via automation
+  socket.addEventListener('setComponentVisibility', (e: any) => {
+    const { componentName, visible } = e.detail
+    onToggleComponent(componentName, visible)
+  })
 
   //   socket.addEventListener('addBadgeText', (e: any) => {
   //     const { text } = e.detail
   //     onAddBadgeText(text)
   //   })
 
-  //   socket.addEventListener('pomodoro', (e: any) => {
-  //     const { action } = e.detail
-  //     const pomodoroStore = usePomodoroStore()
+  socket.addEventListener('pomodoro', (e: any) => {
+    const { action } = e.detail
+    const pomodoroStore = usePomodoroStore()
 
-  //     switch (action) {
-  //       case 'start':
-  //         pomodoroStore.start()
-  //         break
-  //       case 'stop':
-  //         pomodoroStore.stop()
-  //         break
-  //       case 'reset':
-  //         pomodoroStore.reset()
-  //         break
-  //       default:
-  //         console.warn('Unknown pomodoro action:', action)
-  //     }
-  //   })
+    switch (action) {
+      case 'start':
+        pomodoroStore.start()
+        break
+      case 'stop':
+        pomodoroStore.stop()
+        break
+      case 'reset':
+        pomodoroStore.reset()
+        break
+      default:
+        console.warn('Unknown pomodoro action:', action)
+    }
+  })
 
   // Maintain compatibility with old code that might use .on
   socket.on = (event: string, callback: Function) => {
