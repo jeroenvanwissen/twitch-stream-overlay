@@ -5,7 +5,7 @@ import { ChatClient } from '@twurple/chat';
 
 import { getUserData } from '@/lib/twitch/getUserData';
 import messageParser from '@/lib/twitch/messageParser';
-import { scopes, user } from '@/store/auth';
+import { botUser, scopes, user } from '@/store/auth';
 import { addMessage, chatBadges } from '@/store/chat';
 
 import { getChannelBadges, getUserIdFromName } from '@/lib/twitch/apiClient';
@@ -42,7 +42,7 @@ const messageHandler = ref();
 messageHandler.value?.unbind();
 
 messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => {
-	if (!welcomeUsers.value.some(u => u.name === user)) {
+	if (!welcomeUsers.value.some(u => u.name === user) && user !== botUser.value?.name && user !== channel) {
 		welcomeUsers.value = [...welcomeUsers.value, { name: user, hasSpoken: true }];
 
 		if (knownUsers.value.includes(user)) {
@@ -197,6 +197,11 @@ chatClient.onSubGift(async (channel, recipientName, subInfo) => {
 	}
 });
 
-chatClient.onMessage(async (channel, user, text, msg) => {
+chatClient.onBan(async (channel) => {
+	await chatClient.say(channel, `Trash has been taken out.`);
+});
 
+chatClient.onConnect(async () => {
+	console.log('Chat client connected');
+	await chatClient.say(user.value!.name!, `${botUser.value.displayName} at your service! stoney90NoMercy`);
 });

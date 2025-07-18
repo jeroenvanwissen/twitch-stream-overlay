@@ -55,7 +55,7 @@ export interface ChatPermissions {
 	FORBID_ATTR: string[];
 }
 
-export interface Command<T extends Record<string, unknown> = Record<string, unknown>> {
+export interface Command<T = Record<string, unknown>> {
 	name: string;
 	permission: 'broadcaster' | 'moderator' | 'vip' | 'subscriber' | 'everyone';
 	type: 'command' | 'event' | 'message';
@@ -68,10 +68,9 @@ export interface Command<T extends Record<string, unknown> = Record<string, unkn
 		params: string[];
 		message: Message;
 	}) => void;
-	[key: string]: T[keyof T] | string | Record<string, any> | (() => void) | Function;
 }
 
-export interface Reward<T extends Record<string, unknown> = Record<string, unknown>> {
+export interface Reward<T = Record<string, unknown>> {
 	name: string;
 	id: string;
 	storage: T;
@@ -81,7 +80,6 @@ export interface Reward<T extends Record<string, unknown> = Record<string, unkno
 		broadcasterId: string;
 		message: Message;
 	}) => void;
-	[key: string]: T[keyof T] | string | Record<string, any> | (() => void) | Function;
 }
 
 export interface UserRecord {

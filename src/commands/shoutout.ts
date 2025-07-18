@@ -1,12 +1,13 @@
 import type { Command } from '@/types/chat';
+
 import chatClient from '@/lib/twitch/chatClient';
 import { announce, apiClient, getUserIdFromName, shoutoutUser } from '@/lib/twitch/apiClient';
 import { replaceTemplatePlaceholders } from '@/lib/utils';
 import { getUserData } from '@/lib/twitch/getUserData';
 
-interface ShoutoutStorage extends Record<string, unknown> {
+interface ShoutoutStorage {
 	template: string;
-	snarkyReplies: string[];
+	snarkyShoutoutReplies: string[];
 }
 
 const command: Command<ShoutoutStorage> = {
