@@ -102,7 +102,7 @@ function getTransitionName() {
 .slide-top-leave-active,
 .slide-bottom-enter-active,
 .slide-bottom-leave-active {
-	transition: all v-bind('`${listsAnimationDuration}s`') cubic-bezier(0.25, 0.46, 0.45, 0.94);
+	transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94);
 	position: absolute;
 	width: 100%;
 	max-width: 100%;

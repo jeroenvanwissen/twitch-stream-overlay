@@ -106,7 +106,7 @@ watch(spotifyState, (newValue) => {
 						<Marquee :key="spotifyState.item?.name" :text="spotifyState.item?.name" />
 					</div>
 					<div class="text-theme-100 text-lg transition-all duration-300 text-semibold">
-						{{ spotifyState.item?.artists.at(0)?.name }}
+						{{ spotifyState.item?.artists?.map(artist => artist.name).join(', ') }}
 					</div>
 					<!--            <div class="text-theme-100 text-md transition-all duration-300"> -->
 					<!--              {{ spotifyState.is_playing ? 'Now Playing' : 'Paused' }} -->
