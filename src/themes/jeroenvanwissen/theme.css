@@ -1,0 +1,14 @@
+:root {
+  --base: 320deg;
+  --color-50: hsl(var(--base), 100%, 95%);
+  --color-100: hsl(var(--base), 100%, 90%);
+  --color-200: hsl(var(--base), 100%, 80%);
+  --color-300: hsl(var(--base), 100%, 70%);
+  --color-400: hsl(var(--base), 100%, 60%);
+  --color-500: hsl(var(--base), 100%, 50%);
+  --color-600: hsl(var(--base), 100%, 40%);
+  --color-700: hsl(var(--base), 100%, 30%);
+  --color-800: hsl(var(--base), 100%, 20%);
+  --color-900: hsl(var(--base), 100%, 10%);
+  --color-950: hsl(var(--base), 100%, 5%);
+}

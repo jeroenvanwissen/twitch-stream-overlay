@@ -1,75 +1,79 @@
-import { ref } from 'vue';
+import { setVisibility, type ComponentKey } from '@/store/visibility'
+import { ref } from 'vue'
 
 interface WebSocketWithDispatch extends WebSocket {
-    on?: (event: string, callback: Function) => void;
-    off?: (event: string, callback: Function) => void;
+  on?: (event: string, callback: Function) => void
+  off?: (event: string, callback: Function) => void
 }
 
 export const connect = (socket?: WebSocketWithDispatch | null) => {
-    if (!socket) return;
+  if (!socket) return
 
-    // Add event listeners for WebSocket
-    socket.addEventListener('open', () => onConnect(socket));
-    socket.addEventListener('close', () => onDisconnect(socket));
+  // Add event listeners for WebSocket
+  socket.addEventListener('open', () => onConnect(socket))
+  socket.addEventListener('close', () => onDisconnect(socket))
 
-    //   socket.addEventListener('toggleComponent', (e: any) => {
-    //     const { componentName, visible } = e.detail
-    //     onToggleComponent(componentName, visible)
-    //   })
+  socket.addEventListener('toggleComponent', (e: any) => {
+    const { componentName, visible } = e.detail
+    onToggleComponent(componentName, visible)
+  })
+  //   socket.addEventListener('setComponentVisibility', (e: any) => {
+  //     const { componentName, visible } = e.detail
+  //     onToggleComponent(componentName, visible)
+  //   })
 
-    //   socket.addEventListener('setComponentVisibility', (e: any) => {
-    //     const { componentName, visible } = e.detail
-    //     onToggleComponent(componentName, visible)
-    //   })
+  //   socket.addEventListener('addBadgeText', (e: any) => {
+  //     const { text } = e.detail
+  //     onAddBadgeText(text)
+  //   })
 
-    //   socket.addEventListener('addBadgeText', (e: any) => {
-    //     const { text } = e.detail
-    //     onAddBadgeText(text)
-    //   })
+  //   socket.addEventListener('pomodoro', (e: any) => {
+  //     const { action } = e.detail
+  //     const pomodoroStore = usePomodoroStore()
 
-    //   socket.addEventListener('pomodoro', (e: any) => {
-    //     const { action } = e.detail
-    //     const pomodoroStore = usePomodoroStore()
+  //     switch (action) {
+  //       case 'start':
+  //         pomodoroStore.start()
+  //         break
+  //       case 'stop':
+  //         pomodoroStore.stop()
+  //         break
+  //       case 'reset':
+  //         pomodoroStore.reset()
+  //         break
+  //       default:
+  //         console.warn('Unknown pomodoro action:', action)
+  //     }
+  //   })
 
-    //     switch (action) {
-    //       case 'start':
-    //         pomodoroStore.start()
-    //         break
-    //       case 'stop':
-    //         pomodoroStore.stop()
-    //         break
-    //       case 'reset':
-    //         pomodoroStore.reset()
-    //         break
-    //       default:
-    //         console.warn('Unknown pomodoro action:', action)
-    //     }
-    //   })
+  // Maintain compatibility with old code that might use .on
+  socket.on = (event: string, callback: Function) => {
+    socket.addEventListener(event, (e: any) => callback(e.detail))
+  }
 
-    // Maintain compatibility with old code that might use .on
-    socket.on = (event: string, callback: Function) => {
-        socket.addEventListener(event, (e: any) => callback(e.detail));
-    };
-
-    socket.off = (event: string, callback: Function) => {
-        socket.removeEventListener(event, (e: any) => callback(e.detail));
-    };
-};
+  socket.off = (event: string, callback: Function) => {
+    socket.removeEventListener(event, (e: any) => callback(e.detail))
+  }
+}
 
 export const disconnect = (socket?: WebSocketWithDispatch | null) => {
-    if (!socket) return;
-    socket.close();
-};
+  if (!socket) return
+  socket.close()
+}
 
-const timeout = ref<NodeJS.Timeout>();
+const timeout = ref<NodeJS.Timeout>()
 
 export const onConnect = (socket?: WebSocketWithDispatch | null) => {
-    if (!socket) return;
-    document.dispatchEvent(new Event('baseHub-connected'));
-    clearTimeout(timeout.value);
-};
+  if (!socket) return
+  document.dispatchEvent(new Event('baseHub-connected'))
+  clearTimeout(timeout.value)
+}
 
 export const onDisconnect = (socket?: WebSocketWithDispatch | null) => {
-    if (!socket) return;
-    document.dispatchEvent(new Event('baseHub-disconnected'));
-};
+  if (!socket) return
+  document.dispatchEvent(new Event('baseHub-disconnected'))
+}
+
+export const onToggleComponent = (componentName: string, visible: boolean) => {
+  setVisibility(componentName.toLowerCase() as ComponentKey, visible)
+}
