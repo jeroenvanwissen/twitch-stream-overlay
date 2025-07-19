@@ -1,7 +1,7 @@
 import type { Command } from '@/types/chat';
 import chatClient from '@/lib/twitch/chatClient';
 
-interface {{titleName}}Storage extends Record<string, unknown> {
+interface {{titleName}}Storage {
 }
 
 const command: Command<{{titleName}}Storage> = {

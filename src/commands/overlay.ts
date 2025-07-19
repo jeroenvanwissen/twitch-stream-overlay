@@ -1,23 +1,22 @@
-import type { Command } from '@/types/chat';
-import chatClient from '@/lib/twitch/chatClient';
+import chatClient from '@/lib/twitch/chatClient'
+import type { Command } from '@/types/chat'
 
-interface OverlayStorage extends Record<string, unknown> {
-}
+interface OverlayStorage {}
 
 const command: Command<OverlayStorage> = {
-	name: 'overlay',
-	permission: 'everyone',
-	type: 'command',
-	storage: {},
-	init: () => {},
-	callback: async ({ channel }) => {
-		const text = `What started as a codepen from @jeroenvanwissen turned into full overlay.
+  name: 'overlay',
+  permission: 'everyone',
+  type: 'command',
+  storage: {},
+  init: () => {},
+  callback: async ({ channel }) => {
+    const text = `What started as a codepen from @jeroenvanwissen turned into full overlay.
 		Now we are sharing code back and forth to improve it, so you may recognise it from his stream.
 		You can find the code on GitHub: https://github.com/StoneyEagle/Stream-Overlay 
-		If you have any ideas or suggestions, feel free to tell us!`;
+		If you have any ideas or suggestions, feel free to tell us!`
 
-		await chatClient.say(channel, text);
-	},
-};
+    await chatClient.say(channel, text)
+  }
+}
 
-export default command;
+export default command

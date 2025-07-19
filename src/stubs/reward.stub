@@ -1,6 +1,6 @@
 import type { Reward } from '@/types/chat';
 
-interface {{titleName}}Storage extends Record<string, unknown> {
+interface {{titleName}}Storage {
 }
 
 const reward: Reward<{{titleName}}Storage> = {
