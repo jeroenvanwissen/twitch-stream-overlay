@@ -33,7 +33,16 @@ watch(
 
 // Task management functions
 export const addTask = (userId: string, userName: string, text: string) => {
-  const id = tasks.value.length ? Math.max(...tasks.value.map(t => t.id)) + 1 : 1
+  // Get all tasks for this specific user
+  const userTasks = tasks.value.filter(t => t.userName === userName)
+
+  // Find the next available ID for this user
+  let id = 1
+  if (userTasks.length > 0) {
+    const maxId = Math.max(...userTasks.map(t => t.id))
+    id = maxId + 1
+  }
+
   tasks.value.push({
     id,
     userId,
@@ -65,6 +74,12 @@ export const deleteTask = (taskId: number, userName: string) => {
 
 export const clearTasks = () => {
   tasks.value = []
+}
+
+export const clearDoneTasks = () => {
+  const initialCount = tasks.value.length
+  tasks.value = tasks.value.filter(task => !task.done)
+  return initialCount - tasks.value.length
 }
 
 export const findTask = (id: string | number, userName: string) => {
@@ -101,4 +116,23 @@ export const markDone = (id: string | number, userName: string) => {
   if (task) {
     task.done = true
   }
+}
+
+export const markUndone = (id: string | number, userName: string) => {
+  const numId = typeof id === 'string' ? parseInt(id) : id
+  const task = findTask(numId, userName)
+  if (task) {
+    task.done = false
+  }
+}
+
+export const getUserIncompleteTasks = (userName: string) => {
+  const userTasks = tasks.value.filter(t => t.userName === userName && !t.done)
+
+  // Sort tasks: focused task first, then by ID
+  return userTasks.sort((a, b) => {
+    if (a.focused && !b.focused) return -1
+    if (!a.focused && b.focused) return 1
+    return a.id - b.id
+  })
 }
