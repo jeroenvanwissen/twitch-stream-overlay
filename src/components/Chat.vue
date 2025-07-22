@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import { chatMessageQueue } from '@/store/chat';
 import MessageNode from '@/components/MessageNode.vue';
 import { defaultColor } from '@/store/config';
-// import { setupEventSub } from '@/lib/twitch/bot';
+import { tooLight } from '@/lib/utils';
 
 const chatBox = ref<HTMLElement | null>(null);
 
@@ -24,20 +24,25 @@ onMounted(() => {
 				<div class="relative pt-3" :style="{
 					'--color-300': `hsl(from ${message.userInfo.color || defaultColor} h calc(s * .30) l)`,
 					'--color-500': `hsl(from ${message.userInfo.color || defaultColor} h calc(s * .50) l)`,
-					'--color-700': `hsl(from ${message.userInfo.color || defaultColor} h s l)`,
+					'--color-700': `hsl(from ${message.userInfo.color || defaultColor} h s calc(l * .70))`,
 				}"
 				>
 					<div class="shine-wrapper -mt-6 relative z-10 overflow-hidden banner-animate">
-						<div class="relative flex flex-row bg-theme-700 rounded-lg gap-1 h-8 px-2 items-center pr-12">
+						<div class="relative flex flex-row bg-theme-700 rounded-lg gap-1 h-8 px-2 items-center pr-12"
+							:class="{
+								'text-white': !tooLight(message.userInfo.color || defaultColor, 140),
+								'text-black': tooLight(message.userInfo.color || defaultColor, 140),
+							}"
+						>
 							<template v-for="badge in message.userInfo.badges" :key="badge.id">
 								<img :src="badge.getImageUrl(2)" alt="userImage" class="size-5">
 							</template>
 
-							<span class="text-white font-bold text-lg self-start leading-none my-auto">
+							<span class="font-bold text-lg self-start leading-none my-auto">
 								{{ message.userInfo.displayName }}
 							</span>
 							<span v-if="message.userInfo.pronoun"
-								class="text-white text-sm font-semibold font-mono ml-0.5 translate-y-0.5 leading-none my-auto whitespace-nowrap"
+								class="text-sm font-semibold font-mono ml-0.5 translate-y-0.5 leading-none my-auto whitespace-nowrap"
 							>
 								({{ message.userInfo.pronoun.subject }}/{{ message.userInfo.pronoun.object }})
 							</span>

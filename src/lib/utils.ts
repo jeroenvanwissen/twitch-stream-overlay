@@ -24,6 +24,22 @@ export function shouldMarquee(el: HTMLElement) {
 	}
 }
 
+export function getLuminosity(c: string) {
+	c = c.substring(1);
+
+	const rgb: number = Number.parseInt(c, 16);
+	const r = (rgb >> 16) & 0xFF;
+	const g = (rgb >> 8) & 0xFF;
+	const b = (rgb >> 0) & 0xFF;
+
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+export function tooLight(c: any, max = 130) {
+	const luminosity = getLuminosity(c);
+	return luminosity > max;
+}
+
 export function replaceTemplatePlaceholders(template: string, message: Message, isLive?: boolean, gameInfo?: { gameName?: string; title?: string }): string {
 	let result = template.replace(/\{name\}/gu, message.userInfo.displayName);
 
@@ -54,6 +70,17 @@ export function replaceTemplatePlaceholders(template: string, message: Message, 
 		}
 	})();
 
+	const genderedTerm = (() => {
+		switch (subjectPronoun.toLowerCase()) {
+			case 'he':
+				return 'dude';
+			case 'she':
+				return 'dudette';
+			default:
+				return 'friend';
+		}
+	})();
+
 	result = result.replace(/\{presentTense\}/gu, beVerb.toLowerCase());
 	result = result.replace(/\{PresentTense\}/gu, beVerb);
 	result = result.replace(/\{pastTense\}/gu, wasVerb.toLowerCase());
@@ -65,6 +92,9 @@ export function replaceTemplatePlaceholders(template: string, message: Message, 
 	result = result.replace(/\{Subject\}/gu, subjectPronoun);
 	result = result.replace(/\{object\}/gu, objectPronoun.toLowerCase());
 	result = result.replace(/\{Object\}/gu, objectPronoun.charAt(0).toUpperCase() + objectPronoun.slice(1));
+
+	result = result.replace(/\{GenderedTerm\}/gu, genderedTerm.charAt(0).toUpperCase() + genderedTerm.slice(1));
+	result = result.replace(/\{genderedTerm\}/gu, genderedTerm.toLowerCase());
 
 	result = result.replace(/\{game\}/gu, gameInfo?.gameName || '');
 	result = result.replace(/\{title\}/gu, gameInfo?.title || '');
