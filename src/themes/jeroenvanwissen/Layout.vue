@@ -13,7 +13,7 @@ import NextInQueue from '@/components/NextInQueue.vue'
 import NowPlaying from '@/components/NowPlaying.vue'
 import Pomodoro from '@/components/Pomodoro.vue'
 import Tasks from '@/components/Tasks.vue'
-import DeathCounter from '@/components/DeathCounter.vue'
+import DeathCounter from './components/DeathCounter.vue'
 import Badge from './components/Badge.vue'
 
 const chatWindow = ref<HTMLDivElement>()
