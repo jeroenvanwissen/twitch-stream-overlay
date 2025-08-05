@@ -1,6 +1,7 @@
 import type { Command } from '@/types/chat';
 import chatClient from '@/lib/twitch/chatClient';
 import { useLocalStorage } from '@vueuse/core';
+import { messageNow } from '@/store/config';
 
 interface DedStorage {
     count: ReturnType<typeof useLocalStorage<number>>;
@@ -42,7 +43,9 @@ const command: Command<DedStorage> = {
 
         // Default behavior: increment by 1
         command.storage.count.value += 1;
-        await chatClient.say(channel, `jeroen7Ded U DIED! Death count is now ${command.storage.count.value}!`);
+        await chatClient.say(channel, `jeroen7Ded Jeroen died! Death count is now ${command.storage.count.value}!`);
+        // Add badge message for death
+        messageNow(`Jeroen died! Death count is now ${command.storage.count.value}!`);
     },
 };
 
