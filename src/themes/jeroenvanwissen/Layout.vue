@@ -6,13 +6,14 @@ import '@/lib/spotify/spotifySocketClient'
 import '@/lib/twitch/authClient'
 
 import { botUser, user } from '@/store/auth'
-import { pomodoroVisible, spotifyVisible, tasksVisible } from '@/store/visibility'
+import { pomodoroVisible, spotifyVisible, tasksVisible, deathsVisible } from '@/store/visibility'
 
 import Chat from '@/components/Chat.vue'
 import NextInQueue from '@/components/NextInQueue.vue'
 import NowPlaying from '@/components/NowPlaying.vue'
 import Pomodoro from '@/components/Pomodoro.vue'
 import Tasks from '@/components/Tasks.vue'
+import DeathCounter from '@/components/DeathCounter.vue'
 import Badge from './components/Badge.vue'
 
 const chatWindow = ref<HTMLDivElement>()
@@ -28,6 +29,7 @@ const mainWindow = ref<HTMLDivElement>()
       <NowPlaying v-if="user && spotifyVisible" />
       <Pomodoro v-if="user && pomodoroVisible" />
       <Tasks v-if="user && tasksVisible" />
+      <DeathCounter v-if="user && deathsVisible" />
       <!-- <VideoElement /> -->
 
       <div class="top-[calc(100%/8)] flex flex-col gap-4 fixed left-10 card">

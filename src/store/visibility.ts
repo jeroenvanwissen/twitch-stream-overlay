@@ -3,11 +3,13 @@ import { useLocalStorage } from '@vueuse/core'
 export const pomodoroVisible = useLocalStorage<Boolean>('pomodoro-visibility', true)
 export const tasksVisible = useLocalStorage<Boolean>('tasks-visibility', true)
 export const spotifyVisible = useLocalStorage<Boolean>('spotify-visibility', true)
+export const deathsVisible = useLocalStorage<Boolean>('deaths-visibility', true)
 
 const visibilityMap = {
   pomodoro: pomodoroVisible,
   tasks: tasksVisible,
-  spotify: spotifyVisible
+  spotify: spotifyVisible,
+  deaths: deathsVisible
 } as const
 
 export type ComponentKey = keyof typeof visibilityMap
