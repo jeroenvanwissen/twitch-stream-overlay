@@ -6,7 +6,7 @@ import '@/lib/spotify/spotifySocketClient'
 import '@/lib/twitch/authClient'
 
 import { botUser, user } from '@/store/auth'
-import { spotifyVisible } from '@/store/visibility'
+import { isVisible } from '@/store/visibility'
 
 import Badge from '@/components/Badge.vue'
 import Chat from '@/components/Chat.vue'
@@ -23,8 +23,8 @@ const mainWindow = ref<HTMLDivElement>()
     <Badge v-if="botUser" />
 
     <div ref="mainWindow" class="relative flex flex-col w-available h-available justify-center -ml-6 mr-[5%] text-lg">
-      <!--      <NextInQueue v-if="user && spotifyVisible" /> -->
-      <NowPlaying v-if="user && spotifyVisible" />
+      <!--      <NextInQueue v-if="user && isVisible('spotify')" /> -->
+      <NowPlaying v-if="user && isVisible('spotify')" />
 
       <VideoElement />
 

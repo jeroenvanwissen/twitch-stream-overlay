@@ -6,7 +6,7 @@ import '@/lib/spotify/spotifySocketClient'
 import '@/lib/twitch/authClient'
 
 import { botUser, user } from '@/store/auth'
-import { pomodoroVisible, spotifyVisible, tasksVisible, deathsVisible } from '@/store/visibility'
+import { isVisible } from '@/store/visibility'
 
 import Chat from '@/components/Chat.vue'
 import NextInQueue from '@/components/NextInQueue.vue'
@@ -25,11 +25,11 @@ const mainWindow = ref<HTMLDivElement>()
     <Badge v-if="botUser" />
 
     <div ref="mainWindow" class="relative flex flex-col w-available h-available justify-center -ml-6 mr-[5%] text-lg">
-      <NextInQueue v-if="user && spotifyVisible" />
-      <NowPlaying v-if="user && spotifyVisible" />
-      <Pomodoro v-if="user && pomodoroVisible" />
-      <Tasks v-if="user && tasksVisible" />
-      <DeathCounter v-if="user && deathsVisible" />
+      <NextInQueue v-if="user && isVisible('spotify')" />
+      <NowPlaying v-if="user && isVisible('spotify')" />
+      <Pomodoro v-if="user && isVisible('pomodoro')" />
+      <Tasks v-if="user && isVisible('tasks')" />
+      <DeathCounter v-if="user && isVisible('deaths')" />
       <!-- <VideoElement /> -->
 
       <div class="top-[calc(100%/8)] flex flex-col gap-4 fixed left-10 card">
