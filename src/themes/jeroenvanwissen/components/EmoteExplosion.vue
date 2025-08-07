@@ -24,6 +24,10 @@ const animationId = ref(null)
 const containerWidth = ref(window.innerWidth)
 const containerHeight = ref(window.innerHeight)
 
+// Performance controls
+const MAX_EMOTES = 60 // Limit total emotes on screen
+const CLEANUP_INTERVAL = 500 // Clean up dead emotes every 500ms
+
 class Emote {
   constructor(x, y, emoteData) {
     this.id = Math.random().toString(36).substr(2, 9)
@@ -34,20 +38,31 @@ class Emote {
     
     this.x = x
     this.y = y
-    this.vx = (Math.random() - 0.5) * 20 // Random velocity X
-    this.vy = (Math.random() - 0.5) * 20 // Random velocity Y
+    this.vx = (Math.random() - 0.5) * 16 // Reduced random velocity X
+    this.vy = (Math.random() - 0.5) * 16 // Reduced random velocity Y
     this.opacity = 1
-    this.scale = 3
+    this.scale = 2.5 // Slightly smaller initial scale
     this.rotation = 0
-    this.rotationSpeed = (Math.random() - 0.5) * 10
-    this.gravity = 0.2
-    this.bounce = 0.8
-    this.fadeStart = Date.now() + 3000 // Start fading after 3 seconds
-    this.lifetime = 10000 // Total lifetime 5 seconds
+    this.rotationSpeed = (Math.random() - 0.5) * 8 // Reduced rotation speed
+    this.gravity = 0.18 // Slightly reduced gravity
+    this.bounce = 0.75 // Slightly reduced bounce
+    this.fadeStart = Date.now() + 2500 // Start fading after 2.5 seconds
+    this.lifetime = 6000 // Reduced lifetime to 6 seconds
     this.birth = Date.now()
+    this.isDead = false // Cache dead state for performance
   }
 
   update() {
+    // Early exit if already marked as dead
+    if (this.isDead) return
+    
+    // Check if emote should die (do this first to avoid unnecessary calculations)
+    const age = Date.now() - this.birth
+    if (age > this.lifetime) {
+      this.isDead = true
+      return
+    }
+
     // Apply gravity
     this.vy += this.gravity
     
@@ -70,22 +85,23 @@ class Emote {
     }
     
     // Handle fading
-    const age = Date.now() - this.birth
     if (age > this.fadeStart) {
-      const fadeProgress = (age - this.fadeStart) / (this.lifetime - 3000)
+      const fadeProgress = (age - this.fadeStart) / (this.lifetime - 2500)
       this.opacity = Math.max(0, 1 - fadeProgress)
-      this.scale = Math.max(0.1, 1 - fadeProgress * 0.5)
+      this.scale = Math.max(0.1, 2.5 - fadeProgress * 1.2)
     }
     
-    // Reduce velocity over time (air resistance)
-    this.vx *= 0.995
-    this.vy *= 0.995
+    // Reduce velocity over time (air resistance) - more aggressive
+    this.vx *= 0.99
+    this.vy *= 0.99
   }
 
-  isDead() {
-    return Date.now() - this.birth > this.lifetime
+  isDeadMethod() {
+    return this.isDead || (Date.now() - this.birth > this.lifetime)
   }
 }
+
+let lastCleanup = 0
 
 const triggerExplosion = (x = containerWidth.value / 2, y = containerHeight.value / 2, emotes = [], count = null) => {
   if (!emotes || emotes.length === 0) {
@@ -93,8 +109,14 @@ const triggerExplosion = (x = containerWidth.value / 2, y = containerHeight.valu
     return
   }
 
-  // Use provided count or scale based on number of unique emotes (max 20)
-  const explosionCount = count || Math.min(emotes.length * 3, 20)
+  // Performance safeguard: if we have too many emotes, remove the oldest ones
+  if (activeEmotes.value.length > MAX_EMOTES) {
+    const excessCount = activeEmotes.value.length - MAX_EMOTES + 15
+    activeEmotes.value.splice(0, excessCount)
+  }
+
+  // Reduce explosion count for better performance, max 12 emotes per explosion
+  const explosionCount = count || Math.min(emotes.length * 2, 12)
   
   for (let i = 0; i < explosionCount; i++) {
     // Pick a random emote from the provided emotes
@@ -104,11 +126,18 @@ const triggerExplosion = (x = containerWidth.value / 2, y = containerHeight.valu
 }
 
 const animate = () => {
-  // Update all emotes
-  activeEmotes.value.forEach(emote => emote.update())
+  const now = Date.now()
   
-  // Remove dead emotes
-  activeEmotes.value = activeEmotes.value.filter(emote => !emote.isDead())
+  // Update all emotes (iterate backwards to safely remove if needed)
+  for (let i = 0; i < activeEmotes.value.length; i++) {
+    activeEmotes.value[i].update()
+  }
+  
+  // Cleanup dead emotes periodically instead of every frame
+  if (now - lastCleanup > CLEANUP_INTERVAL) {
+    activeEmotes.value = activeEmotes.value.filter(emote => !emote.isDead)
+    lastCleanup = now
+  }
   
   animationId.value = requestAnimationFrame(animate)
 }
@@ -136,6 +165,9 @@ onUnmounted(() => {
   }
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('EmoteExplosion', handleEmoteExplosion)
+  
+  // Clear all emotes on unmount
+  activeEmotes.value = []
 })
 
 // Expose trigger function for direct calls
@@ -164,5 +196,8 @@ defineExpose({
   pointer-events: none;
   will-change: transform, opacity;
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  /* Add GPU acceleration hints */
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 </style>
