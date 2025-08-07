@@ -15,6 +15,7 @@ import Pomodoro from '@/components/Pomodoro.vue'
 import Tasks from '@/components/Tasks.vue'
 import DeathCounter from './components/DeathCounter.vue'
 import Badge from './components/Badge.vue'
+import EmoteExplosion from './components/EmoteExplosion.vue'
 
 const chatWindow = ref<HTMLDivElement>()
 const mainWindow = ref<HTMLDivElement>()
@@ -30,6 +31,7 @@ const mainWindow = ref<HTMLDivElement>()
       <Pomodoro v-if="user && isVisible('pomodoro')" />
       <Tasks v-if="user && isVisible('tasks')" />
       <DeathCounter v-if="user && isVisible('deaths')" />
+      <EmoteExplosion v-if="user && isVisible('emotes')" />
       <!-- <VideoElement /> -->
 
       <div class="top-[calc(100%/8)] flex flex-col gap-4 fixed left-10 card">

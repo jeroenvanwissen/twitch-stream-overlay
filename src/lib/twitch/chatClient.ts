@@ -106,6 +106,22 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 
   console.log(toRaw(message))
 
+  if (msg.emoteOffsets && msg.emoteOffsets.size > 0) {
+    // Convert Map to array of emote objects
+    const emotesToShow = Array.from(msg.emoteOffsets.entries()).map(([emoteId, positions]) => ({
+      name: `emote_${emoteId}`,
+      url: `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/2.0`
+    }))
+
+    window.dispatchEvent(new CustomEvent('EmoteExplosion', {
+      detail: {
+        x: Math.random() * (window.innerWidth - 200) + 100,
+        y: Math.random() * (window.innerHeight - 200) + 100,
+        emotes: emotesToShow
+      }
+    }))
+  }
+
   if (message.isRedemption && message.rewardId) {
     await handleReward(channel, user, text, message)
   } else if (text.startsWith('!')) {
