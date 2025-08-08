@@ -11,6 +11,7 @@ export default antfu({
 			'vue/multi-word-component-names': 'off',
 			'vue/no-deprecated-slot-attribute': 'off',
 			'vue/no-reserved-component-names': 'off',
+			'vue-a11y/media-has-caption': 'off',
 		},
 	},
 	typescript: {

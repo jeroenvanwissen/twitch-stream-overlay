@@ -43,6 +43,10 @@ watch(spotifyState, (newValue, oldValue) => {
 		addShineEffect();
 	}
 
+	if (newValue.is_liked) {
+		showLikeAnimation();
+	}
+
 	interval.value = setInterval(() => {
 		time.value = spotifyState.value && time.value ? time.value + 100 : 0;
 	}, 100);
@@ -75,13 +79,6 @@ function showLikeAnimation() {
 		nowPlayingCard.value?.classList.remove('like-active');
 	}, 3000);
 }
-
-watch(spotifyState, (newValue) => {
-	addShineEffect();
-	if (newValue.is_liked) {
-		showLikeAnimation();
-	}
-});
 </script>
 
 <template>
@@ -103,7 +100,7 @@ watch(spotifyState, (newValue) => {
 				</div>
 				<div :key="spotifyState.item?.name" class="flex flex-col w-available flex-1 overflow-hidden">
 					<div class="text-theme-100 font-bold text-xl overflow-hidden transition-all duration-300">
-						<Marquee :key="spotifyState.item?.name" :text="spotifyState.item?.name" />
+						<Marquee :text="spotifyState.item?.name" />
 					</div>
 					<div class="text-theme-100 text-lg transition-all duration-300 text-semibold">
 						{{ spotifyState.item?.artists?.map(artist => artist.name).join(', ') }}
@@ -124,8 +121,8 @@ watch(spotifyState, (newValue) => {
 	</div>
 </template>
 
-  <style scoped>
-  .now-playing-card {
+<style scoped>
+.now-playing-card {
 	position: relative;
 	transition: all 0.5s ease-in-out;
 	z-index: 0;

@@ -27,7 +27,15 @@ export const extension = ref<VNodeRef>();
 export const badge = ref<VNodeRef>();
 export const span = ref<VNodeRef>();
 
-export const defaultColor = '#f72264';
+export const welcomeUserAfterHours = ref(16); // after how many hours a user is welcome again
+export const ignoredUsersForWelcome = useLocalStorage<string[]>('ignoredUsersForWelcome', [
+	'streamelements',
+	'fossabot',
+	'nomercybot_',
+	'codelinter',
+]);
+
+export const defaultColor = '#A00030';
 
 let intercept = false;
 let interval: NodeJS.Timeout;

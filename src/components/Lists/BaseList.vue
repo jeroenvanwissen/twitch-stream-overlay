@@ -10,7 +10,7 @@ defineProps({
 </script>
 
 <template>
-	<div class="relative px-4 py-2 flex flex-col gap-2 w-fit min-w-[240px]">
+	<div class="relative px-4 py-2 flex flex-col gap-2 w-fit min-w-[280px]">
 		<div id="background" class="absolute rounded-md overflow-hidden inset-0 -z-10" />
 		<h2 class="text-xl font-bold">
 			<slot name="title" />

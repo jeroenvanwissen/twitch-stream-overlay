@@ -9,7 +9,7 @@ const command: Command = {
 	type: 'command',
 	storage: {},
 	init: () => {},
-	callback: async ({ channel }) => {
+	callback: async ({ channel, message }) => {
 		const text = `
 			I'm working on a project named NoMercy TV, the Effortless Encoder.
             It is a self-hosted streaming solution that allows you to stream your own movies, tv shows and music.
@@ -18,7 +18,9 @@ const command: Command = {
             No tracking, no ads, no data collection, NoMercy!
 		`;
 
-		await chatClient.say(channel, text);
+		await chatClient.say(channel, text, {
+			replyTo: message.id,
+		});
 
 		await spotifyClient.volume(10);
 

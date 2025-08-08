@@ -22,7 +22,7 @@ const command: Command<ShoutoutStorage> = {
 			'Attention, earthlings! @{displayname} has {game} videos you need to see. Go give {object} a follow! {Subject} {tense} probably putting on a masterclass, or a clown show – either way, it\'s entertaining.',
 			'Incoming awesome! @{displayname} has some {game} action for you. Go give {object} a follow! {Subject} {tense} crushing it, or at least {Subject} looks like {Subject} is.',
 			'Don\'t walk, run! @{displayname} has more {game} than you can handle. Go give {object} a follow! {Subject} {tense} definitely worth interrupting your snack for.',
-			'Surprise! @{displayname} has tons of {game} content. Go give {object} a follow! {Subject} {tense} making us all look bad with {object} skills (or lack thereof, it\'s charming!).',
+			// 'Surprise! @{displayname} has tons of {game} content. Go give {object} a follow! {Subject} {tense} making us all look bad with {object} skills (or lack thereof, it\'s charming!).',
 			'Our resident legend, @{displayname}, has awesome {game}! Go give {object} a follow! {Subject} {tense} probably about to pull off something epic, or face-plant gloriously.',
 			'Heads up, buttercups! @{displayname} has some {game} for you. Go give {object} a follow! {Subject} {tense} proving once again that {Subject} {tense} awesome (don\'t tell {object} I said that).',
 			'Guess who\'s got content? @{displayname}! {Subject} {tense} rocking {game}. Go give {object} a follow! {Subject} {tense} bringing the vibes, whether {Subject} likes it or not.',

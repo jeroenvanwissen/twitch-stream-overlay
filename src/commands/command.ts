@@ -23,13 +23,17 @@ const command: CommandWithMethods = {
 	async callback({ channel, broadcasterId, commandName, params, message }) {
 		if (allCommands.some(cmd => cmd.name === params.at(1))) {
 			const text = `@${message.userInfo.displayName} The command "${commandName}" can not be modified. Please choose a different name.`;
-			await chatClient.say(channel, text);
+			await chatClient.say(channel, text, {
+				replyTo: message.id,
+			});
 			return;
 		}
 
 		if (params.length < 2) {
 			const text = `@${message.userInfo.displayName} Please provide parameters for the command.`;
-			await chatClient.say(channel, text);
+			await chatClient.say(channel, text, {
+				replyTo: message.id,
+			});
 			return;
 		}
 
@@ -47,12 +51,16 @@ const command: CommandWithMethods = {
 	async add(channel: string, broadcasterId: string, commandName: string, params: string[], message: Message) {
 		if (params.length < 3) {
 			const text = `The command "${params[1]}" requires a message.`;
-			await chatClient.say(channel, text);
+			await chatClient.say(channel, text, {
+				replyTo: message.id,
+			});
 			return;
 		}
 		if (this.storage.commands.some((cmd: BaseCommand) => cmd.name === params.at(1))) {
 			const text = `@${message.userInfo.displayName} The command "${commandName}" is already exists. Use update or remove.`;
-			await chatClient.say(channel, text);
+			await chatClient.say(channel, text, {
+				replyTo: message.id,
+			});
 			return;
 		}
 
@@ -72,35 +80,47 @@ const command: CommandWithMethods = {
 		this.save();
 
 		const text = `The command "${params[1]}" has been added with value: ${params.slice(2).join(' ')}`;
-		await chatClient.say(channel, text);
+		await chatClient.say(channel, text, {
+			replyTo: message.id,
+		});
 	},
 
 	async remove(channel: string, broadcasterId: string, commandName: string, params: string[], message: Message) {
 		if (!this.storage.commands.some((cmd: BaseCommand) => cmd.name === params.at(1))) {
 			const text = `@${message.userInfo.displayName} The command "${params.at(1)}" does not exist.`;
-			await chatClient.say(channel, text);
+			await chatClient.say(channel, text, {
+				replyTo: message.id,
+			});
 			return;
 		}
 
 		const text = `The command "${params[1]}" has been removed.`;
-		await chatClient.say(channel, text);
+		await chatClient.say(channel, text, {
+			replyTo: message.id,
+		});
 	},
 
 	async update(channel: string, broadcasterId: string, commandName: string, params: string[], message: Message) {
 		if (params.length < 3) {
 			const text = `The command "${params[1]}" requires a message.`;
-			await chatClient.say(channel, text);
+			await chatClient.say(channel, text, {
+				replyTo: message.id,
+			});
 			return;
 		}
 
 		if (!this.storage.commands.some((cmd: BaseCommand) => cmd.name === params.at(1))) {
 			const text = `@${message.userInfo.displayName} The command "${params.at(1)}" does not exist.`;
-			await chatClient.say(channel, text);
+			await chatClient.say(channel, text, {
+				replyTo: message.id,
+			});
 			return;
 		}
 
 		const text = `The command "${params[1]}" has been updated with new value: ${params.slice(2).join(' ')}`;
-		await chatClient.say(channel, text);
+		await chatClient.say(channel, text, {
+			replyTo: message.id,
+		});
 	},
 
 	load() {
@@ -126,9 +146,9 @@ const command: CommandWithMethods = {
 		const commandsToSave = command.storage.commands.map((item: BaseCommand) => {
 			const itemCopy = { ...item };
 			for (const key in itemCopy) {
-				if (typeof itemCopy[key] === 'function') {
-					itemCopy[key] = itemCopy[key].toString();
-				}
+				// if (typeof itemCopy[key] === 'function') {
+				// 	itemCopy[key] = itemCopy[key].toString();
+				// }
 			}
 			return itemCopy;
 		});

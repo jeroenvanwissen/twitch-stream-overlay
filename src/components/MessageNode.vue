@@ -13,20 +13,20 @@ defineProps({
 
 <template>
 	<div v-if="node.type === 'rootNode'" :id="node.id" :class="node.classes"
-		class="message gap-0.5 children:inline"
+		class="message gap-0.5 children:inline break-words"
 	>
 		<template v-for="child in node.children ?? []" :key="child.id">
 			<MessageNode :node="child" />
 		</template>
 	</div>
-	<span v-else-if="node.type === 'span'" :id="node.id" :class="node.classes" class="font-sans inline"
+	<span v-else-if="node.type === 'span'" :id="node.id" :class="node.classes" class="font-sans inline break-words"
 		v-bind="node.attribs"
 	>
 		<template v-for="child in node.children ?? []" :key="child.id">
 			<MessageNode :node="child" />
 		</template>
 	</span>
-	<p v-else-if="node.type === 'p'" :id="node.id" :class="node.classes" class="inline"
+	<p v-else-if="node.type === 'p'" :id="node.id" :class="node.classes" class="inline break-words"
 		v-bind="node.attribs"
 	>
 		<template v-for="child in node.children ?? []" :key="child.id">
@@ -34,7 +34,7 @@ defineProps({
 		</template>
 		{{ node.text }}
 	</p>
-	<a v-else-if="node.type === 'a'" :id="node.id" :class="node.classes" class="cursor-pointer inline break-all"
+	<a v-else-if="node.type === 'a'" :id="node.id" :class="node.classes" class="cursor-pointer inline break-words"
 		v-bind="node.attribs"
 	>
 		<template v-for="child in node.children ?? []" :key="child.id">
@@ -42,7 +42,7 @@ defineProps({
 		</template>
 		{{ node.text }}
 	</a>
-	<b v-else-if="node.type === 'b'" :id="node.id" :class="node.classes" class="inline"
+	<b v-else-if="node.type === 'b'" :id="node.id" :class="node.classes" class="inline break-words"
 		v-bind="node.attribs"
 	>
 		<template v-for="child in node.children ?? []" :key="child.id">
@@ -50,7 +50,7 @@ defineProps({
 		</template>
 		{{ node.text }}
 	</b>
-	<u v-else-if="node.type === 'u'" :id="node.id" :class="node.classes" class="inline"
+	<u v-else-if="node.type === 'u'" :id="node.id" :class="node.classes" class="inline break-words"
 		v-bind="node.attribs"
 	>
 		<template v-for="child in node.children ?? []" :key="child.id">
@@ -58,7 +58,7 @@ defineProps({
 		</template>
 		{{ node.text }}
 	</u>
-	<i v-else-if="node.type === 'i'" :id="node.id" :class="node.classes" class="inline"
+	<i v-else-if="node.type === 'i'" :id="node.id" :class="node.classes" class="inline break-words"
 		v-bind="node.attribs"
 	>
 		<template v-for="child in node.children ?? []" :key="child.id">
@@ -66,7 +66,7 @@ defineProps({
 		</template>
 		{{ node.text }}
 	</i>
-	<strong v-else-if="node.type === 'strong'" :id="node.id" :class="node.classes" class="inline"
+	<strong v-else-if="node.type === 'strong'" :id="node.id" :class="node.classes" class="inline break-words"
 		v-bind="node.attribs"
 	>
 		<template v-for="child in node.children ?? []" :key="child.id">
@@ -74,7 +74,7 @@ defineProps({
 		</template>
 		{{ node.text }}
 	</strong>
-	<small v-else-if="node.type === 'small'" :id="node.id" :class="node.classes" class="inline"
+	<small v-else-if="node.type === 'small'" :id="node.id" :class="node.classes" class="inline break-words"
 		v-bind="node.attribs"
 	>
 		<template v-for="child in node.children ?? []" :key="child.id">

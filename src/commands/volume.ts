@@ -9,9 +9,11 @@ const command: Command = {
 	type: 'command',
 	storage: {},
 	init: () => {},
-	callback: async ({ channel, params }) => {
+	callback: async ({ channel, params, message }) => {
 		if (!spotifyState.value.item) {
-			await chatClient.say(channel, 'No song is currently playing!');
+			await chatClient.say(channel, 'No song is currently playing!', {
+				replyTo: message.id,
+			});
 			return;
 		}
 
@@ -19,7 +21,9 @@ const command: Command = {
 		if (volume === null) {
 			const volumeLevel = await spotifyClient.volume();
 			const text = `Current volume level is ${volumeLevel}`;
-			await chatClient.say(channel, text);
+			await chatClient.say(channel, text, {
+				replyTo: message.id,
+			});
 			return;
 		}
 		else if (Number.isNaN(volume) || volume < 0 || volume > 100) {
@@ -30,7 +34,9 @@ const command: Command = {
 		await spotifyClient.volume(volume);
 
 		const text = `Volume set to ${volume}%.`;
-		await chatClient.say(channel, text);
+		await chatClient.say(channel, text, {
+			replyTo: message.id,
+		});
 	},
 };
 
