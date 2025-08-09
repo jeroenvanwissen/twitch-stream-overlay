@@ -11,7 +11,7 @@ const command: Command = {
 		if (!import.meta.env.VITE_SPOTIFY_BANGER_PLAYLIST_URI) {
 			const text = 'Banger playlist is not configured!';
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 			return;
 		}
@@ -21,7 +21,7 @@ const command: Command = {
 		const text = `The Banger playlist is: ${playlistId}`;
 
 		await chatClient.say(channel, text, {
-			replyTo: message.id
+			replyTo: message.id,
 		});
 	},
 };

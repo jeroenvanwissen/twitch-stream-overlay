@@ -52,14 +52,14 @@ const command: CommandWithMethods = {
 		if (params.length < 3) {
 			const text = `The command "${params[1]}" requires a message.`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 			return;
 		}
 		if (this.storage.commands.some((cmd: BaseCommand) => cmd.name === params.at(1))) {
 			const text = `@${message.userInfo.displayName} The command "${commandName}" is already exists. Use update or remove.`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 			return;
 		}
@@ -73,7 +73,7 @@ const command: CommandWithMethods = {
 			callback: async ({ channel, params }) => {
 				const text = params.slice(2).join(' ');
 				await chatClient.say(channel, text, {
-					replyTo: message.id
+					replyTo: message.id,
 				});
 			},
 		};
@@ -83,7 +83,7 @@ const command: CommandWithMethods = {
 
 		const text = `The command "${params[1]}" has been added with value: ${params.slice(2).join(' ')}`;
 		await chatClient.say(channel, text, {
-			replyTo: message.id
+			replyTo: message.id,
 		});
 	},
 
@@ -91,14 +91,14 @@ const command: CommandWithMethods = {
 		if (!this.storage.commands.some((cmd: BaseCommand) => cmd.name === params.at(1))) {
 			const text = `@${message.userInfo.displayName} The command "${params.at(1)}" does not exist.`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 			return;
 		}
 
 		const text = `The command "${params[1]}" has been removed.`;
 		await chatClient.say(channel, text, {
-			replyTo: message.id
+			replyTo: message.id,
 		});
 	},
 
@@ -106,7 +106,7 @@ const command: CommandWithMethods = {
 		if (params.length < 3) {
 			const text = `The command "${params[1]}" requires a message.`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 			return;
 		}
@@ -114,14 +114,14 @@ const command: CommandWithMethods = {
 		if (!this.storage.commands.some((cmd: BaseCommand) => cmd.name === params.at(1))) {
 			const text = `@${message.userInfo.displayName} The command "${params.at(1)}" does not exist.`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 			return;
 		}
 
 		const text = `The command "${params[1]}" has been updated with new value: ${params.slice(2).join(' ')}`;
 		await chatClient.say(channel, text, {
-			replyTo: message.id
+			replyTo: message.id,
 		});
 	},
 
@@ -147,11 +147,11 @@ const command: CommandWithMethods = {
 	save() {
 		const commandsToSave = command.storage.commands.map((item: BaseCommand) => {
 			const itemCopy = { ...item };
-			for (const key in itemCopy) {
-				// if (typeof itemCopy[key] === 'function') {
-				// 	itemCopy[key] = itemCopy[key].toString();
-				// }
-			}
+			// for (const key in itemCopy) {
+			// 	if (typeof itemCopy[key] === 'function') {
+			// 		itemCopy[key] = itemCopy[key].toString();
+			// 	}
+			// }
 			return itemCopy;
 		});
 		localStorage.setItem(this.name, JSON.stringify(commandsToSave));

@@ -1,5 +1,4 @@
 import { createApp } from 'vue';
-import theme from './themes';
 import App from './App.vue';
 import { initializeSocket } from './lib/socketClient/initializeSocket';
 import './styles/index.scss';

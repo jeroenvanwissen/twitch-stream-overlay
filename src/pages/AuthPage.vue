@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import OBSWebSocket from 'obs-websocket-js';
@@ -84,6 +85,7 @@ onMounted(() => {
 </script>
 
 <template>
+	<!-- eslint-disable -->
 	<div class="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-900 text-white">
 		<h1 class="text-2xl font-bold mb-8">
 			Stream Overlay Authentication

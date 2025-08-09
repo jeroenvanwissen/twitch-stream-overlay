@@ -37,7 +37,7 @@ async function fetchOGMetadata(url: string) {
 		throw new Error('Invalid HTML response');
 	}
 
-	if (doc.title == 'Just a moment...') {
+	if (doc.title === 'Just a moment...') {
 		return {
 			title: 'Cloudflare protected',
 			description: null,

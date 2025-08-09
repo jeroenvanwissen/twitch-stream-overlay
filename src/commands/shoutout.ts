@@ -34,7 +34,7 @@ const command: Command<ShoutoutStorage> = {
 		if (params!.length === 0) {
 			const text = `@${message.userInfo.displayName} You need to specify a user to shoutout!`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 			return;
 		}
@@ -73,10 +73,12 @@ const command: Command<ShoutoutStorage> = {
 		await announce(channel, text, 'primary');
 
 		await shoutoutUser(broadcasterId!, userId!)
-			.catch(async (e) => {
-				// const error = JSON.parse(e.message.split('Body:')[1]);
-				// await chatClient.say(channel, error.message);
-			});
+			.catch(
+				// async (e) => {
+				// 	const error = JSON.parse(e.message.split('Body:')[1]);
+				// 	await chatClient.say(channel, error.message);
+				// },
+			);
 	},
 };
 

@@ -1,6 +1,6 @@
 import type { Pronoun } from '@/lib/twitch/getUserData';
 import type { HelixChatBadgeVersion } from '@twurple/api';
-import { EventSubChannelRedemptionAddEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelRedemptionAddEvent';
+import type { EventSubChannelRedemptionAddEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelRedemptionAddEvent';
 
 export interface MessageNode {
 	type: string;
@@ -79,7 +79,7 @@ export interface Reward<T = Record<string, unknown>> {
 	callback: ({ channel, broadcasterId, message }: {
 		channel: string;
 		broadcasterId: string;
-		message?: Message | EventSubChannelRedemptionAddEvent
+		message: Message | EventSubChannelRedemptionAddEvent;
 	}) => void;
 }
 

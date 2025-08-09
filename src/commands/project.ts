@@ -19,7 +19,7 @@ const command: Command = {
 		`;
 
 		await chatClient.say(channel, text, {
-			replyTo: message.id
+			replyTo: message.id,
 		});
 
 		await spotifyClient.volume(10);

@@ -35,13 +35,13 @@ const command: Command<Storage> = {
 			const recordText = records.map(record => `${record.type}: ${record.amount} times`).join(', ');
 			const text = `@${message.userInfo.displayName} your records: ${recordText}`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 		}
 		else {
 			const text = `@${message.userInfo.displayName} you have no records yet!`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 		}
 	},

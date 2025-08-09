@@ -1,41 +1,41 @@
-import type { Message } from '@/types/chat'
-import type { HelixChatBadgeVersion } from '@twurple/api'
-import { ChatClient } from '@twurple/chat'
-import { ref, toRaw } from 'vue'
+import type { Message } from '@/types/chat';
+import type { HelixChatBadgeVersion } from '@twurple/api';
+import { ChatClient } from '@twurple/chat';
+import { ref, toRaw } from 'vue';
 
-import { getUserData } from '@/lib/twitch/getUserData'
-import messageParser from '@/lib/twitch/messageParser'
-import { botUser, scopes, user } from '@/store/auth'
-import { addMessage, chatBadges } from '@/store/chat'
+import { getUserData } from '@/lib/twitch/getUserData';
+import messageParser from '@/lib/twitch/messageParser';
+import { botUser, scopes, user } from '@/store/auth';
+import { addMessage, chatBadges } from '@/store/chat';
 
-import { broadcasterCommands, everyoneCommands, moderatorCommands, subscriberCommands, vipCommands } from '@/commands'
-import { getChannelBadges, getUserIdFromName } from '@/lib/twitch/apiClient'
-import { hasMinLevel } from '@/lib/twitch/helpers'
-import { TwitchClient } from '@/lib/twitch/twitchClient'
-import { rewards } from '@/rewards'
-import { useLocalStorage } from '@vueuse/core'
+import { broadcasterCommands, everyoneCommands, moderatorCommands, subscriberCommands, vipCommands } from '@/commands';
+import { getChannelBadges, getUserIdFromName } from '@/lib/twitch/apiClient';
+import { hasMinLevel } from '@/lib/twitch/helpers';
+import { TwitchClient } from '@/lib/twitch/twitchClient';
+import { rewards } from '@/rewards';
+import { useLocalStorage } from '@vueuse/core';
 import { ignoredUsersForWelcome, welcomeUserAfterHours } from '@/store/config';
 
 export const chatClient = new ChatClient({
-  authProvider: TwitchClient.botAuthProvider!,
-  channels: [user.value!.name!],
-  authIntents: scopes,
-  isAlwaysMod: true
-})
-export default chatClient
+	authProvider: TwitchClient.botAuthProvider!,
+	channels: [user.value!.name!],
+	authIntents: scopes,
+	isAlwaysMod: true,
+});
+export default chatClient;
 
 interface WelcomeUser {
-  name: string
-  hasSpoken: boolean
-  date: Date
+	name: string;
+	hasSpoken: boolean;
+	date: Date;
 }
 
-const welcomeUsers = useLocalStorage<WelcomeUser[]>('welcomeUsers', [])
-const knownUsers = useLocalStorage<string[]>('knownUsers', [])
+const welcomeUsers = useLocalStorage<WelcomeUser[]>('welcomeUsers', []);
+const knownUsers = useLocalStorage<string[]>('knownUsers', []);
 
-const messageHandler = ref()
+const messageHandler = ref();
 
-messageHandler.value?.unbind()
+messageHandler.value?.unbind();
 
 function olderThanHours(date: Date, hours: number): boolean {
 	return (new Date().getTime() - new Date(date).getTime()) < (hours * 60 * 60 * 1000);
@@ -63,175 +63,179 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 			},
 		];
 
-    if (knownUsers.value.includes(user)) {
-      await chatClient.say(channel, `Welcome back @${msg.userInfo.displayName}!`)
-    } else {
-      await chatClient.say(channel, `Welcome @${msg.userInfo.displayName}!`)
-    }
-  }
+		if (knownUsers.value.includes(user)) {
+			await chatClient.say(channel, `Welcome back @${msg.userInfo.displayName}!`);
+		}
+		else {
+			await chatClient.say(channel, `Welcome @${msg.userInfo.displayName}!`);
+		}
+	}
 
-  if (!knownUsers.value.includes(user)) {
-    knownUsers.value = [...knownUsers.value, user]
-  }
+	if (!knownUsers.value.includes(user)) {
+		knownUsers.value = [...knownUsers.value, user];
+	}
 
-  const userData = (await getUserData(channel, msg.userInfo.userId))!
+	const userData = (await getUserData(channel, msg.userInfo.userId))!;
 
-  if (userData.badges.length === 0) {
-    const channelBadges = await getChannelBadges(channel)
+	if (userData.badges.length === 0) {
+		const channelBadges = await getChannelBadges(channel);
 
-    userData.badges =
-      msg.userInfo.badges.size > 0
-        ? [...msg.userInfo.badges.entries()].map(([key, value]) => {
-            const channelBadge = channelBadges.find(badge => badge.id === key)
-            if (channelBadge?.versions.some(version => version.id === value)) {
-              return channelBadge.getVersion(value) as HelixChatBadgeVersion
-            }
+		userData.badges
+      = msg.userInfo.badges.size > 0
+				? [...msg.userInfo.badges.entries()].map(([key, value]) => {
+						const channelBadge = channelBadges.find(badge => badge.id === key);
+						if (channelBadge?.versions.some(version => version.id === value)) {
+							return channelBadge.getVersion(value) as HelixChatBadgeVersion;
+						}
 
-            return chatBadges.value.find(badge => badge.id === key)!.getVersion(value) as HelixChatBadgeVersion
-          })
-        : []
-  }
+						return chatBadges.value.find(badge => badge.id === key)!.getVersion(value) as HelixChatBadgeVersion;
+					})
+				: [];
+	}
 
-  const message: Message = {
-    channelId: channel,
-    date: msg.date,
-    emoteOffsets: msg.emoteOffsets,
-    id: msg.id,
-    isCheer: msg.isCheer,
-    isFirst: msg.isFirst,
-    isHighlight: msg.isHighlight,
-    isRedemption: msg.isRedemption,
-    isReply: msg.isReply,
-    isReturningChatter: msg.isReturningChatter,
-    parentMessageId: msg.parentMessageId,
-    parentMessageText: msg.parentMessageText,
-    rewardId: msg.rewardId,
-    userInfo: {
-      avatarUrl: userData.profile_image_url,
-      badgeInfo: msg.userInfo.badgeInfo,
-      badges: userData.badges,
-      color: msg.userInfo.color,
-      displayName: msg.userInfo.displayName,
-      id: msg.userInfo.userId,
-      isArtist: msg.userInfo.isArtist,
-      isBroadcaster: msg.userInfo.isBroadcaster,
-      isFounder: msg.userInfo.isFounder,
-      isMod: msg.userInfo.isMod,
-      isSubscriber: msg.userInfo.isSubscriber,
-      isVip: msg.userInfo.isVip,
-      userId: msg.userInfo.userId,
-      userName: msg.userInfo.userName,
-      userType: msg.userInfo.userType,
-      pronoun: userData.pronoun
-    },
-    message: messageParser(msg.userInfo.userName, msg.id, text, msg.emoteOffsets),
-    plainText: text
-  }
+	const message: Message = {
+		channelId: channel,
+		date: msg.date,
+		emoteOffsets: msg.emoteOffsets,
+		id: msg.id,
+		isCheer: msg.isCheer,
+		isFirst: msg.isFirst,
+		isHighlight: msg.isHighlight,
+		isRedemption: msg.isRedemption,
+		isReply: msg.isReply,
+		isReturningChatter: msg.isReturningChatter,
+		parentMessageId: msg.parentMessageId,
+		parentMessageText: msg.parentMessageText,
+		rewardId: msg.rewardId,
+		userInfo: {
+			avatarUrl: userData.profile_image_url,
+			badgeInfo: msg.userInfo.badgeInfo,
+			badges: userData.badges,
+			color: msg.userInfo.color,
+			displayName: msg.userInfo.displayName,
+			id: msg.userInfo.userId,
+			isArtist: msg.userInfo.isArtist,
+			isBroadcaster: msg.userInfo.isBroadcaster,
+			isFounder: msg.userInfo.isFounder,
+			isMod: msg.userInfo.isMod,
+			isSubscriber: msg.userInfo.isSubscriber,
+			isVip: msg.userInfo.isVip,
+			userId: msg.userInfo.userId,
+			userName: msg.userInfo.userName,
+			userType: msg.userInfo.userType,
+			pronoun: userData.pronoun,
+		},
+		message: messageParser(msg.userInfo.userName, msg.id, text, msg.emoteOffsets),
+		plainText: text,
+	};
 
-  console.log(toRaw(message))
+	console.log(toRaw(message));
 
-  if (msg.emoteOffsets && msg.emoteOffsets.size > 0) {
-    // Convert Map to array of emote objects
-    const emotesToShow = Array.from(msg.emoteOffsets.entries()).map(([emoteId, positions]) => ({
-      name: `emote_${emoteId}`,
-      url: `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/2.0`
-    }))
+	if (msg.emoteOffsets && msg.emoteOffsets.size > 0) {
+		// Convert Map to array of emote objects
+		const emotesToShow = Array.from(msg.emoteOffsets.entries()).map(([emoteId]) => ({
+			name: `emote_${emoteId}`,
+			url: `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/2.0`,
+		}));
 
-    window.dispatchEvent(new CustomEvent('EmoteExplosion', {
-      detail: {
-        x: Math.random() * (window.innerWidth - 200) + 100,
-        y: Math.random() * (window.innerHeight - 200) + 100,
-        emotes: emotesToShow
-      }
-    }))
-  }
+		window.dispatchEvent(new CustomEvent('EmoteExplosion', {
+			detail: {
+				x: Math.random() * (window.innerWidth - 200) + 100,
+				y: Math.random() * (window.innerHeight - 200) + 100,
+				emotes: emotesToShow,
+			},
+		}));
+	}
 
-  if (message.isRedemption && message.rewardId) {
-    await handleReward(channel, user, text, message)
-  } else if (text.startsWith('!')) {
-    await handleCommand(channel, user, text, message)
-  } else {
-    await addMessage(message)
-  }
-})
+	if (message.isRedemption && message.rewardId) {
+		await handleReward(channel, user, text, message);
+	}
+	else if (text.startsWith('!')) {
+		await handleCommand(channel, user, text, message);
+	}
+	else {
+		await addMessage(message);
+	}
+});
 
 async function handleReward(channel: string, user: string, text: string, message: Message) {
-  const broadcasterId = (await getUserIdFromName(channel))!
-  console.log('handleReward', channel, user, text, message)
+	const broadcasterId = (await getUserIdFromName(channel))!;
+	console.log('handleReward', channel, user, text, message);
 
-  rewards
-    .filter(c => c.id === message.rewardId)
-    .forEach(command => {
-      command.callback({ channel, broadcasterId, message })
-    })
+	rewards
+		.filter(c => c.id === message.rewardId)
+		.forEach((command) => {
+			command.callback({ channel, broadcasterId, message });
+		});
 }
 
 async function handleCommand(channel: string, user: string, text: string, message: Message) {
-  const broadcasterId = (await getUserIdFromName(channel))!
-  const [commandName, ...params] = text.slice(1).split(' ')
+	const broadcasterId = (await getUserIdFromName(channel))!;
+	const [commandName, ...params] = text.slice(1).split(' ');
 
-  const cbObject = { channel, broadcasterId, commandName, params, message }
+	const cbObject = { channel, broadcasterId, commandName, params, message };
 
-  if (hasMinLevel(message.userInfo, 'broadcaster')) {
-    broadcasterCommands
-      .filter(c => c.name === commandName)
-      .forEach(command => {
-        command.callback(cbObject)
-      })
-  }
-  if (hasMinLevel(message.userInfo, 'moderator')) {
-    moderatorCommands
-      .filter(c => c.name === commandName)
-      .forEach(command => {
-        command.callback(cbObject)
-      })
-  }
-  if (hasMinLevel(message.userInfo, 'vip')) {
-    vipCommands
-      .filter(c => c.name === commandName)
-      .forEach(command => {
-        command.callback(cbObject)
-      })
-  }
-  if (hasMinLevel(message.userInfo, 'subscriber')) {
-    subscriberCommands
-      .filter(c => c.name === commandName)
-      .forEach(command => {
-        command.callback(cbObject)
-      })
-  }
-  everyoneCommands
-    .filter(c => c.name === commandName)
-    .forEach(command => {
-      command.callback(cbObject)
-    })
+	if (hasMinLevel(message.userInfo, 'broadcaster')) {
+		broadcasterCommands
+			.filter(c => c.name === commandName)
+			.forEach((command) => {
+				command.callback(cbObject);
+			});
+	}
+	if (hasMinLevel(message.userInfo, 'moderator')) {
+		moderatorCommands
+			.filter(c => c.name === commandName)
+			.forEach((command) => {
+				command.callback(cbObject);
+			});
+	}
+	if (hasMinLevel(message.userInfo, 'vip')) {
+		vipCommands
+			.filter(c => c.name === commandName)
+			.forEach((command) => {
+				command.callback(cbObject);
+			});
+	}
+	if (hasMinLevel(message.userInfo, 'subscriber')) {
+		subscriberCommands
+			.filter(c => c.name === commandName)
+			.forEach((command) => {
+				command.callback(cbObject);
+			});
+	}
+	everyoneCommands
+		.filter(c => c.name === commandName)
+		.forEach((command) => {
+			command.callback(cbObject);
+		});
 }
 
-const giftCounts = new Map<string | undefined, number>()
+const giftCounts = new Map<string | undefined, number>();
 
 chatClient.onCommunitySub(async (channel, gifterName, giftInfo) => {
-  console.log('onCommunitySub', channel, gifterName, giftInfo)
-  const previousGiftCount = giftCounts.get(gifterName) ?? 0
-  giftCounts.set(gifterName, previousGiftCount + giftInfo.count)
-  await chatClient.say(channel, `Thanks ${gifterName} for gifting ${giftInfo.count} subs to the community!`)
-})
+	console.log('onCommunitySub', channel, gifterName, giftInfo);
+	const previousGiftCount = giftCounts.get(gifterName) ?? 0;
+	giftCounts.set(gifterName, previousGiftCount + giftInfo.count);
+	await chatClient.say(channel, `Thanks ${gifterName} for gifting ${giftInfo.count} subs to the community!`);
+});
 
 chatClient.onSubGift(async (channel, recipientName, subInfo) => {
-  console.log('onSubGift', channel, recipientName, subInfo)
-  const gifterName = subInfo.gifter
-  const previousGiftCount = giftCounts.get(gifterName) ?? 0
-  if (previousGiftCount > 0) {
-    giftCounts.set(gifterName, previousGiftCount - 1)
-  } else {
-    await chatClient.say(channel, `Thanks ${gifterName} for gifting a sub to ${recipientName}!`)
-  }
-})
+	console.log('onSubGift', channel, recipientName, subInfo);
+	const gifterName = subInfo.gifter;
+	const previousGiftCount = giftCounts.get(gifterName) ?? 0;
+	if (previousGiftCount > 0) {
+		giftCounts.set(gifterName, previousGiftCount - 1);
+	}
+	else {
+		await chatClient.say(channel, `Thanks ${gifterName} for gifting a sub to ${recipientName}!`);
+	}
+});
 
-chatClient.onBan(async channel => {
-  await chatClient.say(channel, `Trash has been taken out.`)
-})
+chatClient.onBan(async (channel) => {
+	await chatClient.say(channel, `Trash has been taken out.`);
+});
 
 chatClient.onConnect(async () => {
-  console.log('Chat client connected')
-  // await chatClient.say(user.value!.name!, `${botUser.value.displayName} at your service! stoney90NoMercy`);
-})
+	console.log('Chat client connected');
+	// await chatClient.say(user.value!.name!, `${botUser.value.displayName} at your service! stoney90NoMercy`);
+});

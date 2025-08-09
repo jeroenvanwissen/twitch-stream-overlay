@@ -32,7 +32,7 @@ const command: Command = {
 			.join(', ');
 
 		await chatClient.say(channel, text, {
-			replyTo: message.id
+			replyTo: message.id,
 		});
 	},
 };

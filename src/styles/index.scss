@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 @property --rotate {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: true;
+	syntax: '<angle>';
+	initial-value: 0deg;
+	inherits: true;
 }
 @property --base {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: true;
+	syntax: '<angle>';
+	initial-value: 0deg;
+	inherits: true;
 }

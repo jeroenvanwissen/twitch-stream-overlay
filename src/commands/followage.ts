@@ -18,13 +18,13 @@ const command: Command = {
 					const followStartTimestamp = follow.followDate.getTime();
 					const text = `@${message.userInfo.displayName} You have been following for ${secondsToDuration((currentTimestamp - followStartTimestamp) / 1000)}!`;
 					await chatClient.say(channel, text, {
-						replyTo: message.id
+						replyTo: message.id,
 					});
 				}
 				else {
 					const text = `@${message.userInfo.displayName} You are not following!`;
 					await chatClient.say(channel, text, {
-						replyTo: message.id
+						replyTo: message.id,
 					});
 				}
 			});

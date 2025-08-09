@@ -177,36 +177,36 @@ The NoMercy ChatOverlay provides various UI settings that can be adjusted to mat
 
 ```typescript
 // Duration in seconds for badge transitions
-export const badgeTransitionDuration = ref(2)
+export const badgeTransitionDuration = ref(2);
 
 // Duration in seconds for how long the badge stays open
-export const badgeOpenDuration = ref(10)
+export const badgeOpenDuration = ref(10);
 
 // Duration in seconds for how long the badge stays closed
-export const badgeClosedDuration = ref(10)
+export const badgeClosedDuration = ref(10);
 ```
 
 ### Chat Message Settings
 
 ```typescript
 // Duration in seconds for how long chat messages are displayed
-export const chatShowDuration = ref(30)
+export const chatShowDuration = ref(30);
 
 // Duration in seconds for chat animation effects
-export const chatAnimationDuration = ref(0.75)
+export const chatAnimationDuration = ref(0.75);
 ```
 
 ### Lists Rotation Settings
 
 ```typescript
 // Duration in seconds each list is shown before rotating
-export const listsShowDuration = ref(15)
+export const listsShowDuration = ref(15);
 
 // Delay in seconds between switching lists
-export const listsSwitchDelay = ref(5)
+export const listsSwitchDelay = ref(5);
 
 // Duration in seconds for the animation effect when rotating lists
-export const listsAnimationDuration = ref(0.5)
+export const listsAnimationDuration = ref(0.5);
 ```
 
 The ChatOverlay includes a ListsRotator component that alternates between showing the Commands list and the Channel Records list. Instead of displaying both lists simultaneously, the component shows one list at a time with smooth animations between them, providing a cleaner interface.
@@ -252,7 +252,7 @@ The main styles for the overlay can be found in `src/styles/index.scss`. You can
 The default accent color is set as:
 
 ```typescript
-export const defaultColor = '#f72264'
+export const defaultColor = '#f72264';
 ```
 
 ## Components Overview
@@ -294,25 +294,25 @@ yarn make:command commandName
 When you create a new command, it uses the following template structure:
 
 ```typescript
-import type { Command } from '@/types/chat'
-import chatClient from '@/lib/twitch/chatClient'
+import type { Command } from '@/types/chat';
+import chatClient from '@/lib/twitch/chatClient';
 
 interface CommandNameStorage {}
 
 const command: Command<CommandNameStorage> = {
-  name: 'commandName',
-  permission: 'everyone', // 'broadcaster', 'moderator', 'vip', 'subscriber', or 'everyone'
-  type: 'command', // 'command', 'event', or 'message'
-  storage: {}, // Persistent storage for this command
-  init: () => {}, // Called when command is registered
-  callback: async ({ channel, broadcasterId, commandName, params, message }) => {
-    const text = `@${message.userInfo.displayName} This is the commandName command`
+	name: 'commandName',
+	permission: 'everyone', // 'broadcaster', 'moderator', 'vip', 'subscriber', or 'everyone'
+	type: 'command', // 'command', 'event', or 'message'
+	storage: {}, // Persistent storage for this command
+	init: () => {}, // Called when command is registered
+	callback: async ({ channel, broadcasterId, commandName, params, message }) => {
+		const text = `@${message.userInfo.displayName} This is the commandName command`;
 
-    await chatClient.say(channel, text)
-  }
-}
+		await chatClient.say(channel, text);
+	}
+};
 
-export default command
+export default command;
 ```
 
 #### Command Properties
@@ -343,21 +343,21 @@ yarn make:reward rewardName rewardId
 When you create a new reward, it uses the following template structure:
 
 ```typescript
-import type { Reward } from '@/types/chat'
+import type { Reward } from '@/types/chat';
 
 interface RewardNameStorage {}
 
 const reward: Reward<RewardNameStorage> = {
-  name: 'rewardName',
-  id: 'rewardId', // Twitch reward ID
-  storage: {}, // Persistent storage for this reward
-  init: () => {}, // Called when reward is registered
-  callback: async ({ channel, broadcasterId, message }) => {
-    console.log(`Reward "rewardName" triggered by ${message.userInfo.displayName} in channel ${channel}`)
-  }
-}
+	name: 'rewardName',
+	id: 'rewardId', // Twitch reward ID
+	storage: {}, // Persistent storage for this reward
+	init: () => {}, // Called when reward is registered
+	callback: async ({ channel, broadcasterId, message }) => {
+		console.log(`Reward "rewardName" triggered by ${message.userInfo.displayName} in channel ${channel}`);
+	}
+};
 
-export default reward
+export default reward;
 ```
 
 #### Reward Properties

@@ -13,7 +13,7 @@ const command: Command = {
 		if (params!.length === 0) {
 			const text = `@${message.userInfo.displayName} You need to specify a user to unwhitelist!`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 			return;
 		}
@@ -25,13 +25,13 @@ const command: Command = {
 			whitelistedUsers.value = whitelistedUsers.value.filter(user => user.userName !== message.userInfo.userName);
 			const text = `@${message.userInfo.displayName} User ${params.at(0)} has been removed from the whitelist!`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 		}
 		else {
 			const text = `@${message.userInfo.displayName} User ${params.at(0)} not found!`;
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 		}
 	},

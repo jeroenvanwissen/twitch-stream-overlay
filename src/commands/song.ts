@@ -12,7 +12,7 @@ const command: Command = {
 		if (!spotifyState.value.item) {
 			const text = 'No song is currently playing!';
 			await chatClient.say(channel, text, {
-				replyTo: message.id
+				replyTo: message.id,
 			});
 			return;
 		}
@@ -21,7 +21,7 @@ const command: Command = {
             ${spotifyState.value.item.artists.at(0)?.name} ${spotifyState.value.item.external_urls.spotify}`;
 
 		await chatClient.say(channel, text, {
-			replyTo: message.id
+			replyTo: message.id,
 		});
 	},
 };
