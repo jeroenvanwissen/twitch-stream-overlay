@@ -12,7 +12,7 @@ import { broadcasterCommands, everyoneCommands, moderatorCommands, subscriberCom
 import { getChannelBadges, getUserIdFromName } from '@/lib/twitch/apiClient';
 import { hasMinLevel } from '@/lib/twitch/helpers';
 import { TwitchClient } from '@/lib/twitch/twitchClient';
-import { rewards } from '@/rewards';
+// import { rewards } from '@/rewards';
 import { useLocalStorage } from '@vueuse/core';
 import { ignoredUsersForWelcome, welcomeUserAfterHours } from '@/store/config';
 
