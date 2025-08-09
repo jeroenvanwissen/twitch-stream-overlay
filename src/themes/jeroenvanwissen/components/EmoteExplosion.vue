@@ -1,8 +1,17 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
+import type { Ref } from 'vue';
 
-const activeEmotes = ref([]);
-const animationId = ref(null);
+// Define the event detail type for EmoteExplosion
+type EmoteExplosionEventDetail = {
+	x?: number;
+	y?: number;
+	emotes: Array<{ url: string; name?: string }>;
+	count?: number | null;
+};
+
+const activeEmotes = ref<Emote[]>([]);
+const animationId: Ref<number | null> = ref(null);
 const containerWidth = ref(window.innerWidth);
 const containerHeight = ref(window.innerHeight);
 
@@ -11,7 +20,25 @@ const MAX_EMOTES = 60; // Limit total emotes on screen
 const CLEANUP_INTERVAL = 500; // Clean up dead emotes every 500ms
 
 class Emote {
-	constructor(x, y, emoteData) {
+	id: string;
+	url: string;
+	name: string;
+	x: number;
+	y: number;
+	vx: number;
+	vy: number;
+	opacity: number;
+	scale: number;
+	rotation: number;
+	rotationSpeed: number;
+	gravity: number;
+	bounce: number;
+	fadeStart: number;
+	lifetime: number;
+	birth: number;
+	isDead: boolean;
+
+	constructor(x: number, y: number, emoteData: any) {
 		this.id = Math.random().toString(36).substr(2, 9);
 
 		// Use the provided emote data
@@ -86,7 +113,12 @@ class Emote {
 
 let lastCleanup = 0;
 
-function triggerExplosion(x = containerWidth.value / 2, y = containerHeight.value / 2, emotes = [], count = null) {
+function triggerExplosion(
+	x: number = containerWidth.value / 2,
+	y: number = containerHeight.value / 2,
+	emotes: Array<{ url: string; name?: string }> = [],
+	count: number | null = null,
+) {
 	if (!emotes || emotes.length === 0) {
 		console.warn('No emotes provided for explosion');
 		return;
@@ -131,8 +163,8 @@ function handleResize() {
 }
 
 // Listen for custom event
-function handleEmoteExplosion(event) {
-	const { x, y, emotes, count } = event.detail || {};
+function handleEmoteExplosion(event: Event) {
+	const { x, y, emotes, count } = (event as CustomEvent<EmoteExplosionEventDetail>).detail || {};
 	triggerExplosion(x, y, emotes, count);
 }
 
