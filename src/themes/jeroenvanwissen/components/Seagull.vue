@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import seagullSound from '@/assets/sounds/seagull.mp3';
+import seagullSound from '@/themes/jeroenvanwissen/assets/sounds/seagull.mp3';
 
 const audioRef = ref<HTMLAudioElement>();
 
@@ -21,7 +21,7 @@ onMounted(() => {
 <template>
 	<div>
 		<div class="seagull">
-			<img src="@/assets/images/seagull.webp" alt="Seagull">
+			<img src="../assets/images/seagull.webp" alt="Seagull">
 			<audio ref="audioRef" :src="seagullSound" loop />
 		</div>
 	</div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import duckSound from '@/assets/sounds/ducky.mp3';
+import duckSound from '@/themes/jeroenvanwissen/assets/sounds/ducky.mp3';
 
 const audioRef = ref<HTMLAudioElement>();
 
@@ -21,7 +21,7 @@ onMounted(() => {
 <template>
 	<div>
 		<div class="duck">
-			<img src="@/assets/images/ducky.webp" alt="Ducky">
+			<img src="../assets/images/ducky.webp" alt="Ducky">
 			<audio ref="audioRef" :src="duckSound" loop />
 		</div>
 	</div>
