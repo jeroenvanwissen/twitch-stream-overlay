@@ -22,7 +22,7 @@ const command: CommandWithMethods = {
 	},
 	async callback({ channel, broadcasterId, commandName, params, message }) {
 		if (allCommands.some(cmd => cmd.name === params.at(1))) {
-			const text = `@${message.userInfo.displayName} The command "${commandName}" can not be modified. Please choose a different name.`;
+			const text = `The command "${commandName}" can not be modified. Please choose a different name.`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
@@ -30,7 +30,7 @@ const command: CommandWithMethods = {
 		}
 
 		if (params.length < 2) {
-			const text = `@${message.userInfo.displayName} Please provide parameters for the command.`;
+			const text = `Please provide parameters for the command.`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
@@ -57,7 +57,7 @@ const command: CommandWithMethods = {
 			return;
 		}
 		if (this.storage.commands.some((cmd: BaseCommand) => cmd.name === params.at(1))) {
-			const text = `@${message.userInfo.displayName} The command "${commandName}" is already exists. Use update or remove.`;
+			const text = `The command "${commandName}" is already exists. Use update or remove.`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
@@ -89,7 +89,7 @@ const command: CommandWithMethods = {
 
 	async remove(channel: string, broadcasterId: string, commandName: string, params: string[], message: Message) {
 		if (!this.storage.commands.some((cmd: BaseCommand) => cmd.name === params.at(1))) {
-			const text = `@${message.userInfo.displayName} The command "${params.at(1)}" does not exist.`;
+			const text = `The command "${params.at(1)}" does not exist.`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
@@ -112,7 +112,7 @@ const command: CommandWithMethods = {
 		}
 
 		if (!this.storage.commands.some((cmd: BaseCommand) => cmd.name === params.at(1))) {
-			const text = `@${message.userInfo.displayName} The command "${params.at(1)}" does not exist.`;
+			const text = `The command "${params.at(1)}" does not exist.`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});

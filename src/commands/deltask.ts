@@ -10,7 +10,7 @@ const command: Command = {
 	init: () => {},
 	callback: async ({ channel, params, message }) => {
 		if (params!.length === 0) {
-			const text = `@${message.userInfo.displayName} Use !deltask <task> to delete a task. Example: !deltask 1 (where 1 is the task ID)`;
+			const text = `Use !deltask <task> to delete a task. Example: !deltask 1 (where 1 is the task ID)`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
@@ -19,7 +19,7 @@ const command: Command = {
 
 		const task = findTask(params.at(0)!, message.userInfo.userName);
 		if (!task) {
-			const text = `@${message.userInfo.displayName} Task not found! Please ensure the task exists.`;
+			const text = `Task not found! Please ensure the task exists.`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
@@ -27,14 +27,14 @@ const command: Command = {
 		}
 		// If all correct, this statement should never be true.
 		if (task.userId !== message.userInfo.userId) {
-			const text = `@${message.userInfo.displayName} You can only delete your own tasks!`;
+			const text = `You can only delete your own tasks!`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
 			return;
 		}
 		deleteTask(task.id, message.userInfo.userName);
-		const text = `@${message.userInfo.displayName} You have deleted the task "${task.text}"!`;
+		const text = `You have deleted the task "${task.text}"!`;
 		await chatClient.say(channel, text, {
 			replyTo: message.id,
 		});

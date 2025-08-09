@@ -75,7 +75,7 @@ const command: Command<LurkStorage> = {
 		}
 		catch (error) {
 			console.error('Error in lurk command:', error);
-			const text = `@${message.userInfo.displayName} This is the lurk command`;
+			const text = `This is the lurk command`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});

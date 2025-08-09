@@ -32,7 +32,7 @@ const command: Command<ShoutoutStorage> = {
 	init: () => {},
 	callback: async ({ channel, broadcasterId, params, message }) => {
 		if (params!.length === 0) {
-			const text = `@${message.userInfo.displayName} You need to specify a user to shoutout!`;
+			const text = `You need to specify a user to shoutout!`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});

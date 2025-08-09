@@ -11,7 +11,7 @@ const command: Command<HelpStorage> = {
 	init: () => {},
 	callback: async ({ channel, params, message }) => {
 		if (params.length === 0) {
-			const text = `@${message.userInfo.displayName} Invalid usage of the help command. Use !commands to see what commands are available for you.`;
+			const text = `Invalid usage of the help command. Use !commands to see what commands are available for you.`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
@@ -67,7 +67,7 @@ const command: Command<HelpStorage> = {
 				break;
 		}
 
-		await chatClient.say(channel, `@${message.userInfo.displayName} ${helpText}`, {
+		await chatClient.say(channel, `${helpText}`, {
 			replyTo: message.id,
 		});
 	},

@@ -11,7 +11,7 @@ const command: Command = {
 	init: () => {},
 	callback: async ({ channel, params, message }) => {
 		if (params!.length === 0) {
-			const text = `@${message.userInfo.displayName} You need to specify a user to unwhitelist!`;
+			const text = `You need to specify a user to unwhitelist!`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
@@ -23,13 +23,13 @@ const command: Command = {
 
 		if (userId) {
 			whitelistedUsers.value = whitelistedUsers.value.filter(user => user.userName !== message.userInfo.userName);
-			const text = `@${message.userInfo.displayName} User ${params.at(0)} has been removed from the whitelist!`;
+			const text = `User ${params.at(0)} has been removed from the whitelist!`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
 		}
 		else {
-			const text = `@${message.userInfo.displayName} User ${params.at(0)} not found!`;
+			const text = `User ${params.at(0)} not found!`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});

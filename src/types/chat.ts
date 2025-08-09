@@ -79,7 +79,7 @@ export interface Reward<T = Record<string, unknown>> {
 	callback: ({ channel, broadcasterId, message }: {
 		channel: string;
 		broadcasterId: string;
-		message: Message | EventSubChannelRedemptionAddEvent;
+		message: Message | EventSubChannelRedemptionAddEvent; // TODO: maybe split this into separate message and redemption..
 	}) => void;
 }
 

@@ -148,7 +148,7 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 	}
 
 	if (message.isRedemption && message.rewardId) {
-		await handleReward(channel, user, text, message);
+		// await handleReward(channel, user, text, message);
 	}
 	else if (text.startsWith('!')) {
 		await handleCommand(channel, user, text, message);
@@ -158,16 +158,16 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 	}
 });
 
-async function handleReward(channel: string, user: string, text: string, message: Message) {
-	const broadcasterId = (await getUserIdFromName(channel))!;
-	console.log('handleReward', channel, user, text, message);
+// async function handleReward(channel: string, user: string, text: string, message: Message) {
+// 	const broadcasterId = (await getUserIdFromName(channel))!;
+// 	console.log('handleReward', channel, user, text, message);
 
-	rewards
-		.filter(c => c.id === message.rewardId)
-		.forEach((command) => {
-			command.callback({ channel, broadcasterId, message });
-		});
-}
+// 	rewards
+// 		.filter(c => c.id === message.rewardId)
+// 		.forEach((command) => {
+// 			command.callback({ channel, broadcasterId, message });
+// 		});
+// }
 
 async function handleCommand(channel: string, user: string, text: string, message: Message) {
 	const broadcasterId = (await getUserIdFromName(channel))!;

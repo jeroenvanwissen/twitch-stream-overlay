@@ -22,7 +22,7 @@ const command: Command<DedStorage> = {
 
 			if (param === 'reset') {
 				command.storage.count.value = 0;
-				const text = `@${message.userInfo.displayName} Death counter has been reset to 0!`;
+				const text = `Death counter has been reset to 0!`;
 				await chatClient.say(channel, text, {
 					replyTo: message.id,
 				});
@@ -38,7 +38,7 @@ const command: Command<DedStorage> = {
 					if (command.storage.count.value < 0) {
 						command.storage.count.value = 0;
 					}
-					const text = `@${message.userInfo.displayName} Death counter ${value > 0 ? 'increased' : 'decreased'} to ${command.storage.count.value}!`;
+					const text = `Death counter ${value > 0 ? 'increased' : 'decreased'} to ${command.storage.count.value}!`;
 					await chatClient.say(channel, text, {
 						replyTo: message.id,
 					});

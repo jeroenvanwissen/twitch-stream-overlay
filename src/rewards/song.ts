@@ -1,7 +1,8 @@
 import { useLocalStorage } from '@vueuse/core';
 import type { Ref } from 'vue';
 
-import type { Message, Reward, UserRecord } from '@/types/chat';
+import type { Reward, UserRecord } from '@/types/chat';
+import type { EventSubChannelRedemptionAddEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelRedemptionAddEvent';
 
 import { spotifyClient } from '@/lib/spotify/spotifyClient';
 import chatClient from '@/lib/twitch/chatClient';
@@ -14,34 +15,36 @@ const reward: Reward<{ songs: Ref<UserRecord[]> }> = {
 	},
 	init: () => {},
 	callback: async ({ channel, message }) => {
-		message = message as Message;
-		if (!message.plainText.includes('spotify.com') && !message.plainText.includes('track/')) {
-			const text = `@${message.userInfo.displayName} Failed to add song to queue. Make sure you provided a valid Spotify track URL!`;
-			await chatClient.say(channel, text);
+		message = message as EventSubChannelRedemptionAddEvent;
+		if (!message.input.includes('spotify.com') && !message.input.includes('track/')) {
+			const text = `Failed to add song to queue. Make sure you provided a valid Spotify track URL!`;
+			await chatClient.say(channel, text, {
+				replyTo: message.id,
+			});
 			return;
 		}
 
 		const songs = reward.storage.songs;
-		const user = songs.value.find(song => song.userId === message.userInfo.userId)!;
+		const user = songs.value.find(song => song.userId === message.userId)!;
 		if (user) {
 			user.count += 1;
 			user.dates.push(new Date());
-			songs.value = [...songs.value!.filter(song => song.userId !== message.userInfo.userId), user];
+			songs.value = [...songs.value!.filter(song => song.userId !== message.userId), user];
 		}
 		else {
 			const user = {
-				userId: message.userInfo.userId,
-				displayName: message.userInfo.displayName,
+				userId: message.userId,
+				displayName: message.userDisplayName,
 				count: 1,
 				dates: [new Date()],
 			};
-			songs.value = [...songs.value.filter(song => song.userId !== message.userInfo.userId), user];
+			songs.value = [...songs.value.filter(song => song.userId !== message.userId), user];
 		}
 
 		const trackId
-			= message.plainText.includes('spotify.com') && message.plainText.includes('track/')
-				? message.plainText.split('/').pop()?.split('?').at(0)
-				: message.plainText.split(':').pop();
+			= message.input.includes('spotify.com') && message.input.includes('track/')
+				? message.input.split('/').pop()?.split('?').at(0)
+				: message.input.split(':').pop();
 
 		const queueResponse = await spotifyClient.addToQueue(trackId!);
 
@@ -50,8 +53,10 @@ const reward: Reward<{ songs: Ref<UserRecord[]> }> = {
 			await chatClient.say(channel, text);
 		}
 		else {
-			const text = `@${message.userInfo.displayName} Failed to add song to queue. Make sure you provided a valid Spotify track URL!`;
-			await chatClient.say(channel, text);
+			const text = `Failed to add song to queue. Make sure you provided a valid Spotify track URL!`;
+			await chatClient.say(channel, text, {
+				replyTo: message.id,
+			});
 		}
 	},
 };
