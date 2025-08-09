@@ -59,7 +59,9 @@ const command: Command<UnlurkStorage> = {
 			if (!command.storage.lurkers.value.includes(message.userInfo.userName)) {
 				const randomMessageTemplate = command.storage.notLurkingUnlurkReplies[Math.floor(Math.random() * command.storage.notLurkingUnlurkReplies.length)];
 				const text = replaceTemplatePlaceholders(randomMessageTemplate, message);
-				await chatClient.say(channel, text);
+				await chatClient.say(channel, text, {
+					replyTo: message.id
+				});
 				return;
 			}
 
@@ -67,11 +69,16 @@ const command: Command<UnlurkStorage> = {
 
 			const randomMessageTemplate = command.storage.snarkyReplies[Math.floor(Math.random() * command.storage.snarkyReplies.length)];
 			const text = replaceTemplatePlaceholders(randomMessageTemplate, message);
-			await chatClient.say(channel, text);
+			await chatClient.say(channel, text, {
+				replyTo: message.id
+			});
 		}
 		catch (error) {
 			console.error('Error in lurk command:', error);
-			await chatClient.say(channel, `@${message.userInfo.displayName} This is the lurk command`);
+			const text = `@${message.userInfo.displayName} This is the lurk command`;
+			await chatClient.say(channel, text, {
+				replyTo: message.id
+			});
 		}
 	},
 };

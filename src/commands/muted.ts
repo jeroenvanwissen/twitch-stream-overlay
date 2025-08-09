@@ -7,11 +7,11 @@ const command: Command = {
   type: 'command',
   storage: {},
   init: () => {},
-  callback: async ({ channel }) => {
-    await chatClient.say(
-      channel,
-      `Some streams, I don't unmute the mic during breaks. It can be because of open windows, washing maschine making noise, workers around the house... or just not wanting to use my voice. I will be active in chat tho... jeroen7Cheers`
-    )
+  callback: async ({ channel, message }) => {
+    const text = `Some streams, I don't unmute the mic during breaks. It can be because of open windows, washing maschine making noise, workers around the house... or just not wanting to use my voice. I will be active in chat tho... jeroen7Cheers`;
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    });
   }
 }
 

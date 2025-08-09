@@ -12,7 +12,10 @@ const command: Command = {
 	init: () => {},
 	callback: async ({ channel, params, message }) => {
 		if (!params || params.length === 0) {
-			await chatClient.say(channel, `@${message.userInfo.displayName} You need to specify a user to shoutout!`);
+			const text = `@${message.userInfo.displayName} You need to specify a user to shoutout!`;
+			await chatClient.say(channel, text, {
+				replyTo: message.id
+			});
 			return;
 		}
 
@@ -45,16 +48,22 @@ const command: Command = {
 			];
 			if (filtered) {
 				const text = `@${message.userInfo.displayName} User ${params.at(0)} has been whitelisted with no images!`;
-				await chatClient.say(channel, text);
+				await chatClient.say(channel, text, {
+					replyTo: message.id
+				});
 			}
 			else {
 				const text = `@${message.userInfo.displayName} User ${params.at(0)} has been whitelisted!`;
-				await chatClient.say(channel, text);
+				await chatClient.say(channel, text, {
+					replyTo: message.id
+				});
 			}
 		}
 		else {
 			const text = `@${message.userInfo.displayName} User ${params.at(0)} not found!`;
-			await chatClient.say(channel, text);
+			await chatClient.say(channel, text, {
+				replyTo: message.id
+			});
 		}
 	},
 };

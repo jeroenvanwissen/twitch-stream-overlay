@@ -7,11 +7,11 @@ const command: Command = {
   type: 'command',
   storage: {},
   init: () => {},
-  callback: async ({ channel }) => {
-    await chatClient.say(
-      channel,
-      `I work as a Test Automation Engineer for an international consultancy company. I have a strong background as Full Stack JavaScript/TypeScript developer.`
-    )
+  callback: async ({ channel, message }) => {
+    const text = `I work as a Test Automation Engineer for an international consultancy company. I have a strong background as Full Stack JavaScript/TypeScript developer.`;
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    });
   }
 }
 

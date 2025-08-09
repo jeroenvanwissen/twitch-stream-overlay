@@ -97,6 +97,8 @@ botAuthProvider
 	)
 	.then(async (userData) => {
 		botUserId.value = userData;
+		botAuthProvider.addIntentsToUser(userData, ['chat']);
+
 		console.log('Creating user client for', userData);
 
 		const { apiClient } = await import('@/lib/twitch/apiClient');
@@ -113,8 +115,8 @@ botAuthProvider
 			creationDate: u!.creationDate!,
 		};
 
-		// const { setupEventSub } = await import('@/lib/twitch/bot');
-		// await setupEventSub();
+		const { setupEventSub } = await import('@/lib/twitch/bot');
+		await setupEventSub();
 	});
 
 TwitchClient.initialize(authProvider, botAuthProvider);

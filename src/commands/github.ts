@@ -7,11 +7,11 @@ const command: Command = {
   type: 'command',
   storage: {},
   init: () => {},
-  callback: async ({ channel }) => {
-    await chatClient.say(
-      channel,
-      `There's not much interesting on my GitHub profile.. but here it is... https://github.com/jeroenvanwissen`
-    )
+  callback: async ({ channel, message }) => {
+    const text = `There's not much interesting on my GitHub profile.. but here it is... https://github.com/jeroenvanwissen`;
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    });
   }
 }
 

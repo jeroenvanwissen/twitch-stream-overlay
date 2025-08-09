@@ -8,10 +8,12 @@ const command: Command = {
   type: 'command',
   storage: {},
   init: () => {},
-  callback: async ({ channel }) => {
+  callback: async ({ channel, message }) => {
     clearTasks()
-    await chatClient.say(channel, `All tasks have been cleared!`)
-    return
+    const text = `All tasks have been cleared!`
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    })
   }
 }
 

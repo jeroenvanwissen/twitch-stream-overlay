@@ -31,7 +31,9 @@ const command: Command = {
 			.sort((a, b) => a.localeCompare(b))
 			.join(', ');
 
-		await chatClient.say(channel, text);
+		await chatClient.say(channel, text, {
+			replyTo: message.id
+		});
 	},
 };
 

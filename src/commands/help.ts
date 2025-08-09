@@ -12,7 +12,9 @@ const command: Command<HelpStorage> = {
   callback: async ({ channel, params, message }) => {
     if (params.length === 0) {
       const text = `@${message.userInfo.displayName} Invalid usage of the help command. Use !commands to see what commands are available for you.`
-      await chatClient.say(channel, text)
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      })
       return
     }
 
@@ -65,7 +67,9 @@ const command: Command<HelpStorage> = {
         break
     }
 
-    await chatClient.say(channel, `@${message.userInfo.displayName} ${helpText}`)
+    await chatClient.say(channel, `@${message.userInfo.displayName} ${helpText}`, {
+      replyTo: message.id
+    })
   }
 }
 

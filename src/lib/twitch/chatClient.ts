@@ -14,6 +14,7 @@ import { hasMinLevel } from '@/lib/twitch/helpers'
 import { TwitchClient } from '@/lib/twitch/twitchClient'
 import { rewards } from '@/rewards'
 import { useLocalStorage } from '@vueuse/core'
+import { ignoredUsersForWelcome, welcomeUserAfterHours } from '@/store/config';
 
 export const chatClient = new ChatClient({
   authProvider: TwitchClient.botAuthProvider!,
@@ -26,18 +27,41 @@ export default chatClient
 interface WelcomeUser {
   name: string
   hasSpoken: boolean
+  date: Date
 }
 
-const welcomeUsers = ref<WelcomeUser[]>([])
+const welcomeUsers = useLocalStorage<WelcomeUser[]>('welcomeUsers', [])
 const knownUsers = useLocalStorage<string[]>('knownUsers', [])
 
 const messageHandler = ref()
 
 messageHandler.value?.unbind()
 
+function olderThanHours(date: Date, hours: number): boolean {
+	return (new Date().getTime() - new Date(date).getTime()) < (hours * 60 * 60 * 1000);
+}
+
+function shouldIgnoreUser(user: string, channel: string): boolean {
+	if (user === botUser.value?.name || user === channel)
+		return true;
+	if (ignoredUsersForWelcome.value.includes(user))
+		return true;
+	if (ignoredUsersForWelcome.value.includes(channel))
+		return true;
+
+	return false;
+}
+
 messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => {
-  if (!welcomeUsers.value.some(u => u.name === user) && user !== botUser.value?.name && user !== channel) {
-    welcomeUsers.value = [...welcomeUsers.value, { name: user, hasSpoken: true }]
+	if (!welcomeUsers.value.some(u => u.name === user && olderThanHours(u.date, welcomeUserAfterHours.value)) && !shouldIgnoreUser(user, channel)) {
+		welcomeUsers.value = [
+			...welcomeUsers.value.filter(u => u.name !== user),
+			{
+				name: user,
+				hasSpoken: true,
+				date: new Date(),
+			},
+		];
 
     if (knownUsers.value.includes(user)) {
       await chatClient.say(channel, `Welcome back @${msg.userInfo.displayName}!`)

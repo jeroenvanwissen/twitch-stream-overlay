@@ -10,10 +10,10 @@ const command: Command = {
   init: () => {},
   callback: async ({ channel, broadcasterId, params, message }) => {
     if (params!.length === 0) {
-      await chatClient.say(
-        channel,
-        `@${message.userInfo.displayName} Use !next <task> to mark your current task as done and focus on the next task. Example: !next Finish the report`
-      )
+      const text = `@${message.userInfo.displayName} Use !next <task> to mark your current task as done and focus on the next task. Example: !next Finish the report`;
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      });
       return
     }
 
@@ -24,29 +24,43 @@ const command: Command = {
 
     const task = findTask(params.at(0)!, message.userInfo.userName)
     if (!task) {
-      await chatClient.say(channel, `@${message.userInfo.displayName} Task not found! Please ensure the task exists.`)
+      const text = `@${message.userInfo.displayName} Task not found! Please ensure the task exists.`;
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      });
       return
     }
 
     // If all correct, this statement should never be true.
     if (task.userId !== message.userInfo.userId) {
-      await chatClient.say(channel, `@${message.userInfo.displayName} You can only focus on your own tasks!`)
+      const text = `@${message.userInfo.displayName} You can only focus on your own tasks!`;
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      });
       return
     }
 
     if (task.focused) {
-      await chatClient.say(channel, `@${message.userInfo.displayName} You are already focused on this task!`)
+      const text = `@${message.userInfo.displayName} You are already focused on this task!`;
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      });
       return
     }
 
     if (task.done) {
-      await chatClient.say(channel, `@${message.userInfo.displayName} You cannot focus on a completed task!`)
+      const text = `@${message.userInfo.displayName} You cannot focus on a completed task!`;
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      });
       return
     }
 
     focusTask(parseInt(params[0]), message.userInfo.userName)
     const text = `@${message.userInfo.displayName} You are now focused on the task: ${task.text}`
-    await chatClient.say(channel, text)
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    });
   }
 }
 

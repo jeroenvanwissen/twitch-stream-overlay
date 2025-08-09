@@ -1,12 +1,39 @@
 <script setup lang="ts">
-import { spotifyQueue } from '@/store/spotify';
+import { ref, watch } from 'vue';
+import { spotifyQueue, spotifyState } from '@/store/spotify';
+
+const nextUpCard = ref<HTMLElement>();
+
+watch(spotifyState, (newValue, oldValue) => {
+	if (!newValue.is_playing)
+		return;
+
+	// Add shine effect when track changes
+	if (oldValue?.item?.id !== newValue.item?.id && newValue.item) {
+		moveUp();
+	}
+});
+
+// Add shine effect to the widget
+function moveUp() {
+	if (!nextUpCard.value)
+		return;
+
+	nextUpCard.value.classList.add('-translate-y-[25%]');
+
+	setTimeout(() => {
+		nextUpCard.value?.classList.remove('-translate-y-[25%]');
+	}, 10000);
+}
 </script>
 
 <template>
 	<div v-if="spotifyQueue.length > 0" class="fixed bottom-44 right-10">
-		<div class="flex flex-col rounded-lg p-4 gap-y-3 min-w-[200px] max-w-[600px] w-fit relative overflow-clip">
+		<div ref="nextUpCard"
+			class="flex flex-col rounded-lg p-4 gap-y-2 min-w-[200px] max-w-[600px] w-fit relative overflow-clip next-up-card"
+		>
 			<div class="absolute inset-0 w-available h-available bg-theme-900/90 card -z-10" />
-			<div class="text-theme-200 text-md mb-1 card">
+			<div class="text-theme-200 text-md card -mt-1">
 				Next in queue:
 			</div>
 			<div v-for="(track, index) in spotifyQueue.toSpliced(1)" :key="index" class="flex items-center space-x-3">
@@ -25,4 +52,7 @@ import { spotifyQueue } from '@/store/spotify';
 </template>
 
 <style scoped>
+.next-up-card {
+	transition: all 0.5s ease-in-out;
+}
 </style>

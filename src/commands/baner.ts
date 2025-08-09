@@ -7,8 +7,11 @@ const command: Command = {
   type: 'command',
   storage: {},
   init: () => {},
-  callback: async ({ channel }) => {
-    await chatClient.say(channel, `it's !banger you fool!!`)
+  callback: async ({ channel, message }) => {
+    const text = `it's !banger you fool!!`
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    })
   }
 }
 

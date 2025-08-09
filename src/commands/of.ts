@@ -7,11 +7,11 @@ const command: Command = {
   type: 'command',
   storage: {},
   init: () => {},
-  callback: async ({ channel }) => {
-    await chatClient.say(
-      channel,
-      `I have only one fan, it's small and it blows. Use some channel points to turn it on or off.`
-    )
+  callback: async ({ channel, message }) => {
+    const text = `I have only one fan, it's small and it blows. Use some channel points to turn it on or off.`;
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    });
   }
 }
 

@@ -7,11 +7,11 @@ const command: Command = {
   type: 'command',
   storage: {},
   init: () => {},
-  callback: async ({ channel }) => {
-    await chatClient.say(
-      channel,
-      `The Odin Project - Full Stack JavaScript - https://www.theodinproject.com/paths/full-stack-javascript`
-    )
+  callback: async ({ channel, message }) => {
+    const text = `The Odin Project - Full Stack JavaScript - https://www.theodinproject.com/paths/full-stack-javascript`;
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    });
   }
 }
 

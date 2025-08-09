@@ -16,51 +16,70 @@ const command: Command = {
     const user = message?.userInfo.displayName ?? 'User'
 
     if (!params || params.length === 0) {
-      await chatClient.say(channel, `@${user} ${usage}`)
+      const text = `@${user} ${usage}`;
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      });
       return
     }
 
     const sub = params[0].toLowerCase()
+    let text;
     switch (sub) {
       case 'start':
         store.start()
-        await chatClient.say(
-          channel,
-          `@${user} Pomodoro timer started with a ${state.focusLength}-minute focus session!`
-        )
+        text = `@${user} Pomodoro timer started with a ${state.focusLength}-minute focus session!`
+        await chatClient.say(channel, text, {
+          replyTo: message.id
+        })
         break
       case 'stop':
         store.stop()
-        await chatClient.say(channel, `@${user} Pomodoro timer stopped!`)
+        text = `@${user} Pomodoro timer stopped!`
+        await chatClient.say(channel, text, {
+          replyTo: message.id
+        })
         break
       case 'reset':
         store.reset()
-        await chatClient.say(channel, `@${user} Pomodoro timer reset!`)
+        text = `@${user} Pomodoro timer reset!`
+        await chatClient.say(channel, text, {
+          replyTo: message.id
+        })
         break
       case 'next':
         store.nextPomo()
         const newSession = store.state.value.isFocusMode ? 'focus' : 'break'
-        await chatClient.say(channel, `@${user} Pomodoro timer switched to the next ${newSession} session!`)
+        text = `@${user} Pomodoro timer switched to the next ${newSession} session!`
+        await chatClient.say(channel, text, {
+          replyTo: message.id
+        })
         break
       case 'sessions':
         {
           const count = params[1]
           if (!count || isNaN(Number(count)) || Number(count) <= 0) {
-            await chatClient.say(channel, `@${user} Please provide a valid number of pomodoros!`)
+            text = `@${user} Please provide a valid number of pomodoros!`
+            await chatClient.say(channel, text, {
+              replyTo: message.id
+            })
             return
           }
           store.setTotalPomos(Number(count))
-          await chatClient.say(channel, `@${user} Pomodoro timer total pomodoros set to ${count}!`)
+          text = `@${user} Pomodoro timer total pomodoros set to ${count}!`
+          await chatClient.say(channel, text, {
+            replyTo: message.id
+          })
         }
         break
       case 'time':
         {
           const timeArg = params[1]
           if (!timeArg) {
-            await chatClient.say(
-              channel,
-              `@${user} Please provide focus/break time in minutes! Example: !pomo time 50/8`
-            )
+            text = `@${user} Please provide focus/break time in minutes! Example: !pomo time 50/8`;
+            await chatClient.say(channel, text, {
+              replyTo: message.id
+            })
             return
           }
           const [focus, breakTime] = timeArg.split('/')
@@ -71,31 +90,43 @@ const command: Command = {
             focusNum <= 0 ||
             (breakTime !== undefined && (isNaN(breakNum as number) || (breakNum as number) <= 0))
           ) {
-            await chatClient.say(channel, `@${user} Please provide valid focus/break times! Example: !pomo time 50/8`)
+            text = `@${user} Please provide valid focus/break times! Example: !pomo time 50/8`;
+            await chatClient.say(channel, text, {
+              replyTo: message.id
+            })
             return
           }
           store.setFocusLength(focusNum)
           if (breakNum !== undefined) store.setBreakLength(breakNum)
-          await chatClient.say(
-            channel,
-            `@${user} Pomodoro timer focus time set to ${focusNum} minute(s)` +
-              (breakNum !== undefined ? ` and break time set to ${breakNum} minute(s)!` : '!')
-          )
+          text = `@${user} Pomodoro timer focus time set to ${focusNum} minute(s)` +
+            (breakNum !== undefined ? ` and break time set to ${breakNum} minute(s)!` : '!')
+          await chatClient.say(channel, text, {
+            replyTo: message.id
+          })
         }
         break
       case 'add':
         {
           const minutes = params[1]
           if (!minutes || isNaN(Number(minutes)) || Number(minutes) <= 0) {
-            await chatClient.say(channel, `@${user} Please provide a valid number of minutes to add!`)
+            text = `@${user} Please provide a valid number of minutes to add!`;
+            await chatClient.say(channel, text, {
+              replyTo: message.id
+            })
             return
           }
           store.addTime(Number(minutes))
-          await chatClient.say(channel, `@${user} Added ${minutes} minute(s) to the Pomodoro timer!`)
+          text = `@${user} Added ${minutes} minute(s) to the Pomodoro timer!`;
+          await chatClient.say(channel, text, {
+            replyTo: message.id
+          })
         }
         break
       default:
-        await chatClient.say(channel, `@${user} ${usage}`)
+        text = `@${user} ${usage}`;
+        await chatClient.say(channel, text, {
+          replyTo: message.id
+        })
     }
   }
 }

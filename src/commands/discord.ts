@@ -7,8 +7,11 @@ const command: Command = {
   type: 'command',
   storage: {},
   init: () => {},
-  callback: async ({ channel }) => {
-    await chatClient.say(channel, `Join the Discord server for after hour chats... https://discord.gg/rC6YJbN`)
+  callback: async ({ channel, message }) => {
+    const text = `Join the Discord server for after hour chats... https://discord.gg/rC6YJbN`;
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    });
   }
 }
 

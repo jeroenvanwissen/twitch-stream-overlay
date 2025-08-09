@@ -9,16 +9,21 @@ const command: Command = {
   type: 'command',
   storage: {},
   init: () => {},
-  callback: async ({ channel }) => {
+  callback: async ({ channel, message }) => {
     if (!spotifyState.value.item) {
-      await chatClient.say(channel, 'No song is currently playing!')
-      return
+      const text = 'No song is currently playing!';
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      });
+      return;
     }
 
     await spotifyClient.nextTrack()
 
     const text = `I know right, Jeroen's song choices are always on point! Skipped to the next track.`
-    await chatClient.say(channel, text)
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    });
   }
 }
 

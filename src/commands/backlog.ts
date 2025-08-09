@@ -13,14 +13,19 @@ const command: Command = {
     const unDoneTasks = userTasks.filter(task => !task.done)
 
     if (unDoneTasks.length === 0) {
-      await chatClient.say(channel, `@${message.userInfo.displayName} You have no tasks in your backlog!`)
+      const text = `@${message.userInfo.displayName} You have no tasks in your backlog!`
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      })
       return
     }
 
     const taskList = unDoneTasks.map(task => `#${task.id}: ${task.text}${task.focused ? ' (focused)' : ''}`).join(' | ')
 
     const text = `@${message.userInfo.displayName} Here are your tasks in the backlog: ${taskList}`
-    await chatClient.say(channel, text)
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    })
   }
 }
 

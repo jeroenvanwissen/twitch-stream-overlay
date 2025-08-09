@@ -16,6 +16,9 @@ import Tasks from '@/components/Tasks.vue'
 import DeathCounter from './components/DeathCounter.vue'
 import Badge from './components/Badge.vue'
 import EmoteExplosion from './components/EmoteExplosion.vue'
+import Meme from './components/Meme.vue'
+import Ducky from './components/Ducky.vue'
+import Seagull from './components/Seagull.vue'
 
 const chatWindow = ref<HTMLDivElement>()
 const mainWindow = ref<HTMLDivElement>()
@@ -44,5 +47,14 @@ const mainWindow = ref<HTMLDivElement>()
     <div ref="chatWindow" class="absolute top-0 right-0 flex flex-col w-1/4 h-available mb-16 mr-6 mt-6">
       <Chat v-if="user" />
     </div>
+
+      <div class="absolute bottom-[-20px] left-[30vw] w-full">
+        <Ducky v-if="user && isVisible('ducky')" />
+      </div>
+
+      <div class="absolute top-[21vh] left-[30vw] w-full">
+        <Seagull v-if="user && isVisible('seagull')" />
+      </div>
+    <Meme v-if="user" />
   </div>
 </template>

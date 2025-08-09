@@ -7,11 +7,11 @@ const command: Command = {
   type: 'command',
   storage: {},
   init: () => {},
-  callback: async ({ channel }) => {
-    await chatClient.say(
-      channel,
-      `Today I work on the Keychron K2 with Keychron Silent K Pro Red switches and a purple gradient keycap set. I have a nice collection of keyboards...it's a bit of a problem..`
-    )
+  callback: async ({ channel, message }) => {
+    const text = `Ask me about my keyboards! I love mechanical keyboards and have a few different ones. If you're curious about my current setup or want to know more about mechanical keyboards in general, just ask!`;
+    await chatClient.say(channel, text, {
+      replyTo: message.id
+    });
   }
 }
 

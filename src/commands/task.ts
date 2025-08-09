@@ -10,11 +10,11 @@ const command: Command = {
   init: () => {},
   callback: async ({ channel, broadcasterId, params, message }) => {
     if (params!.length === 0) {
-      await chatClient.say(
-        channel,
-        `@${message.userInfo.displayName} Use !task <task> to add a task. Example: !task Finish the report ( comma separated tasks are allowed )`
-      )
-      return
+      const text = `@${message.userInfo.displayName} Use !task <task> to add a task. Example: !task Finish the report ( comma separated tasks are allowed )`;
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      });
+      return;
     }
 
     const tasks = params
@@ -26,7 +26,9 @@ const command: Command = {
     if (tasks.length > 0) {
       addTasks(message.userInfo.userId, message.userInfo.userName, tasks)
       const text = `@${message.userInfo.displayName} Added task(s): ${tasks.join(', ')}`
-      await chatClient.say(channel, text)
+      await chatClient.say(channel, text, {
+        replyTo: message.id
+      });
     }
   }
 }
