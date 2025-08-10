@@ -19,6 +19,8 @@ import EmoteExplosion from './components/EmoteExplosion.vue';
 import Meme from './components/Meme.vue';
 import Ducky from './components/Ducky.vue';
 import Seagull from './components/Seagull.vue';
+import Alerts from './components/Alerts.vue';
+import AdBreak from './components/AdBreak.vue';
 
 const chatWindow = ref<HTMLDivElement>();
 const mainWindow = ref<HTMLDivElement>();
@@ -27,6 +29,8 @@ const mainWindow = ref<HTMLDivElement>();
 <template>
 	<div class="w-screen h-auto max-h-screen aspect-video flex justify-between relative overflow-hidden p-6">
 		<Badge v-if="botUser" />
+		<Alerts v-if="user" />
+		<AdBreak v-if="user" />
 
 		<div ref="mainWindow" class="relative flex flex-col w-available h-available justify-center -ml-6 mr-[5%] text-lg">
 			<NextInQueue v-if="user && isVisible('spotify')" />

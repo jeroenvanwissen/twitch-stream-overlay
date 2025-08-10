@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
 import type { Ref } from 'vue';
+import config from '../config';
 
 // Define the event detail type for EmoteExplosion
 type EmoteExplosionEventDetail = {
@@ -120,8 +121,7 @@ function triggerExplosion(
 	count: number | null = null,
 ) {
 	if (!emotes || emotes.length === 0) {
-		console.warn('No emotes provided for explosion');
-		return;
+		emotes = config.settings.emoteExplosionEmotes || [];
 	}
 
 	// Performance safeguard: if we have too many emotes, remove the oldest ones

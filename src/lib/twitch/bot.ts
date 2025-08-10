@@ -14,9 +14,12 @@ import { rewards } from '@/rewards';
 
 import type { EventSubChannelAdBreakBeginEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelAdBreakBeginEvent';
 import type { EventSubChannelRedemptionAddEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelRedemptionAddEvent';
+import type { EventSubChannelCheerEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelCheerEvent';
+
 import { EventSubWsListener } from '@twurple/eventsub-ws';
 import { ApiClient } from '@twurple/api';
 import { StaticAuthProvider } from '@twurple/auth';
+import type { EventSubChannelFollowEvent } from '@twurple/eventsub-base';
 
 interface WelcomeUser {
 	name: string;
@@ -99,6 +102,8 @@ bot.onRaid(async ({ broadcasterName, userName, viewerCount }) => {
 		await chatClient.say(broadcasterName, error.message);
 	});
 	await messageNow(`Thanks @${userName} for raiding with ${viewerCount} viewers!`);
+
+	emitOverlayAlert({ type: 'raid', userName, raiders: viewerCount });
 });
 
 bot.onChatClear(async ({ broadcasterName }) => {
@@ -108,29 +113,59 @@ bot.onChatClear(async ({ broadcasterName }) => {
 bot.onSub(async ({ broadcasterName, userName }) => {
 	await bot.say(broadcasterName, `Thanks @${userName} for subscribing to the channel!`);
 	latestSubscriber.value = (await apiClient.users.getUserByName(userName))!;
+
+	emitOverlayAlert({ type: 'sub', userName });
 });
+
 bot.onResub(async ({ broadcasterName, userName, months }) => {
 	await bot.say(broadcasterName, `Thanks @${userName} for subscribing to the channel for a total of ${months} months!`);
+
+	emitOverlayAlert({ type: 'sub', userName, message: `Resub ${months} months` });
 });
+
 // bot.onSubGift(async ({ broadcasterName, gifterDisplayName, userName }) => {
 //     await bot.say(broadcasterName, `Thanks @${gifterDisplayName} for gifting a subscription to @${userName}!`);
 // });
+
 // bot.onCommunitySub(async ({ broadcasterName, gifterDisplayName, count }) => {
 //     await bot.say(broadcasterName, `Thanks @${gifterDisplayName} for gifting ${count} subscriptions to the community!`);
 // });
+
 bot.onCommunityPayForward(async ({ broadcasterName, gifterDisplayName, originalGifterDisplayName }) => {
 	await bot.say(
 		broadcasterName,
 		`Thanks @${gifterDisplayName} for paying forward a gift from ${originalGifterDisplayName}!`,
 	);
 });
+
 bot.onGiftPaidUpgrade(async ({ broadcasterName, gifterDisplayName, userName }) => {
 	await bot.say(broadcasterName, `Thanks @${userName} for continuing the gift sub gifted by ${gifterDisplayName}!`);
 });
 
+function emitOverlayAlert(detail: {
+	type: 'raid' | 'bits' | 'follow' | 'sub';
+	userName?: string | null;
+	amount?: number;
+	raiders?: number;
+	tier?: string;
+	message?: string;
+}) {
+	window.dispatchEvent(new CustomEvent('OverlayAlert', { detail }));
+	window.dispatchEvent(new CustomEvent('EmoteExplosion', {
+		detail: {
+			x: window.innerWidth / 2,
+			y: window.innerHeight * 0.3,
+			count: 10,
+		},
+	}));
+}
+
 async function handleAdBreakStart(data: EventSubChannelAdBreakBeginEvent) {
 	console.log('Ad break started:', data);
-	// await bot.say(user.value!.name!, `Ad break started! Duration: ${data.durationSeconds} seconds.`);
+	window.dispatchEvent(new CustomEvent('AdBreakStart', {
+		detail: { durationSeconds: data.durationSeconds, startedAt: data.startDate?.toISOString?.() },
+	}));
+	await bot.say(user.value!.name!, `Ad break started! Duration: ${data.durationSeconds} seconds.`);
 }
 
 async function handleChannelPointRedemption(data: EventSubChannelRedemptionAddEvent) {
@@ -147,6 +182,20 @@ async function handleChannelPointRedemption(data: EventSubChannelRedemptionAddEv
 		});
 }
 
+async function handleChannelFollow(data: EventSubChannelFollowEvent) {
+	console.log('New follower:', data);
+	await bot.say(user.value!.name!, `Thank you @${data.userName} for following the channel!`);
+
+	emitOverlayAlert({ type: 'follow', userName: data.userName });
+}
+
+async function handleChannelCheer(data: EventSubChannelCheerEvent) {
+	console.log('New cheer:', data);
+	await bot.say(user.value!.name!, `Thank you @${data.userName} for cheering ${data.bits} bits!`);
+
+	emitOverlayAlert({ type: 'bits', userName: data.userName, amount: data.bits });
+}
+
 export async function setupEventSub() {
 	console.log('Setting up EventSub listeners...', clientId.value, accessToken.value);
 
@@ -156,6 +205,8 @@ export async function setupEventSub() {
 
 	eventSub.onChannelAdBreakBegin(user.value!.id!, handleAdBreakStart);
 	eventSub.onChannelRedemptionAdd(user.value!.id!, handleChannelPointRedemption);
+	eventSub.onChannelFollow(user.value!.id!, user.value!.id!, handleChannelFollow);
+	eventSub.onChannelCheer(user.value!.id!, handleChannelCheer);
 
 	eventSub.start();
 }
