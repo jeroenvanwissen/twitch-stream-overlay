@@ -17,8 +17,8 @@ const command: Command = {
 		}
 
 		const playlistId = import.meta.env.VITE_SPOTIFY_BANGER_PLAYLIST_URI.split('?').at(0);
-
-		const text = `The Banger playlist is: ${playlistId}`;
+		const spotifyUrl = `https://open.spotify.com/playlist/${playlistId.split(':').at(-1)}`;
+		const text = `The Banger playlist is: ${spotifyUrl}`;
 
 		await chatClient.say(channel, text, {
 			replyTo: message.id,

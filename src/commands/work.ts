@@ -8,7 +8,7 @@ const command: Command = {
 	storage: {},
 	init: () => {},
 	callback: async ({ channel, message }) => {
-		const text = `I work as a Test Automation Engineer for an international consultancy company. I have a strong background as Full Stack JavaScript/TypeScript developer.`;
+		const text = `I work as a Software Engineer for an IT agency / consultancy firm. I have a strong background as Full Stack JavaScript/TypeScript developer.`;
 		await chatClient.say(channel, text, {
 			replyTo: message.id,
 		});

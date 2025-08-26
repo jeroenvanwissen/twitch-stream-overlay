@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
 import seagullSound from '@/themes/jeroenvanwissen/assets/sounds/seagull.mp3';
+import { onMounted, ref } from 'vue';
 
 const audioRef = ref<HTMLAudioElement>();
 
 function playAudio() {
 	if (audioRef.value) {
-		audioRef.value.volume = 0.2;
+		audioRef.value.volume = 1;
 		audioRef.value.play().catch((error) => {
 			console.warn('Audio play failed:', error);
 		});

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
 import duckSound from '@/themes/jeroenvanwissen/assets/sounds/ducky.mp3';
+import { onMounted, ref } from 'vue';
 
 const audioRef = ref<HTMLAudioElement>();
 
 function playAudio() {
 	if (audioRef.value) {
-		audioRef.value.volume = 0.1;
+		audioRef.value.volume = 0.6;
 		audioRef.value.play().catch((error) => {
 			console.warn('Audio play failed:', error);
 		});

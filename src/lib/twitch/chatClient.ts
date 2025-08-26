@@ -13,8 +13,8 @@ import { getChannelBadges, getUserIdFromName } from '@/lib/twitch/apiClient';
 import { hasMinLevel } from '@/lib/twitch/helpers';
 import { TwitchClient } from '@/lib/twitch/twitchClient';
 // import { rewards } from '@/rewards';
-import { useLocalStorage } from '@vueuse/core';
 import { ignoredUsersForWelcome, welcomeUserAfterHours } from '@/store/config';
+import { useLocalStorage } from '@vueuse/core';
 
 export const chatClient = new ChatClient({
 	authProvider: TwitchClient.botAuthProvider!,
@@ -38,7 +38,7 @@ const messageHandler = ref();
 messageHandler.value?.unbind();
 
 function olderThanHours(date: Date, hours: number): boolean {
-	return (new Date().getTime() - new Date(date).getTime()) < (hours * 60 * 60 * 1000);
+	return new Date().getTime() - new Date(date).getTime() < hours * 60 * 60 * 1000;
 }
 
 function shouldIgnoreUser(user: string, channel: string): boolean {
@@ -53,7 +53,10 @@ function shouldIgnoreUser(user: string, channel: string): boolean {
 }
 
 messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => {
-	if (!welcomeUsers.value.some(u => u.name === user && olderThanHours(u.date, welcomeUserAfterHours.value)) && !shouldIgnoreUser(user, channel)) {
+	if (
+		!welcomeUsers.value.some(u => u.name === user && olderThanHours(u.date, welcomeUserAfterHours.value))
+		&& !shouldIgnoreUser(user, channel)
+	) {
 		welcomeUsers.value = [
 			...welcomeUsers.value.filter(u => u.name !== user),
 			{
@@ -64,10 +67,10 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 		];
 
 		if (knownUsers.value.includes(user)) {
-			await chatClient.say(channel, `Welcome back @${msg.userInfo.displayName}!`);
+			// await chatClient.say(channel, `Welcome back @${msg.userInfo.displayName}!`);
 		}
 		else {
-			await chatClient.say(channel, `Welcome @${msg.userInfo.displayName}!`);
+			// await chatClient.say(channel, `Welcome @${msg.userInfo.displayName}!`);
 		}
 	}
 
@@ -81,7 +84,7 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 		const channelBadges = await getChannelBadges(channel);
 
 		userData.badges
-      = msg.userInfo.badges.size > 0
+			= msg.userInfo.badges.size > 0
 				? [...msg.userInfo.badges.entries()].map(([key, value]) => {
 						const channelBadge = channelBadges.find(badge => badge.id === key);
 						if (channelBadge?.versions.some(version => version.id === value)) {
@@ -138,13 +141,15 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 			url: `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/2.0`,
 		}));
 
-		window.dispatchEvent(new CustomEvent('EmoteExplosion', {
-			detail: {
-				x: Math.random() * (window.innerWidth - 200) + 100,
-				y: Math.random() * (window.innerHeight - 200) + 100,
-				emotes: emotesToShow,
-			},
-		}));
+		window.dispatchEvent(
+			new CustomEvent('EmoteExplosion', {
+				detail: {
+					x: Math.random() * (window.innerWidth - 200) + 100,
+					y: Math.random() * (window.innerHeight - 200) + 100,
+					emotes: emotesToShow,
+				},
+			}),
+		);
 	}
 
 	if (message.isRedemption && message.rewardId) {

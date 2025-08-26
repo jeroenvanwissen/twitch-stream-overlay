@@ -1,6 +1,6 @@
-import { ref } from 'vue';
 import { Bot } from '@twurple/easy-bot';
-import { useLocalStorage } from '@vueuse/core';
+// import { useLocalStorage } from '@vueuse/core';
+import { ref } from 'vue';
 
 import { secondsToDuration } from '@/lib/dateTime';
 import apiClient, { getUserIdFromName, shoutoutUser } from '@/lib/twitch/apiClient';
@@ -13,13 +13,13 @@ import { latestSubscriber, messageNow } from '@/store/config';
 import { rewards } from '@/rewards';
 
 import type { EventSubChannelAdBreakBeginEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelAdBreakBeginEvent';
-import type { EventSubChannelRedemptionAddEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelRedemptionAddEvent';
 import type { EventSubChannelCheerEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelCheerEvent';
+import type { EventSubChannelRedemptionAddEvent } from '@twurple/eventsub-base/lib/events/EventSubChannelRedemptionAddEvent';
 
-import { EventSubWsListener } from '@twurple/eventsub-ws';
 import { ApiClient } from '@twurple/api';
 import { StaticAuthProvider } from '@twurple/auth';
 import type { EventSubChannelFollowEvent } from '@twurple/eventsub-base';
+import { EventSubWsListener } from '@twurple/eventsub-ws';
 
 interface WelcomeUser {
 	name: string;
@@ -27,7 +27,7 @@ interface WelcomeUser {
 }
 
 const welcomeUsers = ref<WelcomeUser[]>([]);
-const knownUsers = useLocalStorage<string[]>('knownUsers', []);
+// const knownUsers = useLocalStorage<string[]>('knownUsers', []);
 
 console.log('Creating bot client for', user.value!.name);
 const bot = new Bot({
@@ -60,21 +60,21 @@ bot.onLeave(async ({ userName }) => {
 	console.log(`${userName} has left the channel!`);
 });
 
-bot.onMessage(async ({ broadcasterName, userName }) => {
-	if (!welcomeUsers.value.some(u => u.name === userName)) {
-		welcomeUsers.value = welcomeUsers.value.filter(u => u.name !== userName);
-		if (knownUsers.value.includes(userName)) {
-			await bot.say(broadcasterName, `Welcome back @${userName}!`);
-		}
-		else {
-			await bot.say(broadcasterName, `Welcome @${userName}!`);
-		}
-	}
+// bot.onMessage(async ({ broadcasterName, userName }) => {
+// 	if (!welcomeUsers.value.some(u => u.name === userName)) {
+// 		welcomeUsers.value = welcomeUsers.value.filter(u => u.name !== userName);
+// 		if (knownUsers.value.includes(userName)) {
+// 			await bot.say(broadcasterName, `Welcome back @${userName}!`);
+// 		}
+// 		else {
+// 			await bot.say(broadcasterName, `Welcome @${userName}!`);
+// 		}
+// 	}
 
-	if (!knownUsers.value.includes(userName)) {
-		knownUsers.value = [...knownUsers.value, userName];
-	}
-});
+// 	if (!knownUsers.value.includes(userName)) {
+// 		knownUsers.value = [...knownUsers.value, userName];
+// 	}
+// });
 
 bot.onSubGift(async ({ broadcasterName, gifterName, userName }) => {
 	await bot.say(broadcasterName, `Thanks @${gifterName} for gifting a subscription to @${userName}!`);
@@ -151,20 +151,24 @@ function emitOverlayAlert(detail: {
 	message?: string;
 }) {
 	window.dispatchEvent(new CustomEvent('OverlayAlert', { detail }));
-	window.dispatchEvent(new CustomEvent('EmoteExplosion', {
-		detail: {
-			x: window.innerWidth / 2,
-			y: window.innerHeight * 0.3,
-			count: 10,
-		},
-	}));
+	window.dispatchEvent(
+		new CustomEvent('EmoteExplosion', {
+			detail: {
+				x: window.innerWidth / 2,
+				y: window.innerHeight * 0.3,
+				count: 10,
+			},
+		}),
+	);
 }
 
 async function handleAdBreakStart(data: EventSubChannelAdBreakBeginEvent) {
 	console.log('Ad break started:', data);
-	window.dispatchEvent(new CustomEvent('AdBreakStart', {
-		detail: { durationSeconds: data.durationSeconds, startedAt: data.startDate?.toISOString?.() },
-	}));
+	window.dispatchEvent(
+		new CustomEvent('AdBreakStart', {
+			detail: { durationSeconds: data.durationSeconds, startedAt: data.startDate?.toISOString?.() },
+		}),
+	);
 	await bot.say(user.value!.name!, `Ad break started! Duration: ${data.durationSeconds} seconds.`);
 }
 

@@ -13,14 +13,14 @@ import NextInQueue from '@/components/NextInQueue.vue';
 import NowPlaying from '@/components/NowPlaying.vue';
 import Pomodoro from '@/components/Pomodoro.vue';
 import Tasks from '@/components/Tasks.vue';
-import DeathCounter from './components/DeathCounter.vue';
-import Badge from './components/Badge.vue';
-import EmoteExplosion from './components/EmoteExplosion.vue';
-import Meme from './components/Meme.vue';
-import Ducky from './components/Ducky.vue';
-import Seagull from './components/Seagull.vue';
-import Alerts from './components/Alerts.vue';
 import AdBreak from './components/AdBreak.vue';
+import Alerts from './components/Alerts.vue';
+import Badge from './components/Badge.vue';
+import DeathCounter from './components/DeathCounter.vue';
+import Ducky from './components/Ducky.vue';
+import EmoteExplosion from './components/EmoteExplosion.vue';
+import Seagull from './components/Seagull.vue';
+import Dance from './components/Dance.vue';
 
 const chatWindow = ref<HTMLDivElement>();
 const mainWindow = ref<HTMLDivElement>();
@@ -39,6 +39,7 @@ const mainWindow = ref<HTMLDivElement>();
 			<Tasks v-if="user && isVisible('tasks')" />
 			<DeathCounter v-if="user && isVisible('deaths')" />
 			<EmoteExplosion v-if="user && isVisible('emotes')" />
+			<Dance />
 			<!-- <VideoElement /> -->
 
 			<div class="top-[calc(100%/8)] flex flex-col gap-4 fixed left-10 card">
@@ -59,6 +60,5 @@ const mainWindow = ref<HTMLDivElement>();
 		<div class="absolute top-[21vh] left-[30vw] w-full">
 			<Seagull v-if="user && isVisible('seagull')" />
 		</div>
-		<Meme v-if="user" />
 	</div>
 </template>
