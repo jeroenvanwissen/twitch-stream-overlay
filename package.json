@@ -12,9 +12,11 @@
 		"lint": "eslint .",
 		"lint:fix": "eslint --fix ./src",
 		"make:command": "node src/scripts/make.cjs command",
-		"make:reward": "node src/scripts/make.cjs reward"
+		"make:reward": "node src/scripts/make.cjs reward",
+		"hrbridge": "node src/scripts/hr-bridge.cjs"
 	},
 	"dependencies": {
+		"@abandonware/noble": "^1.9.2-26",
 		"@microsoft/signalr": "^8.0.7",
 		"@nomercy-entertainment/nomercy-video-player": "^0.2.4",
 		"@twurple/api": "^7.2.1",
@@ -35,7 +37,8 @@
 		"tmi.js": "^1.8.5",
 		"ua-parser-js": "^2.0.0",
 		"vue": "^3.5.13",
-		"vue-router": "^4.2.0"
+		"vue-router": "^4.2.0",
+		"ws": "^8.18.3"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^4.16.1",

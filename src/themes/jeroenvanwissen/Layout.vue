@@ -13,6 +13,7 @@ import NextInQueue from '@/components/NextInQueue.vue';
 import NowPlaying from '@/components/NowPlaying.vue';
 import Pomodoro from '@/components/Pomodoro.vue';
 import Tasks from '@/components/Tasks.vue';
+import Heartrate from '@/components/Heartrate.vue';
 import AdBreak from './components/AdBreak.vue';
 import Alerts from './components/Alerts.vue';
 import Badge from './components/Badge.vue';
@@ -29,6 +30,7 @@ const mainWindow = ref<HTMLDivElement>();
 <template>
 	<div class="w-screen h-auto max-h-screen aspect-video flex justify-between relative overflow-hidden p-6">
 		<Badge v-if="botUser" />
+		<Heartrate class="absolute left-14 top-[130px] z-10" />
 		<Alerts v-if="user" />
 		<AdBreak v-if="user" />
 
