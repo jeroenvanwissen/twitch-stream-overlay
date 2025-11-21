@@ -9,7 +9,7 @@ interface DedStorage {
 
 const command: Command<DedStorage> = {
 	name: 'ded',
-	permission: 'moderator',
+	permission: 'everyone',
 	type: 'command',
 	storage: {
 		count: useLocalStorage<number>('ded-count', 0),
