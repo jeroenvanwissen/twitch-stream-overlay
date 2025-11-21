@@ -12,6 +12,7 @@ import { broadcasterCommands, everyoneCommands, moderatorCommands, subscriberCom
 import { getChannelBadges, getUserIdFromName } from '@/lib/twitch/apiClient';
 import { hasMinLevel } from '@/lib/twitch/helpers';
 import { TwitchClient } from '@/lib/twitch/twitchClient';
+import { handleDropAttemptMessage, handleDropResultMessage } from '@/lib/dropGame/handler';
 // import { rewards } from '@/rewards';
 import { ignoredUsersForWelcome, welcomeUserAfterHours } from '@/store/config';
 import { useLocalStorage } from '@vueuse/core';
@@ -133,6 +134,9 @@ messageHandler.value = chatClient.onMessage(async (channel, user, text, msg) => 
 	};
 
 	console.log(toRaw(message));
+
+	handleDropAttemptMessage(message);
+	handleDropResultMessage(message);
 
 	if (msg.emoteOffsets && msg.emoteOffsets.size > 0) {
 		// Convert Map to array of emote objects

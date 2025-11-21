@@ -18,6 +18,7 @@ import AdBreak from './components/AdBreak.vue';
 import Alerts from './components/Alerts.vue';
 import Badge from './components/Badge.vue';
 import DeathCounter from './components/DeathCounter.vue';
+import DropScoreboard from './components/DropScoreboard.vue';
 import Ducky from './components/Ducky.vue';
 import EmoteExplosion from './components/EmoteExplosion.vue';
 import Seagull from './components/Seagull.vue';
@@ -48,6 +49,7 @@ const mainWindow = ref<HTMLDivElement>();
 				<!-- <ListsRotator v-if="botUser && user" direction="left" /> -->
 				<!-- dev only, lists all reward ids -->
 				<!--				<RewardsList v-if="botUser && user" /> -->
+				<DropScoreboard v-if="user && isVisible('dropgame')" />
 			</div>
 		</div>
 

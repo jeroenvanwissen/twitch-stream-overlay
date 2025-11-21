@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@vueuse/core';
 
-const components = ['pomodoro', 'tasks', 'spotify', 'deaths', 'emotes', 'ducky', 'seagull'] as const;
+const components = ['pomodoro', 'tasks', 'spotify', 'deaths', 'emotes', 'ducky', 'seagull', 'dropgame'] as const;
 
 const visibilityMap = components.reduce((acc, component) => {
 	acc[component] = useLocalStorage<boolean>(`${component}-visibility`, true);

@@ -11,7 +11,7 @@ const command: Command = {
 	init: () => {},
 	callback: async ({ channel, params, message }) => {
 		if (!params[0]) {
-			const text = `Please specify a component to hide. Available: pomodoro, tasks, spotify, deaths, emotes, ducky, seagull`;
+			const text = `Please specify a component to hide. Available: pomodoro, tasks, spotify, deaths, emotes, ducky, seagull, dropgame`;
 			await chatClient.say(channel, text, {
 				replyTo: message.id,
 			});
@@ -19,7 +19,7 @@ const command: Command = {
 		}
 
 		const componentName = params[0].toLowerCase() as ComponentKey;
-		const validComponents = ['pomodoro', 'tasks', 'spotify', 'deaths', 'emotes', 'ducky', 'seagull'];
+		const validComponents = ['pomodoro', 'tasks', 'spotify', 'deaths', 'emotes', 'ducky', 'seagull', 'dropgame'];
 
 		if (!validComponents.includes(componentName)) {
 			const text = `Invalid component "${componentName}". Available: ${validComponents.join(', ')}`;
